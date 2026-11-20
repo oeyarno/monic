@@ -21,6 +21,7 @@ import type {
   IndustrySectorCode,
   MarcPlantData,
   MardStorageData,
+  MasterCharacteristic,
   MaterialMasterRecord,
   MaterialTypeCode,
   MaterialViewKey,
@@ -30,7 +31,12 @@ import type {
   ValuationCategoryCode,
   ValuationTypeCode,
 } from '../types/sap.ts';
-import { formatCurrency, formatNumber } from '../utils/format.ts';
+import {
+  buildMaterialShortDescription,
+  formatCharacteristicPattern,
+  formatCurrency,
+  formatNumber,
+} from '../utils/format.ts';
 
 interface MaterialMasterEditorProps {
   data: SapBootstrapPayload;
@@ -41,8 +47,9 @@ interface MaterialMasterEditorProps {
   onSaveMaterial: (
     material: MaterialMasterRecord,
     isCreate: boolean,
-    activeWerks: string
-  ) => Promise<{ ok: boolean; error?: string; details?: string[] }>;
+    activeWerks: string,
+    autoGenerateMaktx?: boolean
+  ) => Promise<{ ok: boolean; error?: string; details?: string[]; matnr?: string }>;
   onDeleteMaterial: (matnr: string) => Promise<{ ok: boolean; error?: string }>;
   onBackToList: () => void;
   onOpenCustomizing: (industry: IndustrySectorCode) => void;
@@ -51,6 +58,7 @@ interface MaterialMasterEditorProps {
 
 const VIEW_TABS: { key: MaterialViewKey; label: string; tableHint: string }[] = [
   { key: 'basic', label: 'Basic Data 1 & 2', tableHint: 'MARA' },
+  { key: 'classification', label: 'Classification & Karakteristik', tableHint: 'AUSP · CT04' },
   { key: 'purchasing', label: 'Purchasing', tableHint: 'MARA · MARC' },
   { key: 'mrp', label: 'MRP 1–4', tableHint: 'MARC' },
   { key: 'storage', label: 'Plant / Storage', tableHint: 'MARC · MARD' },
@@ -61,11 +69,13 @@ const VIEW_TABS: { key: MaterialViewKey; label: string; tableHint: string }[] = 
 
 function createEmptyMaterial(
   data: SapBootstrapPayload,
-  mtart: MaterialTypeCode = 'ROH',
+  mtartOverride?: MaterialTypeCode,
   mbrsh: IndustrySectorCode = data.activeTenant?.defaultIndustry || 'M',
   werks = data.plants[0]?.werks || '1000',
   lgort = data.plants[0]?.storageLocations[0]?.lgort || '0001'
 ): MaterialMasterRecord {
+  const defaultGroup = data.materialGroups?.[0];
+  const mtart: MaterialTypeCode = mtartOverride || defaultGroup?.defaultMtart || 'ROH';
   const mtDef = data.materialTypes.find((m) => m.mtart === mtart) || data.materialTypes[0];
   const prefix = mtDef.internalNumberPrefix;
   let maxSeq = 100;
@@ -93,14 +103,25 @@ function createEmptyMaterial(
     }
   }
 
+  const characteristics: Record<string, string | number | boolean> = {};
+  if (defaultGroup) {
+    for (const ch of defaultGroup.characteristics) {
+      if (ch.dataType === 'boolean') {
+        characteristics[ch.charName] = false;
+      } else {
+        characteristics[ch.charName] = '';
+      }
+    }
+  }
+
   return {
     mara: {
       matnr,
       maktx: '',
       mtart,
       mbrsh,
-      meins: 'KG',
-      matkl: 'GEN-001',
+      meins: 'PC',
+      matkl: defaultGroup?.matkl || 'GEN-001',
       bismt: '',
       spart: '01',
       brgew: 1,
@@ -180,6 +201,7 @@ function createEmptyMaterial(
       tragr: '0001',
       ladgr: '0001',
     },
+    characteristics,
     industryExtensions: extensions,
   };
 }
@@ -207,6 +229,7 @@ export function MaterialMasterEditor({
     return found ? structuredClone(found) : createEmptyMaterial(data);
   });
   const [saving, setSaving] = useState(false);
+  const [autoShortDesc, setAutoShortDesc] = useState<boolean>(mode === 'create');
   const [errorBanner, setErrorBanner] = useState<string[] | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -216,6 +239,7 @@ export function MaterialMasterEditor({
     setErrorBanner(null);
     setSuccessMsg(null);
     setConfirmDelete(false);
+    setAutoShortDesc(mode === 'create');
     const tenantPlant = data.plants[0]?.werks || '1000';
     const tenantSloc = data.plants[0]?.storageLocations[0]?.lgort || '0001';
     if (mode === 'create') {
@@ -258,6 +282,31 @@ export function MaterialMasterEditor({
     );
   }, [data.customIndustryFields, draft.mara.mbrsh]);
 
+  const activeMaterialGroup = useMemo(() => {
+    return (data.materialGroups || []).find((mg) => mg.matkl === draft.mara.matkl);
+  }, [data.materialGroups, draft.mara.matkl]);
+
+  const charCompletion = useMemo(() => {
+    const chars = activeMaterialGroup?.characteristics || [];
+    const requiredChars = chars.filter((c) => c.required && c.dataType !== 'boolean');
+    let requiredFilled = 0;
+    for (const ch of requiredChars) {
+      const val = draft.characteristics?.[ch.charName];
+      if (ch.dataType === 'number') {
+        if (val !== undefined && val !== null && String(val).trim() !== '' && !Number.isNaN(Number(val))) {
+          requiredFilled++;
+        }
+      } else if (val !== undefined && val !== null && String(val).trim() !== '') {
+        requiredFilled++;
+      }
+    }
+    return {
+      total: chars.length,
+      requiredTotal: requiredChars.length,
+      requiredFilled,
+    };
+  }, [activeMaterialGroup, draft.characteristics]);
+
   const oms9Summary = useMemo(() => {
     let requiredCount = 0;
     let displayCount = 0;
@@ -284,6 +333,43 @@ export function MaterialMasterEditor({
       ...prev,
       mara: { ...prev.mara, [key]: value },
     }));
+  };
+
+  const handleMaterialGroupChange = (newMatkl: string) => {
+    const mg = (data.materialGroups || []).find((g) => g.matkl === newMatkl);
+    setDraft((prev) => {
+      const nextChars: Record<string, string | number | boolean> = { ...(prev.characteristics || {}) };
+      if (mg) {
+        for (const ch of mg.characteristics) {
+          if (nextChars[ch.charName] === undefined) {
+            nextChars[ch.charName] = ch.dataType === 'boolean' ? false : '';
+          }
+        }
+      }
+      const nextMaktx = autoShortDesc
+        ? buildMaterialShortDescription(mg, nextChars)
+        : prev.mara.maktx;
+      return {
+        ...prev,
+        mara: { ...prev.mara, matkl: newMatkl, maktx: nextMaktx },
+        characteristics: nextChars,
+      };
+    });
+  };
+
+  const updateCharacteristicValue = (charName: string, val: string | number | boolean) => {
+    setDraft((prev) => {
+      const nextChars = { ...(prev.characteristics || {}), [charName]: val };
+      const mg = (data.materialGroups || []).find((g) => g.matkl === prev.mara.matkl);
+      const nextMaktx = autoShortDesc
+        ? buildMaterialShortDescription(mg, nextChars)
+        : prev.mara.maktx;
+      return {
+        ...prev,
+        mara: { ...prev.mara, maktx: nextMaktx },
+        characteristics: nextChars,
+      };
+    });
   };
 
   const handleMaterialTypeChange = (newMtart: MaterialTypeCode) => {
@@ -561,15 +647,16 @@ export function MaterialMasterEditor({
     setSaving(true);
     setErrorBanner(null);
     setSuccessMsg(null);
-    const res = await onSaveMaterial(draft, mode === 'create', activeWerks);
+    const res = await onSaveMaterial(draft, mode === 'create', activeWerks, autoShortDesc);
     setSaving(false);
     if (!res.ok) {
       setErrorBanner(res.details && res.details.length > 0 ? res.details : [res.error || 'Gagal menyimpan material.']);
     } else {
+      const assignedMatnr = res.matnr || draft.mara.matnr;
       setSuccessMsg(
         mode === 'create'
-          ? `Material ${draft.mara.matnr} berhasil dibuat (MM01) dan tercatat di CDHDR.`
-          : `Perubahan Material ${draft.mara.matnr} berhasil disimpan (MM02) dan tercatat di CDHDR.`
+          ? `Material ${assignedMatnr} berhasil digenerate & dibuat (MM01) dan tercatat di CDHDR.`
+          : `Perubahan Material ${assignedMatnr} berhasil disimpan (MM02) dan tercatat di CDHDR.`
       );
     }
   };
@@ -682,6 +769,155 @@ export function MaterialMasterEditor({
     );
   };
 
+  const renderCharacteristicInput = (ch: MasterCharacteristic, index: number) => {
+    const value = draft.characteristics?.[ch.charName];
+    return (
+      <div key={ch.id} className="space-y-1">
+        <div className="flex items-center justify-between gap-2">
+          <label className="text-xs font-medium text-slate-800">
+            <span className="font-mono text-[11px] font-bold text-[#0064D9] mr-1.5">
+              #{index + 1}
+            </span>
+            {ch.label}
+            {ch.required && <span className="text-red-600 ml-1 font-semibold">*</span>}
+          </label>
+          <span className="text-[11px] font-mono text-slate-400">{ch.charName}</span>
+        </div>
+
+        {ch.dataType === 'select' ? (
+          <select
+            disabled={isReadOnly}
+            value={String(value ?? '')}
+            onChange={(e) => updateCharacteristicValue(ch.charName, e.target.value)}
+            className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 disabled:text-slate-500 focus:outline-none focus:border-[#0064D9]"
+          >
+            <option value="">-- Pilih nilai karakteristik --</option>
+            {(ch.options || []).map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        ) : ch.dataType === 'boolean' ? (
+          <label className="flex items-center gap-2.5 px-3 py-2 bg-slate-50 border border-slate-200 rounded-md cursor-pointer">
+            <input
+              type="checkbox"
+              disabled={isReadOnly}
+              checked={Boolean(value)}
+              onChange={(e) => updateCharacteristicValue(ch.charName, e.target.checked)}
+              className="w-4 h-4 accent-[#0064D9]"
+            />
+            <span className="text-xs font-medium text-slate-700">
+              {Boolean(value) ? 'Ya / Memenuhi' : 'Tidak'}
+            </span>
+          </label>
+        ) : ch.dataType === 'number' ? (
+          <div className="flex items-center">
+            <input
+              type="number"
+              step="any"
+              disabled={isReadOnly}
+              value={value === undefined || value === '' ? '' : Number(value)}
+              onChange={(e) =>
+                updateCharacteristicValue(
+                  ch.charName,
+                  e.target.value === '' ? '' : Number(e.target.value)
+                )
+              }
+              placeholder={`Masukkan angka${ch.unit ? ` (${ch.unit})` : ''}`}
+              className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 disabled:text-slate-500 focus:outline-none focus:border-[#0064D9]"
+            />
+            {ch.unit && (
+              <span className="ml-2 px-2.5 py-2 text-xs font-mono bg-slate-100 border border-slate-200 rounded-md text-slate-600 shrink-0">
+                {ch.unit}
+              </span>
+            )}
+          </div>
+        ) : (
+          <input
+            type="text"
+            disabled={isReadOnly}
+            value={String(value ?? '')}
+            onChange={(e) => updateCharacteristicValue(ch.charName, e.target.value)}
+            placeholder={ch.helpText}
+            className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 disabled:text-slate-500 focus:outline-none focus:border-[#0064D9]"
+          />
+        )}
+        <p className="text-[11px] text-slate-500">{ch.helpText}</p>
+      </div>
+    );
+  };
+
+  const generatedShortDescPreview = useMemo(() => {
+    return buildMaterialShortDescription(activeMaterialGroup, draft.characteristics);
+  }, [activeMaterialGroup, draft.characteristics]);
+
+  const renderCharacteristicSection = (standalone = false) => (
+    <div className={standalone ? 'space-y-5' : 'mt-6 pt-6 border-t border-slate-200 space-y-4'}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900">
+            Karakteristik Material sesuai Master Characteristic (CT04 · {draft.mara.matkl})
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            {activeMaterialGroup
+              ? `${activeMaterialGroup.label} — Format Short Name: ${formatCharacteristicPattern(activeMaterialGroup)}`
+              : 'Material Group belum terdaftar pada Master Characteristic (CT04).'}
+          </p>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <span
+            className={`text-xs font-mono font-semibold tabular-nums ${
+              charCompletion.requiredFilled === charCompletion.requiredTotal
+                ? 'text-emerald-700'
+                : 'text-amber-700'
+            }`}
+          >
+            {charCompletion.requiredFilled}/{charCompletion.requiredTotal} wajib terisi
+          </span>
+          <button
+            type="button"
+            onClick={() => onOpenCustomizing(draft.mara.mbrsh)}
+            className="inline-flex items-center gap-1 text-xs font-medium text-[#0064D9] hover:underline whitespace-nowrap"
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            <span>Kelola CT04</span>
+          </button>
+        </div>
+      </div>
+
+      {activeMaterialGroup && activeMaterialGroup.characteristics.length > 0 && (
+        <div className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-md flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div className="min-w-0">
+            <span className="text-slate-500">Preview Short Name (Urutan #1–#{activeMaterialGroup.characteristics.length}): </span>
+            <span className="font-mono font-semibold text-slate-900">
+              {generatedShortDescPreview || formatCharacteristicPattern(activeMaterialGroup)}
+            </span>
+          </div>
+          {!isReadOnly && generatedShortDescPreview && draft.mara.maktx !== generatedShortDescPreview && (
+            <button
+              type="button"
+              onClick={() => updateMara('maktx', generatedShortDescPreview)}
+              className="text-xs font-semibold text-[#0064D9] hover:underline whitespace-nowrap shrink-0"
+            >
+              Terapkan ke MARA-MAKTX
+            </button>
+          )}
+        </div>
+      )}
+
+      {!activeMaterialGroup || activeMaterialGroup.characteristics.length === 0 ? (
+        <div className="p-4 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-500">
+          Belum ada Master Characteristic yang didefinisikan untuk Material Group {draft.mara.matkl}.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {activeMaterialGroup.characteristics.map((ch, idx) => renderCharacteristicInput(ch, idx))}
+        </div>
+      )}
+    </div>
+  );
+
   if (mode !== 'create' && data.materials.length === 0) {
     return (
       <div className="bg-white border border-slate-200 rounded-lg p-10 text-center space-y-3">
@@ -738,7 +974,10 @@ export function MaterialMasterEditor({
                   </select>
                 )}
                 {mode === 'create' && (
-                  <span className="font-mono text-sm font-bold text-slate-900">{draft.mara.matnr}</span>
+                  <span className="font-mono text-sm font-bold text-slate-900">
+                    {draft.mara.matnr}{' '}
+                    <span className="text-xs font-normal text-slate-500">(Auto MMNR)</span>
+                  </span>
                 )}
               </div>
               <p className="text-xs text-slate-500 mt-1">
@@ -906,17 +1145,23 @@ export function MaterialMasterEditor({
           </div>
         </div>
 
-        {/* OMS9 Active Rule Context Line */}
+        {/* OMS9 & CT04 Active Rule Context Line */}
         <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-slate-800">Aturan OMS9 Aktif [{draft.mara.mbrsh}]:</span>
-            <span>{oms9Summary.requiredCount} Wajib</span>
+            <span className="font-semibold text-slate-800">Aturan Aktif [{draft.mara.mbrsh} · {draft.mara.matkl}]:</span>
+            <span>{oms9Summary.requiredCount} Field OMS9 Wajib</span>
             <span aria-hidden="true">·</span>
-            <span>{oms9Summary.displayCount} Read-Only</span>
+            <span>{industryCustomFields.length} CI_MARA</span>
             <span aria-hidden="true">·</span>
-            <span>{oms9Summary.hideCount} Disembunyikan</span>
-            <span aria-hidden="true">·</span>
-            <span>{industryCustomFields.length} Field Kustom CI_MARA</span>
+            <span
+              className={
+                charCompletion.requiredFilled < charCompletion.requiredTotal
+                  ? 'font-semibold text-amber-700'
+                  : 'font-semibold text-emerald-700'
+              }
+            >
+              {charCompletion.requiredFilled}/{charCompletion.requiredTotal} Karakteristik CT04 Wajib Terisi
+            </span>
           </div>
           <button
             type="button"
@@ -924,7 +1169,7 @@ export function MaterialMasterEditor({
             className="inline-flex items-center gap-1 text-xs font-medium text-[#0064D9] hover:underline"
           >
             <Sliders className="w-3.5 h-3.5" />
-            <span>Atur Field Industri di OMS9</span>
+            <span>Atur OMS9 &amp; CT04</span>
           </button>
         </div>
       </div>
@@ -999,28 +1244,80 @@ export function MaterialMasterEditor({
         <div className="p-6">
           {/* VIEW 1: BASIC DATA 1 & 2 */}
           {activeView === 'basic' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               <div>
-                {renderFieldLabel('Material Number', 'MARA-MATNR', 'required')}
+                {renderFieldLabel('Material Number', 'MARA-MATNR', 'display')}
                 <input
                   type="text"
-                  disabled={mode !== 'create'}
+                  readOnly
+                  disabled
                   value={draft.mara.matnr}
-                  onChange={(e) => updateMara('matnr', e.target.value.toUpperCase())}
-                  className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 disabled:text-slate-500 focus:outline-none focus:border-[#0064D9]"
+                  className="w-full px-3 py-2 text-sm font-mono bg-slate-100 border border-slate-200 rounded-md text-slate-600 cursor-not-allowed"
                 />
+                {mode === 'create' && (
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Digenerate otomatis oleh sistem (Internal Number Range MMNR · {draft.mara.mtart}).
+                  </p>
+                )}
               </div>
 
               <div className="md:col-span-2">
-                {renderFieldLabel('Material Description', 'MARA-MAKTX', 'required')}
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                  <label className="text-xs font-medium text-slate-700">
+                    Material Description (Short Name)
+                    <span className="text-red-600 ml-1 font-semibold">*</span>
+                  </label>
+                  <div className="flex items-center gap-3">
+                    {!isReadOnly && (
+                      <label className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-600 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={autoShortDesc}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setAutoShortDesc(checked);
+                            if (checked && generatedShortDescPreview) {
+                              updateMara('maktx', generatedShortDescPreview);
+                            }
+                          }}
+                          className="w-3.5 h-3.5 accent-[#0064D9]"
+                        />
+                        <span>Auto dari Karakteristik</span>
+                      </label>
+                    )}
+                    <span className="text-[11px] font-mono text-slate-400">MARA-MAKTX</span>
+                  </div>
+                </div>
                 <input
                   type="text"
                   disabled={isReadOnly}
+                  readOnly={autoShortDesc && !isReadOnly}
                   value={draft.mara.maktx}
-                  onChange={(e) => updateMara('maktx', e.target.value)}
-                  placeholder="Deskripsi material (maks. 40 karakter SAP atau Long Text)"
-                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
+                  onChange={(e) => {
+                    setAutoShortDesc(false);
+                    updateMara('maktx', e.target.value);
+                  }}
+                  placeholder={`Otomatis mengikuti format: ${formatCharacteristicPattern(activeMaterialGroup)}`}
+                  className={`w-full px-3 py-2 text-sm border border-slate-200 rounded-md text-slate-900 focus:outline-none focus:border-[#0064D9] ${
+                    isReadOnly
+                      ? 'bg-slate-100'
+                      : autoShortDesc
+                      ? 'bg-slate-50 font-medium'
+                      : 'bg-white'
+                  }`}
                 />
+                <div className="flex flex-wrap items-center justify-between gap-2 mt-1 text-[11px] text-slate-500">
+                  <span>
+                    Acuan CT04 ({draft.mara.matkl}):{' '}
+                    <span className="font-mono text-slate-700">
+                      {formatCharacteristicPattern(activeMaterialGroup)}
+                    </span>
+                  </span>
+                  <span className="font-mono tabular-nums">
+                    {draft.mara.maktx.length} karakter
+                  </span>
+                </div>
               </div>
 
               <div>
@@ -1042,14 +1339,22 @@ export function MaterialMasterEditor({
               </div>
 
               <div>
-                {renderFieldLabel('Material Group', 'MARA-MATKL', 'required')}
-                <input
-                  type="text"
+                {renderFieldLabel('Material Group (Master CT04)', 'MARA-MATKL', 'required')}
+                <select
                   disabled={isReadOnly}
                   value={draft.mara.matkl}
-                  onChange={(e) => updateMara('matkl', e.target.value.toUpperCase())}
+                  onChange={(e) => handleMaterialGroupChange(e.target.value)}
                   className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
-                />
+                >
+                  {(data.materialGroups || []).map((mg) => (
+                    <option key={mg.matkl} value={mg.matkl}>
+                      {mg.matkl} — {mg.label}
+                    </option>
+                  ))}
+                  {!(data.materialGroups || []).some((mg) => mg.matkl === draft.mara.matkl) && (
+                    <option value={draft.mara.matkl}>{draft.mara.matkl} (Unregistered)</option>
+                  )}
+                </select>
               </div>
 
               <div>
@@ -1164,7 +1469,12 @@ export function MaterialMasterEditor({
                 </div>
               </div>
             </div>
+            {renderCharacteristicSection(false)}
+          </div>
           )}
+
+          {/* VIEW 1B: CLASSIFICATION & MASTER CHARACTERISTICS (AUSP / CT04) */}
+          {activeView === 'classification' && renderCharacteristicSection(true)}
 
           {/* VIEW 2: PURCHASING */}
           {activeView === 'purchasing' && (

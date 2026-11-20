@@ -308,6 +308,17 @@ export function MaterialListView({
                     data.industrySectors.find((i) => i.mbrsh === mat.mara.mbrsh)?.shortLabel ||
                     mat.mara.mbrsh;
 
+                  const matGroup = (data.materialGroups || []).find((mg) => mg.matkl === mat.mara.matkl);
+                  const charSummary = (matGroup?.characteristics || [])
+                    .map((ch) => {
+                      const val = mat.characteristics?.[ch.charName];
+                      if (val === undefined || val === null || val === '') return null;
+                      return `${val}${ch.unit ? ` ${ch.unit}` : ''}`;
+                    })
+                    .filter(Boolean)
+                    .slice(0, 3)
+                    .join(' · ');
+
                   return (
                     <tr
                       key={mat.mara.matnr}
@@ -341,6 +352,11 @@ export function MaterialListView({
                             </>
                           )}
                         </div>
+                        {charSummary && (
+                          <div className="text-[11px] text-slate-500 font-mono mt-0.5 truncate" title={charSummary}>
+                            {charSummary}
+                          </div>
+                        )}
                       </td>
 
                       <td className="py-3 px-4 align-top whitespace-nowrap font-mono text-slate-700">

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   AlertCircle,
+  ArrowDown,
+  ArrowUp,
   CheckCircle2,
   Plus,
   Save,
@@ -8,13 +10,17 @@ import {
   Trash2,
 } from 'lucide-react';
 import type {
+  CharacteristicDataType,
   CustomFieldDataType,
   CustomIndustryField,
   FieldStatus,
   IndustrySectorCode,
+  MasterCharacteristic,
+  MaterialTypeCode,
   SapBootstrapPayload,
   StandardFieldRule,
 } from '../types/sap.ts';
+import { formatCharacteristicPattern } from '../utils/format.ts';
 
 interface IndustryCustomizingViewProps {
   data: SapBootstrapPayload;
@@ -23,6 +29,22 @@ interface IndustryCustomizingViewProps {
   onCreateCustomField: (field: CustomIndustryField) => Promise<{ ok: boolean; error?: string }>;
   onUpdateCustomField: (field: CustomIndustryField) => Promise<{ ok: boolean; error?: string }>;
   onDeleteCustomField: (id: string) => Promise<{ ok: boolean; error?: string }>;
+  onCreateMaterialGroup: (group: {
+    matkl: string;
+    label: string;
+    defaultMtart?: MaterialTypeCode;
+    description?: string;
+  }) => Promise<{ ok: boolean; error?: string }>;
+  onCreateCharacteristic: (
+    matkl: string,
+    characteristic: MasterCharacteristic
+  ) => Promise<{ ok: boolean; error?: string }>;
+  onUpdateCharacteristic: (
+    matkl: string,
+    characteristic: MasterCharacteristic
+  ) => Promise<{ ok: boolean; error?: string }>;
+  onDeleteCharacteristic: (matkl: string, charId: string) => Promise<{ ok: boolean; error?: string }>;
+  onReorderCharacteristics: (matkl: string, charIds: string[]) => Promise<{ ok: boolean; error?: string }>;
 }
 
 const STATUS_OPTIONS: { value: FieldStatus; label: string }[] = [
@@ -39,11 +61,16 @@ export function IndustryCustomizingView({
   onCreateCustomField,
   onUpdateCustomField,
   onDeleteCustomField,
+  onCreateMaterialGroup,
+  onCreateCharacteristic,
+  onUpdateCharacteristic,
+  onDeleteCharacteristic,
+  onReorderCharacteristics,
 }: IndustryCustomizingViewProps) {
   const [selectedIndustry, setSelectedIndustry] = useState<IndustrySectorCode>(
     initialIndustry || data.activeTenant?.defaultIndustry || 'C'
   );
-  const [activeSubTab, setActiveSubTab] = useState<'oms9' | 'append'>('oms9');
+  const [activeSubTab, setActiveSubTab] = useState<'oms9' | 'append' | 'ct04'>('oms9');
   const [rulesDraft, setRulesDraft] = useState<StandardFieldRule[]>(() =>
     structuredClone(data.standardFieldRules)
   );
@@ -58,19 +85,48 @@ export function IndustryCustomizingView({
   const [newHelpText, setNewHelpText] = useState('');
   const [newStatus, setNewStatus] = useState<FieldStatus>('required');
 
+  // CT04 Master Characteristic & Material Group state
+  const [selectedMatkl, setSelectedMatkl] = useState<string>(
+    data.materialGroups?.[0]?.matkl || ''
+  );
+  const [showNewGroupForm, setShowNewGroupForm] = useState(false);
+  const [newGroupCode, setNewGroupCode] = useState('');
+  const [newGroupLabel, setNewGroupLabel] = useState('');
+  const [newGroupMtart, setNewGroupMtart] = useState<MaterialTypeCode>('ROH');
+  const [newGroupDesc, setNewGroupDesc] = useState('');
+
+  const [newCharName, setNewCharName] = useState('');
+  const [newCharLabel, setNewCharLabel] = useState('');
+  const [newCharType, setNewCharType] = useState<CharacteristicDataType>('text');
+  const [newCharUnit, setNewCharUnit] = useState('');
+  const [newCharOptionsRaw, setNewCharOptionsRaw] = useState('');
+  const [newCharRequired, setNewCharRequired] = useState(true);
+  const [newCharHelp, setNewCharHelp] = useState('');
+
   useEffect(() => {
     setRulesDraft(structuredClone(data.standardFieldRules));
   }, [data.standardFieldRules]);
 
   useEffect(() => {
     setSelectedIndustry(initialIndustry || data.activeTenant?.defaultIndustry || 'M');
+    setSelectedMatkl(data.materialGroups?.[0]?.matkl || '');
     setFeedback(null);
   }, [initialIndustry, data.activeTenant.tenantId]);
+
+  useEffect(() => {
+    if (
+      data.materialGroups.length > 0 &&
+      !data.materialGroups.some((mg) => mg.matkl === selectedMatkl)
+    ) {
+      setSelectedMatkl(data.materialGroups[0].matkl);
+    }
+  }, [data.materialGroups, selectedMatkl]);
 
   const industryDef = data.industrySectors.find((i) => i.mbrsh === selectedIndustry);
   const industryFields = data.customIndustryFields.filter(
     (f) => f.industrySector === selectedIndustry
   );
+  const activeMaterialGroup = data.materialGroups.find((mg) => mg.matkl === selectedMatkl);
 
   const handleRuleChange = (fieldKey: string, nextStatus: FieldStatus) => {
     setRulesDraft((prev) =>
@@ -129,24 +185,92 @@ export function IndustryCustomizingView({
     }
   };
 
+  const handleCreateMaterialGroupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFeedback(null);
+    const cleanCode = newGroupCode.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+    const res = await onCreateMaterialGroup({
+      matkl: cleanCode,
+      label: newGroupLabel.trim(),
+      defaultMtart: newGroupMtart,
+      description: newGroupDesc.trim(),
+    });
+    if (res.ok) {
+      setSelectedMatkl(cleanCode);
+      setShowNewGroupForm(false);
+      setNewGroupCode('');
+      setNewGroupLabel('');
+      setNewGroupDesc('');
+      setFeedback({
+        type: 'ok',
+        text: `Material Group ${cleanCode} berhasil dibuat pada T023 tenant ${data.activeTenant.bukrs}. Tambahkan Master Characteristic di bawah.`,
+      });
+    } else {
+      setFeedback({ type: 'err', text: res.error || 'Gagal membuat Material Group.' });
+    }
+  };
+
+  const handleCreateCharacteristicSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeMaterialGroup) return;
+    setFeedback(null);
+    const cleanName = newCharName.trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+    const finalName = cleanName.startsWith('CHR_') ? cleanName : `CHR_${cleanName}`;
+
+    const charObj: MasterCharacteristic = {
+      id: '',
+      charName: finalName,
+      label: newCharLabel.trim(),
+      dataType: newCharType,
+      unit: newCharType === 'number' && newCharUnit.trim() ? newCharUnit.trim() : undefined,
+      options:
+        newCharType === 'select'
+          ? newCharOptionsRaw
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : undefined,
+      required: newCharRequired,
+      helpText: newCharHelp.trim() || `Master characteristic untuk ${activeMaterialGroup.label}`,
+    };
+
+    const res = await onCreateCharacteristic(activeMaterialGroup.matkl, charObj);
+    if (res.ok) {
+      setFeedback({
+        type: 'ok',
+        text: `Master Characteristic ${finalName} ditambahkan ke Material Group ${activeMaterialGroup.matkl} dan wajib diisi pada MM01/MM02.`,
+      });
+      setNewCharName('');
+      setNewCharLabel('');
+      setNewCharUnit('');
+      setNewCharOptionsRaw('');
+      setNewCharHelp('');
+    } else {
+      setFeedback({ type: 'err', text: res.error || 'Gagal menambahkan Master Characteristic.' });
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Industry Sector Selector Strip */}
+      {/* Header & Selector Strip */}
       <div className="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-semibold text-slate-900">
-              SPRO Customizing · OMS9 Field Selection &amp; Append Structure CI_MARA
+              SPRO Customizing · OMS9, CI_MARA &amp; Master Characteristic per Material Group (CT04)
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Konfigurasi aturan field standar SAP (Required/Optional/Display/Hide) serta field kustom spesifik per Industry Sector (T137).
+              Konfigurasi aturan field standar (OMS9), append field industri (CI_MARA), serta Master Characteristic wajib per Material Group (T023 / CT04).
             </p>
           </div>
 
-          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit">
+          <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit">
             <button
               type="button"
-              onClick={() => setActiveSubTab('oms9')}
+              onClick={() => {
+                setActiveSubTab('oms9');
+                setFeedback(null);
+              }}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeSubTab === 'oms9' ? 'bg-white text-[#0064D9] shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
@@ -155,48 +279,192 @@ export function IndustryCustomizingView({
             </button>
             <button
               type="button"
-              onClick={() => setActiveSubTab('append')}
+              onClick={() => {
+                setActiveSubTab('append');
+                setFeedback(null);
+              }}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeSubTab === 'append' ? 'bg-white text-[#0064D9] shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Append Field Builder (CI_MARA)
+              Append Field (CI_MARA)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveSubTab('ct04');
+                setFeedback(null);
+              }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                activeSubTab === 'ct04' ? 'bg-white text-[#0064D9] shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Master Characteristic (CT04)
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-          {data.industrySectors.map((ind) => {
-            const isSelected = ind.mbrsh === selectedIndustry;
-            const customCount = data.customIndustryFields.filter(
-              (f) => f.industrySector === ind.mbrsh
-            ).length;
-            return (
-              <button
-                key={ind.mbrsh}
-                type="button"
-                onClick={() => {
-                  setSelectedIndustry(ind.mbrsh);
-                  setFeedback(null);
-                }}
-                className={`p-3 rounded-md border text-left transition-colors ${
-                  isSelected
-                    ? 'bg-[#EAF2FD] border-[#0064D9] text-[#0064D9]'
-                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white'
-                }`}
-              >
-                <div className="font-mono text-xs font-bold">MBRSH · {ind.mbrsh}</div>
-                <div className="text-xs font-semibold mt-0.5 truncate">{ind.shortLabel}</div>
-                <div className="text-[11px] text-slate-500 mt-1">{customCount} field CI_MARA</div>
-              </button>
-            );
-          })}
-        </div>
+        {activeSubTab !== 'ct04' ? (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+              {data.industrySectors.map((ind) => {
+                const isSelected = ind.mbrsh === selectedIndustry;
+                const customCount = data.customIndustryFields.filter(
+                  (f) => f.industrySector === ind.mbrsh
+                ).length;
+                return (
+                  <button
+                    key={ind.mbrsh}
+                    type="button"
+                    onClick={() => {
+                      setSelectedIndustry(ind.mbrsh);
+                      setFeedback(null);
+                    }}
+                    className={`p-3 rounded-md border text-left transition-colors ${
+                      isSelected
+                        ? 'bg-[#EAF2FD] border-[#0064D9] text-[#0064D9]'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white'
+                    }`}
+                  >
+                    <div className="font-mono text-xs font-bold">MBRSH · {ind.mbrsh}</div>
+                    <div className="text-xs font-semibold mt-0.5 truncate">{ind.shortLabel}</div>
+                    <div className="text-[11px] text-slate-500 mt-1">{customCount} field CI_MARA</div>
+                  </button>
+                );
+              })}
+            </div>
 
-        {industryDef && (
-          <div className="pt-3 border-t border-slate-100 text-xs text-slate-600">
-            <span className="font-semibold text-slate-900">{industryDef.label}:</span>{' '}
-            {industryDef.regulatoryContext}
+            {industryDef && (
+              <div className="pt-3 border-t border-slate-100 text-xs text-slate-600">
+                <span className="font-semibold text-slate-900">{industryDef.label}:</span>{' '}
+                {industryDef.regulatoryContext}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="text-xs text-slate-600">
+                Material Group aktif untuk tenant{' '}
+                <span className="font-mono font-semibold text-slate-900">{data.activeTenant.bukrs}</span>{' '}
+                ({data.materialGroups.length} grup T023)
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowNewGroupForm((v) => !v)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#0064D9] bg-[#EAF2FD] hover:bg-[#dceafb] rounded-md transition-colors whitespace-nowrap"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{showNewGroupForm ? 'Tutup Form Material Group' : 'Tambah Material Group (T023)'}</span>
+              </button>
+            </div>
+
+            {showNewGroupForm && (
+              <form
+                onSubmit={handleCreateMaterialGroupSubmit}
+                className="p-4 bg-slate-50 border border-slate-200 rounded-md grid grid-cols-1 md:grid-cols-12 gap-3 items-end"
+              >
+                <div className="md:col-span-3">
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Kode MATKL
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newGroupCode}
+                    onChange={(e) => setNewGroupCode(e.target.value.toUpperCase())}
+                    placeholder="mis. PIPE-SS atau PPE-GLV"
+                    className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                  />
+                </div>
+                <div className="md:col-span-3">
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Nama Material Group
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newGroupLabel}
+                    onChange={(e) => setNewGroupLabel(e.target.value)}
+                    placeholder="mis. Safety Gloves & Hand PPE"
+                    className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-md"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Default MTART
+                  </label>
+                  <select
+                    value={newGroupMtart}
+                    onChange={(e) => setNewGroupMtart(e.target.value as MaterialTypeCode)}
+                    className="w-full px-2.5 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                  >
+                    {data.materialTypes.map((mt) => (
+                      <option key={mt.mtart} value={mt.mtart}>
+                        {mt.mtart}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="md:col-span-3">
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Deskripsi Singkat
+                  </label>
+                  <input
+                    type="text"
+                    value={newGroupDesc}
+                    onChange={(e) => setNewGroupDesc(e.target.value)}
+                    placeholder="Deskripsi kelompok material"
+                    className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-md"
+                  />
+                </div>
+                <div className="md:col-span-1">
+                  <button
+                    type="submit"
+                    className="w-full py-1.5 px-3 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </form>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {data.materialGroups.map((mg) => {
+                const isSelected = mg.matkl === selectedMatkl;
+                const reqCount = mg.characteristics.filter((c) => c.required).length;
+                return (
+                  <button
+                    key={mg.matkl}
+                    type="button"
+                    onClick={() => {
+                      setSelectedMatkl(mg.matkl);
+                      setFeedback(null);
+                    }}
+                    className={`p-3 rounded-md border text-left transition-colors ${
+                      isSelected
+                        ? 'bg-[#EAF2FD] border-[#0064D9] text-[#0064D9]'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs font-bold">{mg.matkl}</span>
+                      <span className="text-[11px] font-mono text-slate-500">
+                        {mg.characteristics.length} char ({reqCount} wajib)
+                      </span>
+                    </div>
+                    <div className="text-xs font-semibold mt-0.5 truncate">{mg.label}</div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {activeMaterialGroup && (
+              <div className="pt-3 border-t border-slate-100 text-xs text-slate-600">
+                <span className="font-mono font-semibold text-slate-900">{activeMaterialGroup.matkl}</span>{' '}
+                — {activeMaterialGroup.description}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -480,6 +748,246 @@ export function IndustryCustomizingView({
             )}
           </div>
         </div>
+      )}
+
+      {/* SUBTAB 3: MASTER CHARACTERISTIC PER MATERIAL GROUP (CT04) */}
+      {activeSubTab === 'ct04' && (
+        activeMaterialGroup ? (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <form
+              onSubmit={handleCreateCharacteristicSubmit}
+              className="lg:col-span-5 bg-white border border-slate-200 rounded-lg p-5 space-y-4"
+            >
+              <div className="flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-[#0064D9]" />
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Tambah Master Characteristic ({activeMaterialGroup.matkl})
+                </h3>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Technical Characteristic Name (CT04 · CHR_*)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newCharName}
+                  onChange={(e) => setNewCharName(e.target.value.toUpperCase())}
+                  placeholder="mis. CHR_DIAMETER atau CHR_EN_STD"
+                  className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Nama Karakteristik
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newCharLabel}
+                  onChange={(e) => setNewCharLabel(e.target.value)}
+                  placeholder="mis. Rating Tekanan Kerja Maksimum"
+                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Tipe Data</label>
+                  <select
+                    value={newCharType}
+                    onChange={(e) => setNewCharType(e.target.value as CharacteristicDataType)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-md"
+                  >
+                    <option value="text">Text (CHAR)</option>
+                    <option value="number">Number (NUM)</option>
+                    <option value="select">Allowed Values (Dropdown)</option>
+                    <option value="boolean">Boolean (Yes/No)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Validasi MM01/MM02</label>
+                  <select
+                    value={newCharRequired ? 'required' : 'optional'}
+                    onChange={(e) => setNewCharRequired(e.target.value === 'required')}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-md"
+                  >
+                    <option value="required">Wajib Diisi (Required)</option>
+                    <option value="optional">Opsional (Optional)</option>
+                  </select>
+                </div>
+              </div>
+
+              {newCharType === 'number' && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Unit of Measure (Opsional)</label>
+                  <input
+                    type="text"
+                    value={newCharUnit}
+                    onChange={(e) => setNewCharUnit(e.target.value)}
+                    placeholder="mis. mm, PSI, bar, kg, V"
+                    className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md"
+                  />
+                </div>
+              )}
+
+              {newCharType === 'select' && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                    Allowed Values (Pisahkan dengan koma)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newCharOptionsRaw}
+                    onChange={(e) => setNewCharOptionsRaw(e.target.value)}
+                    placeholder="mis. Class 150, Class 300, Class 600"
+                    className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Keterangan / Help Text</label>
+                <input
+                  type="text"
+                  value={newCharHelp}
+                  onChange={(e) => setNewCharHelp(e.target.value)}
+                  placeholder="Petunjuk pengisian karakteristik saat buat material MM01"
+                  className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-md"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Simpan Karakteristik ke {activeMaterialGroup.matkl}</span>
+              </button>
+            </form>
+
+            <div className="lg:col-span-7 bg-white border border-slate-200 rounded-lg overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-slate-200 space-y-2">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-900">
+                    Master Characteristic (CT04) — {activeMaterialGroup.matkl} ({activeMaterialGroup.characteristics.length})
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Urutan karakteristik menjadi acuan penulisan Material Description (Short Name) secara otomatis di MM01/MM02.
+                  </p>
+                </div>
+                {activeMaterialGroup.characteristics.length > 0 && (
+                  <div className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-xs">
+                    <span className="text-slate-500">Format Short Name (MARA-MAKTX): </span>
+                    <span className="font-mono font-semibold text-[#0064D9]">
+                      {formatCharacteristicPattern(activeMaterialGroup)}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {activeMaterialGroup.characteristics.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-500">
+                  Belum ada Master Characteristic pada Material Group {activeMaterialGroup.matkl}. Tambahkan lewat form di kiri.
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-200">
+                  {activeMaterialGroup.characteristics.map((ch, idx) => {
+                    const chars = activeMaterialGroup.characteristics;
+                    const moveChar = async (delta: -1 | 1) => {
+                      const targetIdx = idx + delta;
+                      if (targetIdx < 0 || targetIdx >= chars.length) return;
+                      const ids = chars.map((item) => item.id);
+                      const [moved] = ids.splice(idx, 1);
+                      ids.splice(targetIdx, 0, moved);
+                      const res = await onReorderCharacteristics(activeMaterialGroup.matkl, ids);
+                      if (res.ok) {
+                        setFeedback({
+                          type: 'ok',
+                          text: `Urutan karakteristik ${activeMaterialGroup.matkl} diperbarui — Format Short Name kini mengikuti urutan baru.`,
+                        });
+                      }
+                    };
+                    return (
+                      <div key={ch.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[11px] font-bold text-slate-500 tabular-nums">
+                              #{idx + 1}
+                            </span>
+                            <span className="font-mono text-xs font-bold text-[#0064D9]">{ch.charName}</span>
+                            <span className="text-slate-300">·</span>
+                            <span className="text-xs font-semibold text-slate-900">{ch.label}</span>
+                          </div>
+                          <div className="text-[11px] text-slate-500 mt-1">
+                            Tipe: <span className="font-mono">{ch.dataType}</span>
+                            {ch.unit ? ` (${ch.unit})` : ''}
+                            {ch.options && ch.options.length > 0 ? ` · Nilai: ${ch.options.join(', ')}` : ''}
+                          </div>
+                          <div className="text-[11px] text-slate-500 mt-0.5">{ch.helpText}</div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            disabled={idx === 0}
+                            onClick={() => moveChar(-1)}
+                            title="Naikkan urutan"
+                            className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded disabled:opacity-30 transition-colors"
+                          >
+                            <ArrowUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={idx === chars.length - 1}
+                            onClick={() => moveChar(1)}
+                            title="Turunkan urutan"
+                            className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded disabled:opacity-30 transition-colors"
+                          >
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </button>
+                          <select
+                            value={ch.required ? 'required' : 'optional'}
+                            onChange={(e) =>
+                              onUpdateCharacteristic(activeMaterialGroup.matkl, {
+                                ...ch,
+                                required: e.target.value === 'required',
+                              })
+                            }
+                            aria-label={`Validasi untuk ${ch.charName}`}
+                            className={`px-2.5 py-1.5 text-xs font-medium border rounded-md ${
+                              ch.required
+                                ? 'bg-red-50 border-red-200 text-red-700'
+                                : 'bg-slate-50 border-slate-200 text-slate-700'
+                            }`}
+                          >
+                            <option value="required">Wajib (Required)</option>
+                            <option value="optional">Opsional</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => onDeleteCharacteristic(activeMaterialGroup.matkl, ch.id)}
+                            title="Hapus karakteristik"
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-xs text-slate-500">
+            Belum ada Material Group pada tenant aktif. Gunakan tombol Tambah Material Group (T023) di atas.
+          </div>
+        )
       )}
     </div>
   );

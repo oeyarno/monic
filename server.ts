@@ -3,80 +3,194 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { createInitialDatabase, INITIAL_MATERIALS, INITIAL_STANDARD_FIELD_RULES, VALUATION_TYPES } from './server/seedData.ts';
+import {
+  CORE_BUSINESS_OPTIONS,
+  createInitialMultiTenantDatabase,
+  createTemplateMaterialGroups,
+  createTenantTemplateWorkspace,
+  INDUSTRY_SECTORS,
+  MATERIAL_TYPES,
+  VALUATION_TYPES,
+} from './server/seedData.ts';
 import type {
   ChangeDocument,
   CustomIndustryField,
+  MasterCharacteristic,
   MaterialDocument,
+  MaterialGroupDefinition,
   MaterialMasterRecord,
+  MaterialTypeCode,
   MovementTypeCode,
+  MultiTenantDatabase,
   PurchaseOrder,
   PurchaseRequisition,
   SapBootstrapPayload,
   SplitValuationItem,
   StandardFieldRule,
+  TenantCompany,
+  TenantCoreBusinessType,
+  TenantSummary,
+  TenantWorkspaceData,
   ValuationTypeCode,
 } from './src/types/sap.ts';
+import { buildMaterialShortDescription } from './src/utils/format.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'sap-store.json');
 
-function loadDatabase(): SapBootstrapPayload {
+function loadDatabase(): MultiTenantDatabase {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
   if (!fs.existsSync(DB_FILE)) {
-    const initial = createInitialDatabase();
+    const initial = createInitialMultiTenantDatabase();
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
     return initial;
   }
   try {
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    const parsed = JSON.parse(raw) as SapBootstrapPayload;
-    let mutated = false;
-    if (!parsed.valuationTypes) {
-      parsed.valuationTypes = structuredClone(VALUATION_TYPES);
-      mutated = true;
+    const parsed = JSON.parse(raw) as Partial<MultiTenantDatabase>;
+    if (!parsed.schemaVersion || parsed.schemaVersion < 2 || !parsed.workspaces || !parsed.tenantCompanies) {
+      const migrated = createInitialMultiTenantDatabase();
+      fs.writeFileSync(DB_FILE, JSON.stringify(migrated, null, 2), 'utf-8');
+      return migrated;
     }
-    if (!parsed.standardFieldRules.some((r) => r.fieldKey === 'bwtty')) {
-      const bwttyRule = INITIAL_STANDARD_FIELD_RULES.find((r) => r.fieldKey === 'bwtty');
-      if (bwttyRule) {
-        parsed.standardFieldRules.push(structuredClone(bwttyRule));
-        mutated = true;
-      }
-    }
-    // Hydrate splitValuations on initial materials if upgrading from earlier schema
-    for (const mat of parsed.materials) {
-      const seedMatch = INITIAL_MATERIALS.find((s) => s.mara.matnr === mat.mara.matnr);
-      if (seedMatch) {
-        for (const [bwkey, seedMbew] of Object.entries(seedMatch.mbew)) {
-          const currMbew = mat.mbew[bwkey];
-          if (currMbew && currMbew.bwtty === undefined && seedMbew.bwtty) {
-            currMbew.bwtty = seedMbew.bwtty;
-            currMbew.splitValuations = structuredClone(seedMbew.splitValuations);
-            mutated = true;
+    if (parsed.schemaVersion < 3) {
+      const freshSeed = createInitialMultiTenantDatabase();
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) {
+          parsed.workspaces[company.tenantId] = createTenantTemplateWorkspace(
+            company,
+            company.coreBusinessType
+          );
+          continue;
+        }
+        if (!ws.materialGroups || ws.materialGroups.length === 0) {
+          ws.materialGroups = createTemplateMaterialGroups(company.coreBusinessType);
+        }
+        const seedMaterials = freshSeed.workspaces[company.tenantId]?.materials || [];
+        for (const mat of ws.materials) {
+          if (!mat.characteristics) {
+            const matchedSeed = seedMaterials.find((sm) => sm.mara.matnr === mat.mara.matnr);
+            mat.characteristics = matchedSeed?.characteristics
+              ? structuredClone(matchedSeed.characteristics)
+              : {};
           }
         }
       }
-    }
-    if (mutated) {
+      parsed.schemaVersion = 3;
       fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
     }
-    return parsed;
+    if (parsed.schemaVersion < 4) {
+      const freshSeed = createInitialMultiTenantDatabase();
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+        const templateGroups = createTemplateMaterialGroups(company.coreBusinessType);
+        if (!ws.materialGroups) ws.materialGroups = [];
+        for (const tg of templateGroups) {
+          if (!ws.materialGroups.some((mg) => mg.matkl === tg.matkl)) {
+            ws.materialGroups.unshift(tg);
+          }
+        }
+        const seedMaterials = freshSeed.workspaces[company.tenantId]?.materials || [];
+        for (const sm of seedMaterials) {
+          if (sm.mara.matkl === 'LIGHT-VEH' && !ws.materials.some((m) => m.mara.matnr === sm.mara.matnr)) {
+            ws.materials.push(structuredClone(sm));
+          }
+        }
+      }
+      parsed.schemaVersion = 4;
+      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
+    }
+    if (parsed.schemaVersion < 5) {
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws?.customIndustryFields) continue;
+        for (const cf of ws.customIndustryFields) {
+          if (cf.fieldName === 'ZZ_CHASSIS_SERIES' && cf.status === 'required') {
+            cf.status = 'optional';
+          }
+        }
+      }
+      parsed.schemaVersion = 5;
+      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
+    }
+    return parsed as MultiTenantDatabase;
   } catch {
-    const initial = createInitialDatabase();
+    const initial = createInitialMultiTenantDatabase();
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
     return initial;
   }
 }
 
-function saveDatabase(db: SapBootstrapPayload): void {
+function saveDatabase(db: MultiTenantDatabase): void {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
   fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+}
+
+function resolveTenantContext(
+  db: MultiTenantDatabase,
+  req: express.Request
+): { tenantId: string; company: TenantCompany; workspace: TenantWorkspaceData } {
+  const requested =
+    (typeof req.query.tenantId === 'string' && req.query.tenantId.trim()) ||
+    req.header('x-tenant-id')?.trim() ||
+    db.activeTenantId;
+
+  const company =
+    db.tenantCompanies.find((t) => t.tenantId === requested) || db.tenantCompanies[0];
+
+  const workspace = db.workspaces[company.tenantId];
+  return { tenantId: company.tenantId, company, workspace };
+}
+
+function buildTenantSummaries(db: MultiTenantDatabase): TenantSummary[] {
+  return db.tenantCompanies.map((company) => {
+    const ws = db.workspaces[company.tenantId];
+    const totalInventoryValue = (ws?.materials || []).reduce(
+      (sum, mat) => sum + Object.values(mat.mbew).reduce((acc, m) => acc + m.salk3, 0),
+      0
+    );
+    return {
+      ...company,
+      materialCount: ws?.materials.length || 0,
+      plantCount: ws?.plants.length || 0,
+      totalInventoryValue,
+      openPrCount: ws?.purchaseRequisitions.filter((p) => p.status !== 'Converted to PO').length || 0,
+      openPoCount: ws?.purchaseOrders.filter((p) => p.status !== 'Completed').length || 0,
+    };
+  });
+}
+
+function buildBootstrapPayload(
+  db: MultiTenantDatabase,
+  tenantId: string
+): SapBootstrapPayload {
+  const company = db.tenantCompanies.find((t) => t.tenantId === tenantId) || db.tenantCompanies[0];
+  const ws = db.workspaces[company.tenantId];
+  return {
+    activeTenant: company,
+    tenants: buildTenantSummaries(db),
+    materials: ws.materials,
+    purchaseRequisitions: ws.purchaseRequisitions,
+    purchaseOrders: ws.purchaseOrders,
+    materialDocuments: ws.materialDocuments,
+    customIndustryFields: ws.customIndustryFields,
+    standardFieldRules: ws.standardFieldRules,
+    materialGroups: ws.materialGroups || [],
+    changeDocuments: ws.changeDocuments,
+    plants: ws.plants,
+    vendors: ws.vendors,
+    materialTypes: MATERIAL_TYPES,
+    industrySectors: INDUSTRY_SECTORS,
+    valuationTypes: VALUATION_TYPES,
+  };
 }
 
 function nextSequence(prefix: string, existing: string[], padLength: number): string {
@@ -93,7 +207,7 @@ function nextSequence(prefix: string, existing: string[], padLength: number): st
 }
 
 function nextChangeNumber(logs: ChangeDocument[]): string {
-  let max = 941;
+  let max = 100;
   for (const item of logs) {
     const num = Number.parseInt(item.changenr.replace('CHG-', ''), 10);
     if (!Number.isNaN(num) && num > max) {
@@ -103,9 +217,27 @@ function nextChangeNumber(logs: ChangeDocument[]): string {
   return `CHG-${String(max + 1).padStart(6, '0')}`;
 }
 
+function generateInternalMaterialNumber(
+  mtart: MaterialTypeCode,
+  materials: MaterialMasterRecord[]
+): string {
+  const mtDef = MATERIAL_TYPES.find((m) => m.mtart === mtart) || MATERIAL_TYPES[0];
+  const prefix = mtDef.internalNumberPrefix;
+  let maxSeq = 100;
+  for (const m of materials) {
+    if (m.mara.matnr.startsWith(prefix)) {
+      const tail = Number.parseInt(m.mara.matnr.slice(prefix.length), 10);
+      if (!Number.isNaN(tail) && tail >= maxSeq) {
+        maxSeq = tail + 1;
+      }
+    }
+  }
+  return `${prefix}${String(maxSeq).padStart(3, '0')}`;
+}
+
 function validateMaterialAgainstOms9(
   material: MaterialMasterRecord,
-  db: SapBootstrapPayload,
+  ws: TenantWorkspaceData,
   activeWerks: string
 ): string[] {
   const errors: string[] = [];
@@ -115,13 +247,12 @@ function validateMaterialAgainstOms9(
   if (!material.mara.maktx.trim()) errors.push('Material Description (MARA-MAKTX) wajib diisi.');
   if (!material.mara.meins.trim()) errors.push('Base Unit of Measure (MARA-MEINS) wajib diisi.');
 
-  // Standard OMS9 field rules check
   const plantData = material.marc[activeWerks];
   const storageKeys = Object.keys(material.mard).filter((k) => k.startsWith(`${activeWerks}-`));
   const firstStorage = storageKeys.length > 0 ? material.mard[storageKeys[0]] : undefined;
   const mbewData = material.mbew[activeWerks];
 
-  for (const rule of db.standardFieldRules) {
+  for (const rule of ws.standardFieldRules) {
     const status = rule.rulesByIndustry[mbrsh];
     if (status !== 'required') continue;
 
@@ -137,7 +268,6 @@ function validateMaterialAgainstOms9(
     }
 
     if (rule.fieldKey === 'xchpf' || rule.fieldKey === 'kautb') {
-      // Boolean flags: if required by OMS9, must be enabled (true) or explicitly set
       if (rule.fieldKey === 'xchpf' && value !== true) {
         errors.push(`OMS9 [${mbrsh}]: ${rule.label} (${rule.technicalName}) wajib diaktifkan untuk sektor industri ini.`);
       }
@@ -154,8 +284,7 @@ function validateMaterialAgainstOms9(
     }
   }
 
-  // Industry-specific CI_MARA custom fields check
-  const relevantCustomFields = db.customIndustryFields.filter(
+  const relevantCustomFields = ws.customIndustryFields.filter(
     (cf) => cf.industrySector === mbrsh && cf.status === 'required'
   );
   for (const cf of relevantCustomFields) {
@@ -166,6 +295,31 @@ function validateMaterialAgainstOms9(
     }
   }
 
+  const matGroups = ws.materialGroups || [];
+  const matGroup = matGroups.find((mg) => mg.matkl === material.mara.matkl);
+  if (!matGroup) {
+    errors.push(
+      `Material Group "${material.mara.matkl || '-'}" tidak terdaftar pada Master Material Group (T023 / CT04) tenant ini.`
+    );
+  } else {
+    for (const ch of matGroup.characteristics) {
+      if (!ch.required) continue;
+      if (ch.dataType === 'boolean') continue;
+      const val = material.characteristics?.[ch.charName];
+      if (ch.dataType === 'number') {
+        if (val === undefined || val === null || String(val).trim() === '' || Number.isNaN(Number(val))) {
+          errors.push(
+            `CT04 [${matGroup.matkl}]: Karakteristik wajib "${ch.label}" (${ch.charName}) harus diisi dengan angka.`
+          );
+        }
+      } else if (val === undefined || val === null || String(val).trim() === '') {
+        errors.push(
+          `CT04 [${matGroup.matkl}]: Karakteristik wajib "${ch.label}" (${ch.charName}) wajib diisi.`
+        );
+      }
+    }
+  }
+
   return errors;
 }
 
@@ -173,34 +327,125 @@ async function startServer() {
   const app = express();
   app.use(express.json({ limit: '4mb' }));
 
-  // Bootstrap endpoint
-  app.get('/api/bootstrap', (_req, res) => {
+  // Bootstrap endpoint (tenant-aware)
+  app.get('/api/bootstrap', (req, res) => {
     const db = loadDatabase();
-    res.json(db);
+    const { tenantId } = resolveTenantContext(db, req);
+    if (db.activeTenantId !== tenantId) {
+      db.activeTenantId = tenantId;
+      saveDatabase(db);
+    }
+    res.json(buildBootstrapPayload(db, tenantId));
   });
 
-  // Public reset is disabled to prevent anyone from erasing shared application data.
-  app.post('/api/reset', (_req, res) => {
-    res.status(404).json({ error: 'Not found' });
+  // Create New Tenant Company (OX02)
+  app.post('/api/tenants', (req, res) => {
+    const db = loadDatabase();
+    const { bukrs, name, coreBusinessType, city } = req.body as {
+      bukrs: string;
+      name: string;
+      coreBusinessType: TenantCoreBusinessType;
+      city: string;
+    };
+
+    const cleanBukrs = (bukrs || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    const cleanName = (name || '').trim();
+    if (!cleanBukrs || cleanBukrs.length < 2) {
+      return res.status(400).json({ error: 'Company Code (BUKRS) minimal 2 karakter alfanumerik.' });
+    }
+    if (!cleanName) {
+      return res.status(400).json({ error: 'Nama perusahaan wajib diisi.' });
+    }
+    if (db.tenantCompanies.some((t) => t.bukrs === cleanBukrs)) {
+      return res.status(409).json({ error: `Company Code ${cleanBukrs} sudah digunakan oleh tenant lain.` });
+    }
+
+    const coreMeta =
+      CORE_BUSINESS_OPTIONS.find((o) => o.value === coreBusinessType) || CORE_BUSINESS_OPTIONS[4];
+    const nextClientNum = String((db.tenantCompanies.length + 1) * 100);
+    const tenantId = `tenant-${cleanBukrs.toLowerCase()}-${Date.now().toString(36)}`;
+
+    const newCompany: TenantCompany = {
+      tenantId,
+      bukrs: cleanBukrs,
+      clientNumber: nextClientNum,
+      name: cleanName,
+      shortName: `${cleanName.replace(/^PT\s+/i, '').split(' ').slice(0, 2).join(' ')}`,
+      coreBusiness: coreMeta.label,
+      coreBusinessType: coreMeta.value,
+      city: (city || 'Jakarta').trim(),
+      defaultIndustry: coreMeta.defaultIndustry,
+      description: coreMeta.summary,
+    };
+
+    db.tenantCompanies.push(newCompany);
+    db.workspaces[tenantId] = createTenantTemplateWorkspace(newCompany, coreMeta.value);
+    db.activeTenantId = tenantId;
+    saveDatabase(db);
+
+    return res.status(201).json(buildBootstrapPayload(db, tenantId));
   });
 
-  // MM01 - Create Material Master
+  // Delete Tenant Company
+  app.delete('/api/tenants/:tenantId', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId } = req.params;
+    if (db.tenantCompanies.length <= 1) {
+      return res.status(400).json({ error: 'Minimal harus ada 1 perusahaan tenant aktif di sistem.' });
+    }
+    const idx = db.tenantCompanies.findIndex((t) => t.tenantId === tenantId);
+    if (idx === -1) {
+      return res.status(404).json({ error: 'Tenant tidak ditemukan.' });
+    }
+
+    db.tenantCompanies.splice(idx, 1);
+    delete db.workspaces[tenantId];
+    if (db.activeTenantId === tenantId) {
+      db.activeTenantId = db.tenantCompanies[0].tenantId;
+    }
+    saveDatabase(db);
+    return res.json(buildBootstrapPayload(db, db.activeTenantId));
+  });
+
+  // Reset seed data (all tenants or active tenant)
+  app.post('/api/reset', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId } = resolveTenantContext(db, req);
+    const fresh = createInitialMultiTenantDatabase();
+    fresh.activeTenantId = fresh.tenantCompanies.some((t) => t.tenantId === tenantId)
+      ? tenantId
+      : fresh.tenantCompanies[0].tenantId;
+    saveDatabase(fresh);
+    res.json(buildBootstrapPayload(fresh, fresh.activeTenantId));
+  });
+
+  // MM01 - Create Material Master (Internal Number Assignment MMNR)
   app.post('/api/materials', (req, res) => {
     const db = loadDatabase();
-    const { material, activeWerks = '1000', username = 'SAP_USER' } = req.body as {
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const defaultWerks = workspace.plants[0]?.werks || '1000';
+    const { material, activeWerks = defaultWerks, autoGenerateMaktx = false, username = 'SAP_USER' } = req.body as {
       material: MaterialMasterRecord;
       activeWerks?: string;
+      autoGenerateMaktx?: boolean;
       username?: string;
     };
 
-    const existing = db.materials.find((m) => m.mara.matnr === material.mara.matnr);
-    if (existing) {
-      return res.status(409).json({
-        error: `Material ${material.mara.matnr} sudah terdaftar di tabel MARA. Gunakan MM02 untuk mengubah.`,
-      });
+    // System-generated Material Number (Internal Number Range by MTART)
+    material.mara.matnr = generateInternalMaterialNumber(material.mara.mtart, workspace.materials);
+    if (!material.characteristics) {
+      material.characteristics = {};
     }
 
-    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks);
+    const matGroup = (workspace.materialGroups || []).find((mg) => mg.matkl === material.mara.matkl);
+    if (autoGenerateMaktx || !material.mara.maktx.trim()) {
+      const generatedMaktx = buildMaterialShortDescription(matGroup, material.characteristics);
+      if (generatedMaktx) {
+        material.mara.maktx = generatedMaktx;
+      }
+    }
+
+    const validationErrors = validateMaterialAgainstOms9(material, workspace, activeWerks);
     if (validationErrors.length > 0) {
       return res.status(400).json({ error: validationErrors[0], details: validationErrors });
     }
@@ -210,9 +455,9 @@ async function startServer() {
     material.mara.updatedAt = now;
     material.mara.createdBy = username;
 
-    db.materials.unshift(material);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.materials.unshift(material);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MATERIAL',
       objectId: material.mara.matnr,
       tableName: 'MARA',
@@ -224,41 +469,55 @@ async function startServer() {
     });
 
     saveDatabase(db);
-    return res.status(201).json({ material, db });
+    return res.status(201).json({ material, db: buildBootstrapPayload(db, tenantId) });
   });
 
   // MM02 - Update Material Master
   app.put('/api/materials/:matnr', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { matnr } = req.params;
-    const { material, activeWerks = '1000', username = 'SAP_USER' } = req.body as {
+    const defaultWerks = workspace.plants[0]?.werks || '1000';
+    const { material, activeWerks = defaultWerks, autoGenerateMaktx = false, username = 'SAP_USER' } = req.body as {
       material: MaterialMasterRecord;
       activeWerks?: string;
+      autoGenerateMaktx?: boolean;
       username?: string;
     };
 
-    const idx = db.materials.findIndex((m) => m.mara.matnr === matnr);
+    const idx = workspace.materials.findIndex((m) => m.mara.matnr === matnr);
     if (idx === -1) {
-      return res.status(404).json({ error: `Material ${matnr} tidak ditemukan di tabel MARA.` });
+      return res.status(404).json({ error: `Material ${matnr} tidak ditemukan di tenant aktif.` });
     }
 
-    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks);
+    if (!material.characteristics) {
+      material.characteristics = {};
+    }
+
+    const targetGroup = (workspace.materialGroups || []).find((mg) => mg.matkl === material.mara.matkl);
+    if (autoGenerateMaktx || !material.mara.maktx.trim()) {
+      const generatedMaktx = buildMaterialShortDescription(targetGroup, material.characteristics);
+      if (generatedMaktx) {
+        material.mara.maktx = generatedMaktx;
+      }
+    }
+
+    const validationErrors = validateMaterialAgainstOms9(material, workspace, activeWerks);
     if (validationErrors.length > 0) {
       return res.status(400).json({ error: validationErrors[0], details: validationErrors });
     }
 
-    const prev = db.materials[idx];
+    const prev = workspace.materials[idx];
     const now = new Date().toISOString();
     material.mara.updatedAt = now;
 
-    // Diff key fields for CDHDR / CDPOS
     const diffs: ChangeDocument[] = [];
     const addDiff = (tableName: string, fieldName: string, oldVal: unknown, newVal: unknown) => {
       const o = String(oldVal ?? '');
       const n = String(newVal ?? '');
       if (o !== n) {
         diffs.push({
-          changenr: nextChangeNumber([...diffs, ...db.changeDocuments]),
+          changenr: nextChangeNumber([...diffs, ...workspace.changeDocuments]),
           objectClass: 'MATERIAL',
           objectId: matnr,
           tableName,
@@ -273,6 +532,7 @@ async function startServer() {
 
     addDiff('MARA', 'MAKTX (Description)', prev.mara.maktx, material.mara.maktx);
     addDiff('MARA', 'MBRSH (Industry Sector)', prev.mara.mbrsh, material.mara.mbrsh);
+    addDiff('MARA', 'MATKL (Material Group)', prev.mara.matkl, material.mara.matkl);
     addDiff('MARA', 'MSTAE (X-Plant Status)', prev.mara.mstae || 'Active', material.mara.mstae || 'Active');
     addDiff('MARA', 'XCHPF (Batch Mgmt)', prev.mara.xchpf, material.mara.xchpf);
 
@@ -293,13 +553,25 @@ async function startServer() {
       addDiff('MBEW', `STPRS [${activeWerks}] (Std Price)`, prevMbew.stprs, nextMbew.stprs);
     }
 
-    for (const cf of db.customIndustryFields.filter((f) => f.industrySector === material.mara.mbrsh)) {
+    for (const cf of workspace.customIndustryFields.filter((f) => f.industrySector === material.mara.mbrsh)) {
       addDiff('CI_MARA', cf.fieldName, prev.industryExtensions?.[cf.fieldName], material.industryExtensions?.[cf.fieldName]);
+    }
+
+    const matGroup = (workspace.materialGroups || []).find((mg) => mg.matkl === material.mara.matkl);
+    if (matGroup) {
+      for (const ch of matGroup.characteristics) {
+        addDiff(
+          'AUSP',
+          `${matGroup.matkl} · ${ch.charName}`,
+          prev.characteristics?.[ch.charName],
+          material.characteristics?.[ch.charName]
+        );
+      }
     }
 
     if (diffs.length === 0) {
       diffs.push({
-        changenr: nextChangeNumber(db.changeDocuments),
+        changenr: nextChangeNumber(workspace.changeDocuments),
         objectClass: 'MATERIAL',
         objectId: matnr,
         tableName: 'MARA',
@@ -311,27 +583,28 @@ async function startServer() {
       });
     }
 
-    db.materials[idx] = material;
-    db.changeDocuments.unshift(...diffs);
+    workspace.materials[idx] = material;
+    workspace.changeDocuments.unshift(...diffs);
     saveDatabase(db);
-    return res.json({ material, db });
+    return res.json({ material, db: buildBootstrapPayload(db, tenantId) });
   });
 
   // Delete / Archive Material
   app.delete('/api/materials/:matnr', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { matnr } = req.params;
-    const idx = db.materials.findIndex((m) => m.mara.matnr === matnr);
+    const idx = workspace.materials.findIndex((m) => m.mara.matnr === matnr);
     if (idx === -1) {
       return res.status(404).json({ error: `Material ${matnr} tidak ditemukan.` });
     }
-    const openPos = db.purchaseOrders.filter((po) => po.matnr === matnr && po.status !== 'Completed');
+    const openPos = workspace.purchaseOrders.filter((po) => po.matnr === matnr && po.status !== 'Completed');
     if (openPos.length > 0) {
       return res.status(400).json({
         error: `Material ${matnr} masih memiliki Purchase Order terbuka (${openPos[0].ebeln}). Tidak dapat dihapus.`,
       });
     }
-    const totalStock = Object.values(db.materials[idx].mard).reduce(
+    const totalStock = Object.values(workspace.materials[idx].mard).reduce(
       (sum, item) => sum + item.labst + item.insme + item.speme,
       0
     );
@@ -340,9 +613,9 @@ async function startServer() {
         error: `Material ${matnr} masih memiliki stok fisik (${totalStock}). Lakukan Goods Issue (MIGO 201) terlebih dahulu.`,
       });
     }
-    db.materials.splice(idx, 1);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.materials.splice(idx, 1);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MATERIAL',
       objectId: matnr,
       tableName: 'MARA',
@@ -353,12 +626,13 @@ async function startServer() {
       timestamp: new Date().toISOString(),
     });
     saveDatabase(db);
-    return res.json({ db });
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
   // ME51N - Create Purchase Requisition
   app.post('/api/mm/prs', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { matnr, werks, lgort, menge, lfdat, bwtar, username = 'MRP_PLANNER' } = req.body as {
       matnr: string;
       werks: string;
@@ -369,7 +643,7 @@ async function startServer() {
       username?: string;
     };
 
-    const material = db.materials.find((m) => m.mara.matnr === matnr);
+    const material = workspace.materials.find((m) => m.mara.matnr === matnr);
     if (!material) return res.status(404).json({ error: 'Material tidak ditemukan.' });
     if (material.mara.mstae === '01' || material.mara.mstae === '02') {
       return res.status(400).json({
@@ -395,7 +669,7 @@ async function startServer() {
 
     const banfn = nextSequence(
       '001000',
-      db.purchaseRequisitions.map((p) => p.banfn),
+      workspace.purchaseRequisitions.map((p) => p.banfn),
       4
     );
 
@@ -418,9 +692,9 @@ async function startServer() {
       createdBy: username,
     };
 
-    db.purchaseRequisitions.unshift(newPr);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.purchaseRequisitions.unshift(newPr);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MM_DOC',
       objectId: banfn,
       tableName: 'EBAN',
@@ -431,12 +705,13 @@ async function startServer() {
       timestamp: new Date().toISOString(),
     });
     saveDatabase(db);
-    return res.status(201).json({ pr: newPr, db });
+    return res.status(201).json({ pr: newPr, db: buildBootstrapPayload(db, tenantId) });
   });
 
   // Convert PR to PO
   app.post('/api/mm/prs/:banfn/convert', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { banfn } = req.params;
     const { lifnr, netpr, eindt, bwtar, username = 'BUYER_MM' } = req.body as {
       lifnr: string;
@@ -446,21 +721,22 @@ async function startServer() {
       username?: string;
     };
 
-    const pr = db.purchaseRequisitions.find((p) => p.banfn === banfn);
+    const pr = workspace.purchaseRequisitions.find((p) => p.banfn === banfn);
     if (!pr) return res.status(404).json({ error: `PR ${banfn} tidak ditemukan.` });
     if (pr.status === 'Converted to PO') {
       return res.status(400).json({ error: `PR ${banfn} sudah dikonversi menjadi PO ${pr.ebeln}.` });
     }
 
-    const vendor = db.vendors.find((v) => v.lifnr === lifnr);
+    const vendor = workspace.vendors.find((v) => v.lifnr === lifnr);
     if (!vendor) return res.status(404).json({ error: 'Vendor tidak ditemukan.' });
 
     const ebeln = nextSequence(
       '450000',
-      db.purchaseOrders.map((o) => o.ebeln),
+      workspace.purchaseOrders.map((o) => o.ebeln),
       4
     );
 
+    const resolvedBwtar = bwtar || pr.bwtar;
     const newPo: PurchaseOrder = {
       ebeln,
       lifnr: vendor.lifnr,
@@ -472,10 +748,10 @@ async function startServer() {
       menge: pr.menge,
       receivedQty: 0,
       meins: pr.meins,
-      netpr: netpr !== undefined ? Number(netpr) : pr.preis,
+      netpr: resolvedBwtar === 'FREE' ? 0 : netpr !== undefined ? Number(netpr) : pr.preis,
       peinh: 1,
       waers: pr.waers,
-      bwtar: bwtar || pr.bwtar,
+      bwtar: resolvedBwtar,
       ekgrp: pr.ekgrp,
       eindt: eindt || pr.lfdat,
       status: 'Open',
@@ -486,9 +762,9 @@ async function startServer() {
 
     pr.status = 'Converted to PO';
     pr.ebeln = ebeln;
-    db.purchaseOrders.unshift(newPo);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.purchaseOrders.unshift(newPo);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MM_DOC',
       objectId: ebeln,
       tableName: 'EKKO / EKPO',
@@ -499,12 +775,13 @@ async function startServer() {
       timestamp: new Date().toISOString(),
     });
     saveDatabase(db);
-    return res.status(201).json({ po: newPo, db });
+    return res.status(201).json({ po: newPo, db: buildBootstrapPayload(db, tenantId) });
   });
 
   // ME21N - Create Purchase Order directly
   app.post('/api/mm/pos', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { lifnr, matnr, werks, lgort, menge, netpr, eindt, bwtar, username = 'BUYER_MM' } = req.body as {
       lifnr: string;
       matnr: string;
@@ -517,7 +794,7 @@ async function startServer() {
       username?: string;
     };
 
-    const material = db.materials.find((m) => m.mara.matnr === matnr);
+    const material = workspace.materials.find((m) => m.mara.matnr === matnr);
     if (!material) return res.status(404).json({ error: 'Material tidak ditemukan.' });
     if (material.mara.mstae === '01' || material.mara.mstae === '02') {
       return res.status(400).json({
@@ -525,7 +802,7 @@ async function startServer() {
       });
     }
 
-    const vendor = db.vendors.find((v) => v.lifnr === lifnr);
+    const vendor = workspace.vendors.find((v) => v.lifnr === lifnr);
     if (!vendor) return res.status(404).json({ error: 'Vendor tidak ditemukan.' });
 
     const marc = material.marc[werks] || Object.values(material.marc)[0];
@@ -535,7 +812,7 @@ async function startServer() {
 
     const ebeln = nextSequence(
       '450000',
-      db.purchaseOrders.map((o) => o.ebeln),
+      workspace.purchaseOrders.map((o) => o.ebeln),
       4
     );
 
@@ -561,9 +838,9 @@ async function startServer() {
       createdBy: username,
     };
 
-    db.purchaseOrders.unshift(newPo);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.purchaseOrders.unshift(newPo);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MM_DOC',
       objectId: ebeln,
       tableName: 'EKKO / EKPO',
@@ -574,12 +851,13 @@ async function startServer() {
       timestamp: new Date().toISOString(),
     });
     saveDatabase(db);
-    return res.status(201).json({ po: newPo, db });
+    return res.status(201).json({ po: newPo, db: buildBootstrapPayload(db, tenantId) });
   });
 
   // MIGO - Goods Movement (101 GR, 201 GI, 311 Transfer, 561 Initial)
   app.post('/api/mm/migo', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const {
       bwart,
       matnr,
@@ -611,22 +889,21 @@ async function startServer() {
       return res.status(400).json({ error: 'Quantity pergerakan barang harus lebih besar dari 0.' });
     }
 
-    const material = db.materials.find((m) => m.mara.matnr === matnr);
+    const material = workspace.materials.find((m) => m.mara.matnr === matnr);
     if (!material) return res.status(404).json({ error: `Material ${matnr} tidak ditemukan.` });
 
     if (material.mara.mstae === '02') {
       return res.status(400).json({ error: `Material ${matnr} diblokir total (MSTAE=02).` });
     }
 
-    const plantDef = db.plants.find((p) => p.werks === werks);
+    const plantDef = workspace.plants.find((p) => p.werks === werks);
     const slocDef = plantDef?.storageLocations.find((s) => s.lgort === lgort);
     const mardKey = `${werks}-${lgort}`;
 
-    // Ensure MARD entry exists when receiving/initializing
     const ensureMard = (w: string, l: string) => {
       const k = `${w}-${l}`;
       if (!material.mard[k]) {
-        const sDef = db.plants.find((p) => p.werks === w)?.storageLocations.find((s) => s.lgort === l);
+        const sDef = workspace.plants.find((p) => p.werks === w)?.storageLocations.find((s) => s.lgort === l);
         material.mard[k] = {
           werks: w,
           lgort: l,
@@ -645,7 +922,6 @@ async function startServer() {
       return material.mard[k];
     };
 
-    // Ensure MBEW entry exists for plant
     if (!material.mbew[werks]) {
       const fallbackMbew = Object.values(material.mbew)[0];
       material.mbew[werks] = {
@@ -703,7 +979,7 @@ async function startServer() {
     if (bwart === '101') {
       bwartDesc = 'Goods Receipt for Purchase Order';
       if (!ebeln) return res.status(400).json({ error: 'Nomor Purchase Order (EBELN) wajib untuk MIGO 101.' });
-      const po = db.purchaseOrders.find((o) => o.ebeln === ebeln);
+      const po = workspace.purchaseOrders.find((o) => o.ebeln === ebeln);
       if (!po) return res.status(404).json({ error: `PO ${ebeln} tidak ditemukan.` });
       const remaining = po.menge - po.receivedQty;
       if (qty > remaining) {
@@ -821,12 +1097,12 @@ async function startServer() {
 
     const mblnr = nextSequence(
       '50000',
-      db.materialDocuments.map((d) => d.mblnr),
+      workspace.materialDocuments.map((d) => d.mblnr),
       5
     );
     const belnr = nextSequence(
       '49000',
-      db.materialDocuments.map((d) => d.belnr),
+      workspace.materialDocuments.map((d) => d.belnr),
       5
     );
 
@@ -854,9 +1130,9 @@ async function startServer() {
     };
 
     const newStock = material.mard[mardKey]?.labst || 0;
-    db.materialDocuments.unshift(doc);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.materialDocuments.unshift(doc);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MM_DOC',
       objectId: mblnr,
       tableName: 'MARD / MBEW',
@@ -868,20 +1144,21 @@ async function startServer() {
     });
 
     saveDatabase(db);
-    return res.status(201).json({ doc, db });
+    return res.status(201).json({ doc, db: buildBootstrapPayload(db, tenantId) });
   });
 
   // OMS9 - Update Standard Field Rules
   app.put('/api/customizing/standard-rules', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { rules, username = 'BASIS_ADMIN' } = req.body as {
       rules: StandardFieldRule[];
       username?: string;
     };
 
-    db.standardFieldRules = rules;
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.standardFieldRules = rules;
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
       objectId: 'OMS9',
       tableName: 'T137 / T130F',
@@ -892,12 +1169,13 @@ async function startServer() {
       timestamp: new Date().toISOString(),
     });
     saveDatabase(db);
-    return res.json({ db });
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
   // Add Custom Industry Append Field (CI_MARA)
   app.post('/api/customizing/industry-fields', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { field, username = 'BASIS_ADMIN' } = req.body as {
       field: CustomIndustryField;
       username?: string;
@@ -907,9 +1185,13 @@ async function startServer() {
       ? field.fieldName.toUpperCase().replace(/[^A-Z0-9_]/g, '_')
       : `ZZ_${field.fieldName.toUpperCase().replace(/[^A-Z0-9_]/g, '_')}`;
 
-    if (db.customIndustryFields.some((f) => f.fieldName === normalizedName && f.industrySector === field.industrySector)) {
+    if (
+      workspace.customIndustryFields.some(
+        (f) => f.fieldName === normalizedName && f.industrySector === field.industrySector
+      )
+    ) {
       return res.status(409).json({
-        error: `Field ${normalizedName} sudah ada di struktur CI_MARA untuk industri ${field.industrySector}.`,
+        error: `Field ${normalizedName} sudah ada di struktur CI_MARA tenant ini untuk industri ${field.industrySector}.`,
       });
     }
 
@@ -919,9 +1201,9 @@ async function startServer() {
       fieldName: normalizedName,
     };
 
-    db.customIndustryFields.push(newField);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    workspace.customIndustryFields.push(newField);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
       objectId: `CI_MARA-${newField.industrySector}`,
       tableName: 'CI_MARA',
@@ -933,25 +1215,26 @@ async function startServer() {
     });
 
     saveDatabase(db);
-    return res.status(201).json({ field: newField, db });
+    return res.status(201).json({ field: newField, db: buildBootstrapPayload(db, tenantId) });
   });
 
   // Update Custom Industry Append Field
   app.put('/api/customizing/industry-fields/:id', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { id } = req.params;
     const { field, username = 'BASIS_ADMIN' } = req.body as {
       field: CustomIndustryField;
       username?: string;
     };
 
-    const idx = db.customIndustryFields.findIndex((f) => f.id === id);
+    const idx = workspace.customIndustryFields.findIndex((f) => f.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Custom field tidak ditemukan.' });
 
-    const prev = db.customIndustryFields[idx];
-    db.customIndustryFields[idx] = field;
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    const prev = workspace.customIndustryFields[idx];
+    workspace.customIndustryFields[idx] = field;
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
       objectId: `CI_MARA-${field.industrySector}`,
       tableName: 'CI_MARA',
@@ -963,20 +1246,21 @@ async function startServer() {
     });
 
     saveDatabase(db);
-    return res.json({ db });
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
   // Delete Custom Industry Append Field
   app.delete('/api/customizing/industry-fields/:id', (req, res) => {
     const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
     const { id } = req.params;
-    const idx = db.customIndustryFields.findIndex((f) => f.id === id);
+    const idx = workspace.customIndustryFields.findIndex((f) => f.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Custom field tidak ditemukan.' });
 
-    const removed = db.customIndustryFields[idx];
-    db.customIndustryFields.splice(idx, 1);
-    db.changeDocuments.unshift({
-      changenr: nextChangeNumber(db.changeDocuments),
+    const removed = workspace.customIndustryFields[idx];
+    workspace.customIndustryFields.splice(idx, 1);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
       objectId: `CI_MARA-${removed.industrySector}`,
       tableName: 'CI_MARA',
@@ -988,42 +1272,241 @@ async function startServer() {
     });
 
     saveDatabase(db);
-    return res.json({ db });
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
-  // Vite dev middleware or static production build
+  // CT04 / T023 - Create Material Group
+  app.post('/api/customizing/material-groups', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { group, username = 'BASIS_ADMIN' } = req.body as {
+      group: { matkl: string; label: string; defaultMtart?: MaterialTypeCode; description?: string };
+      username?: string;
+    };
+
+    const cleanMatkl = (group?.matkl || '')
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9_-]/g, '-');
+    const cleanLabel = (group?.label || '').trim();
+    if (!cleanMatkl || !cleanLabel) {
+      return res.status(400).json({ error: 'Kode Material Group (MATKL) dan Label wajib diisi.' });
+    }
+    if (!workspace.materialGroups) workspace.materialGroups = [];
+    if (workspace.materialGroups.some((mg) => mg.matkl === cleanMatkl)) {
+      return res.status(409).json({ error: `Material Group ${cleanMatkl} sudah terdaftar di tenant ini.` });
+    }
+
+    const newGroup: MaterialGroupDefinition = {
+      matkl: cleanMatkl,
+      label: cleanLabel,
+      defaultMtart: group.defaultMtart || 'ROH',
+      description: (group.description || cleanLabel).trim(),
+      characteristics: [],
+    };
+
+    workspace.materialGroups.push(newGroup);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: cleanMatkl,
+      tableName: 'T023',
+      fieldName: 'CREATE_MATKL',
+      oldValue: '-',
+      newValue: `${cleanMatkl} · ${cleanLabel}`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.status(201).json({ materialGroup: newGroup, db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // CT04 - Add Master Characteristic to a Material Group
+  app.post('/api/customizing/material-groups/:matkl/characteristics', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { matkl } = req.params;
+    const { characteristic, username = 'BASIS_ADMIN' } = req.body as {
+      characteristic: MasterCharacteristic;
+      username?: string;
+    };
+
+    if (!workspace.materialGroups) workspace.materialGroups = [];
+    const group = workspace.materialGroups.find((mg) => mg.matkl === matkl);
+    if (!group) {
+      return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+    }
+
+    const rawName = (characteristic?.charName || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+    const normalizedCharName = rawName.startsWith('CHR_') ? rawName : `CHR_${rawName}`;
+    if (!rawName || !characteristic?.label?.trim()) {
+      return res.status(400).json({ error: 'Technical Characteristic Name (CHR_*) dan Label wajib diisi.' });
+    }
+
+    if (group.characteristics.some((c) => c.charName === normalizedCharName)) {
+      return res.status(409).json({
+        error: `Karakteristik ${normalizedCharName} sudah terdaftar pada Material Group ${matkl}.`,
+      });
+    }
+
+    const newChar: MasterCharacteristic = {
+      id: `ch-${Date.now()}`,
+      charName: normalizedCharName,
+      label: characteristic.label.trim(),
+      dataType: characteristic.dataType || 'text',
+      unit: characteristic.unit?.trim() || undefined,
+      options:
+        characteristic.dataType === 'select' && characteristic.options
+          ? characteristic.options.map((o) => o.trim()).filter(Boolean)
+          : undefined,
+      required: Boolean(characteristic.required),
+      helpText: characteristic.helpText?.trim() || `Karakteristik master untuk ${group.label}`,
+    };
+
+    group.characteristics.push(newChar);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: matkl,
+      tableName: 'CT04 / CABN',
+      fieldName: `ADD ${newChar.charName}`,
+      oldValue: '-',
+      newValue: `${newChar.label} (${newChar.required ? 'Wajib' : 'Opsional'})`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.status(201).json({ characteristic: newChar, db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // CT04 - Update Master Characteristic
+  app.put('/api/customizing/material-groups/:matkl/characteristics/:charId', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { matkl, charId } = req.params;
+    const { characteristic, username = 'BASIS_ADMIN' } = req.body as {
+      characteristic: MasterCharacteristic;
+      username?: string;
+    };
+
+    const group = (workspace.materialGroups || []).find((mg) => mg.matkl === matkl);
+    if (!group) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+
+    const idx = group.characteristics.findIndex((c) => c.id === charId);
+    if (idx === -1) return res.status(404).json({ error: 'Master Characteristic tidak ditemukan.' });
+
+    const prev = group.characteristics[idx];
+    group.characteristics[idx] = { ...prev, ...characteristic, id: prev.id, charName: prev.charName };
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: matkl,
+      tableName: 'CT04 / CABN',
+      fieldName: prev.charName,
+      oldValue: `${prev.label} (${prev.required ? 'Wajib' : 'Opsional'})`,
+      newValue: `${group.characteristics[idx].label} (${group.characteristics[idx].required ? 'Wajib' : 'Opsional'})`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // CT04 - Reorder Master Characteristics (determines MARA-MAKTX Short Description sequence)
+  app.put('/api/customizing/material-groups/:matkl/reorder', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { matkl } = req.params;
+    const { charIds, username = 'BASIS_ADMIN' } = req.body as {
+      charIds: string[];
+      username?: string;
+    };
+
+    const group = (workspace.materialGroups || []).find((mg) => mg.matkl === matkl);
+    if (!group) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+
+    const prevPattern = group.characteristics.map((c) => c.label).join('-');
+    const byId = new Map(group.characteristics.map((c) => [c.id, c]));
+    const reordered: MasterCharacteristic[] = [];
+    for (const id of charIds || []) {
+      const item = byId.get(id);
+      if (item) {
+        reordered.push(item);
+        byId.delete(id);
+      }
+    }
+    for (const remaining of byId.values()) {
+      reordered.push(remaining);
+    }
+
+    group.characteristics = reordered;
+    const nextPattern = group.characteristics.map((c) => c.label).join('-');
+
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: matkl,
+      tableName: 'CT04 / CABN',
+      fieldName: 'REORDER_SHORT_DESC_FORMAT',
+      oldValue: prevPattern || '-',
+      newValue: nextPattern || '-',
+      username,
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // CT04 - Delete Master Characteristic
+  app.delete('/api/customizing/material-groups/:matkl/characteristics/:charId', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { matkl, charId } = req.params;
+
+    const group = (workspace.materialGroups || []).find((mg) => mg.matkl === matkl);
+    if (!group) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+
+    const idx = group.characteristics.findIndex((c) => c.id === charId);
+    if (idx === -1) return res.status(404).json({ error: 'Master Characteristic tidak ditemukan.' });
+
+    const removed = group.characteristics.splice(idx, 1)[0];
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: matkl,
+      tableName: 'CT04 / CABN',
+      fieldName: `DROP ${removed.charName}`,
+      oldValue: removed.label,
+      newValue: 'Removed',
+      username: 'BASIS_ADMIN',
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
-
     app.use(vite.middlewares);
   } else {
     const distPath = path.resolve(__dirname, 'dist');
-
     app.use(express.static(distPath));
-
-    // Return 404 for unknown API endpoints
-    app.use('/api', (_req, res) => {
-      res.status(404).json({
-        success: false,
-        message: 'API endpoint not found',
-      });
-    });
-
-    // React SPA fallback (Express 4 compatible)
-    app.get('*', (_req, res, next) => {
-      res.sendFile(path.join(distPath, 'index.html'), (error) => {
-        if (error) next(error);
-      });
+    app.get('/{*splat}', (_req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  const PORT = Number(process.env.PORT) || 3000;
-
+  const PORT = 3000;
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`MONIC server running on port ${PORT}`);
+    console.log(`SAP S/4HANA Multi-Tenant Material Master & MM server running on http://0.0.0.0:${PORT}`);
   });
 }
 

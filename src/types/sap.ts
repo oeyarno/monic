@@ -8,6 +8,7 @@ export type CustomFieldDataType = 'text' | 'number' | 'select' | 'boolean' | 'da
 
 export type MaterialViewKey =
   | 'basic'
+  | 'classification'
   | 'purchasing'
   | 'mrp'
   | 'storage'
@@ -73,6 +74,27 @@ export interface StandardFieldRule {
   viewKey: MaterialViewKey;
   label: string;
   rulesByIndustry: Record<IndustrySectorCode, FieldStatus>;
+}
+
+export type CharacteristicDataType = 'text' | 'number' | 'select' | 'boolean';
+
+export interface MasterCharacteristic {
+  id: string;
+  charName: string; // CT04 technical characteristic name, e.g. CHR_PIPE_OD
+  label: string;
+  dataType: CharacteristicDataType;
+  unit?: string;
+  options?: string[];
+  required: boolean;
+  helpText: string;
+}
+
+export interface MaterialGroupDefinition {
+  matkl: string; // MARA-MATKL
+  label: string;
+  defaultMtart?: MaterialTypeCode;
+  description: string;
+  characteristics: MasterCharacteristic[];
 }
 
 export interface MaraData {
@@ -189,6 +211,7 @@ export interface MaterialMasterRecord {
   mard: Record<string, MardStorageData>; // key: `${werks}-${lgort}`
   mbew: Record<string, MbewValuationData>; // key: `${werks}`
   mvke: MvkeSalesData;
+  characteristics?: Record<string, string | number | boolean>; // AUSP values per MATKL Master Characteristic
   industryExtensions: Record<string, string | number | boolean>;
 }
 
@@ -307,6 +330,7 @@ export interface TenantWorkspaceData {
   materialDocuments: MaterialDocument[];
   customIndustryFields: CustomIndustryField[];
   standardFieldRules: StandardFieldRule[];
+  materialGroups: MaterialGroupDefinition[];
   changeDocuments: ChangeDocument[];
   plants: PlantDefinition[];
   vendors: VendorDefinition[];
