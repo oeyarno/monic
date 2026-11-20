@@ -33,22 +33,89 @@ const DB_FILE = path.join(DATA_DIR, 'sap-store.json');
 
 type TenantDatabaseContext = { database: MultiTenantDatabase; tenantId: string };
 const databaseContexts = new WeakMap<object, TenantDatabaseContext>();
-function saveMultiTenantDatabase(db: MultiTenantDatabase): void {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  const tempFile = `${DB_FILE}.tmp`;
-  fs.writeFileSync(tempFile, JSON.stringify(db, null, 2), 'utf-8');
-  fs.renameSync(tempFile, DB_FILE);
+
+const REQUIRED_WORKSPACE_ARRAYS: (keyof TenantWorkspaceData)[] = [
+  'materials', 'purchaseRequisitions', 'purchaseOrders', 'materialDocuments',
+  'customIndustryFields', 'standardFieldRules', 'changeDocuments', 'plants', 'vendors',
+];
+
+function validateMultiTenantDatabase(value: unknown): asserts value is MultiTenantDatabase {
+  if (!value || typeof value !== 'object') {
+    throw new Error('Struktur database MONIC tidak valid. Data tidak diubah.');
+  }
+  const db = value as Partial<MultiTenantDatabase>;
+  if (db.schemaVersion !== 2) {
+    throw new Error(`Schema database MONIC tidak didukung (versi: ${String(db.schemaVersion)}). Data tidak diubah.`);
+  }
+  if (!Array.isArray(db.tenantCompanies) || db.tenantCompanies.length === 0 ||
+      !db.workspaces || typeof db.workspaces !== 'object' || Array.isArray(db.workspaces)) {
+    throw new Error('Struktur tenant/workspace database MONIC tidak lengkap. Data tidak diubah.');
+  }
+  const tenantIds = new Set<string>();
+  for (const company of db.tenantCompanies) {
+    if (!company || typeof company.tenantId !== 'string' || !company.tenantId.trim() || tenantIds.has(company.tenantId)) {
+      throw new Error('Daftar tenant MONIC tidak valid atau memiliki ID ganda. Data tidak diubah.');
+    }
+    tenantIds.add(company.tenantId);
+    const workspace = db.workspaces[company.tenantId];
+    if (!workspace || typeof workspace !== 'object' ||
+        REQUIRED_WORKSPACE_ARRAYS.some((key) => !Array.isArray((workspace as any)[key]))) {
+      throw new Error(`Workspace tenant ${company.tenantId} tidak lengkap. Data tidak diubah.`);
+    }
+  }
+  if (typeof db.activeTenantId !== 'string' || !tenantIds.has(db.activeTenantId)) {
+    throw new Error('Tenant aktif pada database MONIC tidak valid. Data tidak diubah.');
+  }
 }
+
+function saveMultiTenantDatabase(db: MultiTenantDatabase): void {
+  validateMultiTenantDatabase(db);
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  const tempFile = `${DB_FILE}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  try {
+    fs.writeFileSync(tempFile, JSON.stringify(db, null, 2), { encoding: 'utf-8', flag: 'wx' });
+    // Rename is atomic on the Railway Linux volume: readers see the old or new complete file.
+    fs.renameSync(tempFile, DB_FILE);
+  } catch (error) {
+    try { if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile); } catch { /* preserve original save error */ }
+    throw new Error(`Gagal menyimpan database MONIC. File data sebelumnya dipertahankan. ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
 function loadMultiTenantDatabase(): MultiTenantDatabase {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(DB_FILE)) { const initial = createInitialMultiTenantDatabase(); saveMultiTenantDatabase(initial); return initial; }
+  if (!fs.existsSync(DB_FILE)) {
+    const initial = createInitialMultiTenantDatabase();
+    saveMultiTenantDatabase(initial);
+    return initial;
+  }
+
   let parsed: any;
-  try { parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8')); }
-  catch { throw new Error('Database MONIC tidak dapat dibaca. Data tidak diubah; perlu pemulihan manual.'); }
-  if (parsed && parsed.schemaVersion >= 2 && Array.isArray(parsed.tenantCompanies) && parsed.workspaces && typeof parsed.workspaces === 'object') return parsed as MultiTenantDatabase;
+  try {
+    parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+  } catch {
+    throw new Error('Database MONIC tidak dapat dibaca. Data tidak diubah; perlu pemulihan manual.');
+  }
+
+  if (parsed && Number.isInteger(parsed.schemaVersion) && parsed.schemaVersion > 2) {
+    throw new Error(`Database MONIC menggunakan schema versi ${parsed.schemaVersion}, lebih baru dari aplikasi. Data tidak diubah.`);
+  }
+  if (parsed && parsed.schemaVersion === 2) {
+    validateMultiTenantDatabase(parsed);
+    return parsed;
+  }
+
   if (parsed && Array.isArray(parsed.materials)) {
-    const migrated = createInitialMultiTenantDatabase(), firstTenant = migrated.tenantCompanies[0];
+    const migrated = createInitialMultiTenantDatabase();
+    const firstTenant = migrated.tenantCompanies[0];
+    if (!firstTenant) throw new Error('Template tenant awal tidak tersedia. Database lama tidak diubah.');
     const legacy = parsed as Partial<TenantWorkspaceData>;
+    for (const key of REQUIRED_WORKSPACE_ARRAYS) {
+      const candidate = legacy[key];
+      if (candidate !== undefined && !Array.isArray(candidate)) {
+        throw new Error(`Data lama pada bagian ${key} tidak valid. Database lama tidak diubah.`);
+      }
+    }
     migrated.workspaces[firstTenant.tenantId] = {
       materials: legacy.materials || [], purchaseRequisitions: legacy.purchaseRequisitions || [],
       purchaseOrders: legacy.purchaseOrders || [], materialDocuments: legacy.materialDocuments || [],
@@ -56,34 +123,53 @@ function loadMultiTenantDatabase(): MultiTenantDatabase {
       changeDocuments: legacy.changeDocuments || [], plants: legacy.plants || [], vendors: legacy.vendors || [],
     };
     migrated.activeTenantId = firstTenant.tenantId;
-    // Preserve the original single-tenant database before the first schema migration.
-    // If the backup cannot be created, abort migration and leave the source file untouched.
+    // Back up the original before migration. If backup or save fails, the original remains untouched.
     const backupFile = `${DB_FILE}.pre-multitenant-${new Date().toISOString().replace(/[:.]/g, '-')}.bak`;
     fs.copyFileSync(DB_FILE, backupFile, fs.constants.COPYFILE_EXCL);
     saveMultiTenantDatabase(migrated);
     return migrated;
   }
+
   throw new Error('Format database MONIC tidak dikenal. Data lama tidak ditimpa.');
 }
+
 function resolveTenantId(db: MultiTenantDatabase, req: express.Request): string {
-  const requested = (typeof req.query.tenantId === 'string' && req.query.tenantId.trim()) || req.header('x-tenant-id')?.trim() || db.activeTenantId;
-  const company = db.tenantCompanies.find((tenant) => tenant.tenantId === requested) || db.tenantCompanies[0];
-  if (!company) throw new Error('Belum ada tenant yang terdaftar.');
+  const requested = (typeof req.query.tenantId === 'string' && req.query.tenantId.trim()) ||
+    req.header('x-tenant-id')?.trim() || db.activeTenantId;
+  const company = db.tenantCompanies.find((tenant) => tenant.tenantId === requested);
+  if (!company) throw new Error(`Tenant "${requested}" tidak ditemukan. Permintaan dihentikan agar data tidak masuk ke perusahaan lain.`);
   return company.tenantId;
 }
+
 function buildTenantSummaries(db: MultiTenantDatabase): TenantSummary[] {
   return db.tenantCompanies.map((company) => {
     const workspace = db.workspaces[company.tenantId];
-    const totalInventoryValue = (workspace?.materials || []).reduce((sum, material) => sum + Object.values(material.mbew).reduce((acc, item) => acc + item.salk3, 0), 0);
-    return { ...company, materialCount: workspace?.materials.length || 0, plantCount: workspace?.plants.length || 0,
-      totalInventoryValue, openPrCount: workspace?.purchaseRequisitions.filter((pr) => pr.status !== 'Converted to PO').length || 0,
-      openPoCount: workspace?.purchaseOrders.filter((po) => po.status !== 'Completed').length || 0 };
+    const totalInventoryValue = workspace.materials.reduce((sum, material) =>
+      sum + Object.values(material.mbew || {}).reduce((acc, item) => acc + (Number(item.salk3) || 0), 0), 0);
+    return {
+      ...company,
+      materialCount: workspace.materials.length,
+      plantCount: workspace.plants.length,
+      totalInventoryValue,
+      openPrCount: workspace.purchaseRequisitions.filter((pr) => pr.status !== 'Converted to PO').length,
+      openPoCount: workspace.purchaseOrders.filter((po) => po.status !== 'Completed').length,
+    };
   });
 }
+
 function buildBootstrapPayload(db: MultiTenantDatabase, tenantId: string): SapBootstrapPayload {
-  const company = db.tenantCompanies.find((tenant) => tenant.tenantId === tenantId) || db.tenantCompanies[0];
-  return { ...db.workspaces[company.tenantId], activeTenant: company, tenants: buildTenantSummaries(db),
-    materialTypes: MATERIAL_TYPES, industrySectors: INDUSTRY_SECTORS, valuationTypes: VALUATION_TYPES };
+  const company = db.tenantCompanies.find((tenant) => tenant.tenantId === tenantId);
+  if (!company) throw new Error(`Tenant ${tenantId} tidak ditemukan.`);
+  const workspace = db.workspaces[company.tenantId];
+  if (!workspace) throw new Error(`Workspace tenant ${tenantId} tidak tersedia. Data tidak diubah.`);
+  return {
+    ...workspace,
+    activeTenant: company,
+    tenants: buildTenantSummaries(db),
+    materialTypes: MATERIAL_TYPES,
+    industrySectors: INDUSTRY_SECTORS,
+    valuationTypes: VALUATION_TYPES,
+  };
 }
 function loadDatabase(req: express.Request): SapBootstrapPayload {
   const database = loadMultiTenantDatabase(), tenantId = resolveTenantId(database, req);
