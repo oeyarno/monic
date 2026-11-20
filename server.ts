@@ -859,15 +859,15 @@ async function startServer() {
   } else {
     const distPath = path.resolve(__dirname, 'dist');
     app.use(express.static(distPath));
-    app.get('/{*splat}', (_req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
+    app.get('*', (_req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
 
-  const PORT = 3000;
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`SAP S/4HANA Material Master & MM server running on http://0.0.0.0:${PORT}`);
-  });
+const PORT = Number(process.env.PORT) || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`MONIC server running on port ${PORT}`);
+});
 }
 
 startServer();
