@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import {
   Boxes,
+  Building2,
   ClipboardList,
   FileSpreadsheet,
   History,
   Layers,
   PackagePlus,
+  RotateCcw,
   Search,
   ShoppingCart,
   Sliders,
   Warehouse,
 } from 'lucide-react';
+import type { TenantCompany, TenantSummary } from '../types/sap.ts';
 
 export type ActiveRoute =
   | 'mm60'
@@ -21,12 +24,17 @@ export type ActiveRoute =
   | 'migo'
   | 'mmbe'
   | 'oms9'
+  | 'ox02'
   | 'cdhdr';
 
 interface SidebarProps {
   activeRoute: ActiveRoute;
+  activeTenant?: TenantCompany;
+  tenants: TenantSummary[];
+  onSwitchTenant: (tenantId: string) => void;
   onNavigate: (route: ActiveRoute) => void;
   onTcodeJump: (tcode: string) => void;
+  onResetDemo: () => void;
   counts: {
     materials: number;
     openPrs: number;
@@ -48,8 +56,12 @@ interface NavGroup {
 
 export function Sidebar({
   activeRoute,
+  activeTenant,
+  tenants,
+  onSwitchTenant,
   onNavigate,
   onTcodeJump,
+  onResetDemo,
   counts,
 }: SidebarProps) {
   const [tcodeInput, setTcodeInput] = useState('');
@@ -75,6 +87,7 @@ export function Sidebar({
     {
       title: 'SPRO & Tata Kelola',
       items: [
+        { id: 'ox02', tcode: 'OX02', label: 'Perusahaan (Tenant)', icon: Building2, count: tenants.length },
         { id: 'oms9', tcode: 'OMS9', label: 'Kustomisasi Industri', icon: Sliders, count: counts.customFields },
         { id: 'cdhdr', tcode: 'CDHDR', label: 'Change Documents', icon: History },
       ],
@@ -94,9 +107,30 @@ export function Sidebar({
         <div className="text-sm font-bold tracking-tight text-slate-900 whitespace-nowrap">
           SAP S/4HANA Enterprise
         </div>
-        <div className="text-xs text-slate-500 mt-0.5 whitespace-nowrap">
-          Client 100 · Material Master &amp; MM
-        </div>
+
+        {/* Multi-Tenant Selector */}
+        {activeTenant && tenants.length > 0 && (
+          <div className="mt-2.5">
+            <label htmlFor="tenant-switcher" className="sr-only">
+              Pilih Perusahaan Tenant
+            </label>
+            <select
+              id="tenant-switcher"
+              value={activeTenant.tenantId}
+              onChange={(e) => onSwitchTenant(e.target.value)}
+              className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-md text-slate-900 focus:outline-none focus:border-[#0064D9] focus:bg-white transition-colors"
+            >
+              {tenants.map((t) => (
+                <option key={t.tenantId} value={t.tenantId}>
+                  {t.bukrs} · {t.shortName}
+                </option>
+              ))}
+            </select>
+            <div className="text-[11px] text-slate-500 mt-1 truncate">
+              Client {activeTenant.clientNumber} · {activeTenant.coreBusiness}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleTcodeSubmit} className="mt-3 relative">
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -104,7 +138,7 @@ export function Sidebar({
             type="text"
             value={tcodeInput}
             onChange={(e) => setTcodeInput(e.target.value)}
-            placeholder="T-Code (mis. MM01, MIGO)"
+            placeholder="T-Code (mis. MM01, OX02)"
             aria-label="Jump to SAP Transaction Code"
             className="w-full pl-8 pr-2 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-md text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#0064D9] focus:bg-white transition-colors"
           />
@@ -164,6 +198,16 @@ export function Sidebar({
         ))}
       </nav>
 
+      <div className="p-3 border-t border-slate-200">
+        <button
+          type="button"
+          onClick={onResetDemo}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors whitespace-nowrap"
+        >
+          <RotateCcw className="w-3.5 h-3.5 shrink-0" />
+          <span>Reset Data Standar SAP</span>
+        </button>
+      </div>
     </aside>
   );
 }

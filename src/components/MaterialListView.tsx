@@ -96,7 +96,7 @@ export function MaterialListView({
     const bklas = primaryMbew?.bklas || '3000';
     const waers = primaryMbew?.waers || 'IDR';
     const isBelowRop = minReorder > 0 && stockTotal < minReorder;
-    const primaryPlant = plants[0] || Object.keys(mat.marc)[0] || '1000';
+    const primaryPlant = plants[0] || Object.keys(mat.marc)[0] || data.plants[0]?.werks || '1000';
     const bwtty = primaryMbew?.bwtty || '';
     const splitTypes: ValuationTypeCode[] = [];
     const relevantMbew = Object.values(mat.mbew).filter(
@@ -263,10 +263,10 @@ export function MaterialListView({
         <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
           <div>
             <h2 className="text-sm font-semibold text-slate-900">
-              MM60 · Daftar Material Master &amp; Valuasi Plant
+              MM60 · Daftar Material Master &amp; Valuasi Plant ({data.activeTenant.bukrs})
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Menampilkan {filteredMaterials.length} dari {data.materials.length} material terdaftar pada tabel MARA, MARC, MARD, dan MBEW
+              {data.activeTenant.name} · {data.activeTenant.coreBusiness} · Menampilkan {filteredMaterials.length} dari {data.materials.length} material
             </p>
           </div>
         </div>

@@ -272,7 +272,35 @@ export interface ChangeDocument {
   timestamp: string;
 }
 
-export interface SapBootstrapPayload {
+export type TenantCoreBusinessType =
+  | 'oil_gas_contractor'
+  | 'heavy_workshop'
+  | 'unit_spareparts'
+  | 'tools_ppe'
+  | 'general_industry';
+
+export interface TenantCompany {
+  tenantId: string;
+  bukrs: string; // SAP Company Code
+  clientNumber: string; // e.g. '100', '200', '300', '400'
+  name: string;
+  shortName: string;
+  coreBusiness: string;
+  coreBusinessType: TenantCoreBusinessType;
+  city: string;
+  defaultIndustry: IndustrySectorCode;
+  description: string;
+}
+
+export interface TenantSummary extends TenantCompany {
+  materialCount: number;
+  plantCount: number;
+  totalInventoryValue: number;
+  openPrCount: number;
+  openPoCount: number;
+}
+
+export interface TenantWorkspaceData {
   materials: MaterialMasterRecord[];
   purchaseRequisitions: PurchaseRequisition[];
   purchaseOrders: PurchaseOrder[];
@@ -282,7 +310,20 @@ export interface SapBootstrapPayload {
   changeDocuments: ChangeDocument[];
   plants: PlantDefinition[];
   vendors: VendorDefinition[];
+}
+
+export interface MultiTenantDatabase {
+  schemaVersion: number;
+  activeTenantId: string;
+  tenantCompanies: TenantCompany[];
+  workspaces: Record<string, TenantWorkspaceData>;
+}
+
+export interface SapBootstrapPayload extends TenantWorkspaceData {
+  activeTenant: TenantCompany;
+  tenants: TenantSummary[];
   materialTypes: MaterialTypeDefinition[];
   industrySectors: IndustrySectorDefinition[];
   valuationTypes: ValuationTypeDefinition[];
 }
+

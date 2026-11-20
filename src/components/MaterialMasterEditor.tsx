@@ -62,9 +62,9 @@ const VIEW_TABS: { key: MaterialViewKey; label: string; tableHint: string }[] = 
 function createEmptyMaterial(
   data: SapBootstrapPayload,
   mtart: MaterialTypeCode = 'ROH',
-  mbrsh: IndustrySectorCode = 'M',
-  werks = '1000',
-  lgort = '0001'
+  mbrsh: IndustrySectorCode = data.activeTenant?.defaultIndustry || 'M',
+  werks = data.plants[0]?.werks || '1000',
+  lgort = data.plants[0]?.storageLocations[0]?.lgort || '0001'
 ): MaterialMasterRecord {
   const mtDef = data.materialTypes.find((m) => m.mtart === mtart) || data.materialTypes[0];
   const prefix = mtDef.internalNumberPrefix;
@@ -196,9 +196,11 @@ export function MaterialMasterEditor({
   onOpenCustomizing,
   onMmAction,
 }: MaterialMasterEditorProps) {
+  const defaultPlant = data.plants[0]?.werks || '1000';
+  const defaultSloc = data.plants[0]?.storageLocations[0]?.lgort || '0001';
   const [activeView, setActiveView] = useState<MaterialViewKey>('basic');
-  const [activeWerks, setActiveWerks] = useState('1000');
-  const [activeLgort, setActiveLgort] = useState('0001');
+  const [activeWerks, setActiveWerks] = useState(defaultPlant);
+  const [activeLgort, setActiveLgort] = useState(defaultSloc);
   const [draft, setDraft] = useState<MaterialMasterRecord>(() => {
     if (mode === 'create') return createEmptyMaterial(data);
     const found = data.materials.find((m) => m.mara.matnr === initialMatnr) || data.materials[0];
@@ -209,26 +211,32 @@ export function MaterialMasterEditor({
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Sync draft when switching selected material or mode
+  // Sync draft when switching selected material, mode, or tenant
   useEffect(() => {
     setErrorBanner(null);
     setSuccessMsg(null);
     setConfirmDelete(false);
+    const tenantPlant = data.plants[0]?.werks || '1000';
+    const tenantSloc = data.plants[0]?.storageLocations[0]?.lgort || '0001';
     if (mode === 'create') {
       setDraft(createEmptyMaterial(data));
-      setActiveWerks('1000');
-      setActiveLgort('0001');
+      setActiveWerks(tenantPlant);
+      setActiveLgort(tenantSloc);
       return;
     }
     const found = data.materials.find((m) => m.mara.matnr === initialMatnr) || data.materials[0];
     if (found) {
       setDraft(structuredClone(found));
-      const firstPlant = Object.keys(found.marc)[0] || '1000';
+      const firstPlant = Object.keys(found.marc)[0] || tenantPlant;
       setActiveWerks(firstPlant);
-      const firstSloc = Object.values(found.mard).find((s) => s.werks === firstPlant)?.lgort || '0001';
+      const firstSloc = Object.values(found.mard).find((s) => s.werks === firstPlant)?.lgort || tenantSloc;
       setActiveLgort(firstSloc);
+    } else {
+      setDraft(createEmptyMaterial(data));
+      setActiveWerks(tenantPlant);
+      setActiveLgort(tenantSloc);
     }
-  }, [mode, initialMatnr, data.materials]);
+  }, [mode, initialMatnr, data.materials, data.activeTenant.tenantId]);
 
   const isReadOnly = mode === 'view';
   const currentPlantDef = data.plants.find((p) => p.werks === activeWerks) || data.plants[0];
@@ -673,6 +681,27 @@ export function MaterialMasterEditor({
       </div>
     );
   };
+
+  if (mode !== 'create' && data.materials.length === 0) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-lg p-10 text-center space-y-3">
+        <div className="text-sm font-semibold text-slate-900">
+          Belum ada Material Master pada tenant {data.activeTenant.bukrs} ({data.activeTenant.name})
+        </div>
+        <p className="text-xs text-slate-500 max-w-md mx-auto">
+          Buat material pertama untuk sektor {data.activeTenant.coreBusiness} menggunakan transaksi MM01.
+        </p>
+        <button
+          type="button"
+          onClick={() => onModeChange('create')}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md transition-colors"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          <span>Buat Material Baru (MM01)</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSave} className="space-y-5">

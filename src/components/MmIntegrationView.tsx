@@ -73,12 +73,14 @@ export function MmIntegrationView({
   onPostMigo,
 }: MmIntegrationViewProps) {
   const defaultMatnr = preselectedMatnr || data.materials[0]?.mara.matnr || '';
+  const defaultPlant = preselectedWerks || data.plants[0]?.werks || '1000';
+  const defaultSloc = data.plants[0]?.storageLocations[0]?.lgort || '0001';
   const [selectedMatnr, setSelectedMatnr] = useState(defaultMatnr);
-  const [werks, setWerks] = useState(preselectedWerks || '1000');
-  const [lgort, setLgort] = useState('0001');
-  const [qty, setQty] = useState(100);
+  const [werks, setWerks] = useState(defaultPlant);
+  const [lgort, setLgort] = useState(defaultSloc);
+  const [qty, setQty] = useState(10);
   const [dateInput, setDateInput] = useState('2026-11-30');
-  const [lifnr, setLifnr] = useState(data.vendors[0]?.lifnr || 'V-100042');
+  const [lifnr, setLifnr] = useState(data.vendors[0]?.lifnr || '');
   const [poPrice, setPoPrice] = useState(15000);
   const [selectedBwtar, setSelectedBwtar] = useState<ValuationTypeCode>('LOCAL');
 
@@ -87,18 +89,54 @@ export function MmIntegrationView({
   const [selectedEbeln, setSelectedEbeln] = useState(
     data.purchaseOrders.find((p) => p.status !== 'Completed')?.ebeln || ''
   );
-  const [targetLgort, setTargetLgort] = useState('0002');
-  const [kostl, setKostl] = useState('CC-PROD-100');
+  const [targetLgort, setTargetLgort] = useState(data.plants[0]?.storageLocations[1]?.lgort || '0002');
+  const [kostl, setKostl] = useState('CC-OPS-100');
   const [bktxt, setBktxt] = useState('');
 
   // PR -> PO Conversion modal state
   const [convertingPr, setConvertingPr] = useState<PurchaseRequisition | null>(null);
-  const [convertLifnr, setConvertLifnr] = useState(data.vendors[0]?.lifnr || 'V-100042');
+  const [convertLifnr, setConvertLifnr] = useState(data.vendors[0]?.lifnr || '');
   const [convertPrice, setConvertPrice] = useState(0);
   const [convertBwtar, setConvertBwtar] = useState<ValuationTypeCode>('LOCAL');
 
   const [feedback, setFeedback] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Sync defaults when switching tenant
+  useEffect(() => {
+    setFeedback(null);
+    setConvertingPr(null);
+    const firstM = data.materials[0];
+    const firstPlant = firstM ? Object.keys(firstM.marc)[0] || data.plants[0]?.werks || '1000' : data.plants[0]?.werks || '1000';
+    const firstSloc = firstM
+      ? Object.values(firstM.mard).find((s) => s.werks === firstPlant)?.lgort || data.plants[0]?.storageLocations[0]?.lgort || '0001'
+      : data.plants[0]?.storageLocations[0]?.lgort || '0001';
+    setSelectedMatnr(firstM?.mara.matnr || '');
+    setWerks(firstPlant);
+    setLgort(firstSloc);
+    setTargetLgort(data.plants.find((p) => p.werks === firstPlant)?.storageLocations.find((s) => s.lgort !== firstSloc)?.lgort || '0002');
+    setLifnr(data.vendors[0]?.lifnr || '');
+    setConvertLifnr(data.vendors[0]?.lifnr || '');
+    setSelectedEbeln(data.purchaseOrders.find((p) => p.status !== 'Completed')?.ebeln || '');
+    if (firstM) {
+      const mbew = firstM.mbew[firstPlant] || Object.values(firstM.mbew)[0];
+      if (mbew) {
+        const splitKeys = Object.keys(mbew.splitValuations || {}) as ValuationTypeCode[];
+        const defaultVt = splitKeys[0] || 'LOCAL';
+        setSelectedBwtar(defaultVt);
+        const splitRow = mbew.bwtty ? mbew.splitValuations?.[defaultVt] : undefined;
+        setPoPrice(
+          splitRow
+            ? splitRow.vprsv === 'V'
+              ? splitRow.verpr
+              : splitRow.stprs
+            : mbew.vprsv === 'V'
+            ? mbew.verpr
+            : mbew.stprs
+        );
+      }
+    }
+  }, [data.activeTenant.tenantId]);
 
   const activeMaterial = useMemo(
     () => data.materials.find((m) => m.mara.matnr === selectedMatnr) || data.materials[0],
@@ -134,9 +172,9 @@ export function MmIntegrationView({
       setSelectedMatnr(preselectedMatnr);
       const m = data.materials.find((x) => x.mara.matnr === preselectedMatnr);
       if (m) {
-        const firstW = preselectedWerks && m.marc[preselectedWerks] ? preselectedWerks : Object.keys(m.marc)[0] || '1000';
+        const firstW = preselectedWerks && m.marc[preselectedWerks] ? preselectedWerks : Object.keys(m.marc)[0] || data.plants[0]?.werks || '1000';
         setWerks(firstW);
-        const firstS = Object.values(m.mard).find((s) => s.werks === firstW)?.lgort || '0001';
+        const firstS = Object.values(m.mard).find((s) => s.werks === firstW)?.lgort || data.plants[0]?.storageLocations[0]?.lgort || '0001';
         setLgort(firstS);
         const mbew = m.mbew[firstW] || Object.values(m.mbew)[0];
         if (mbew) {
@@ -156,7 +194,7 @@ export function MmIntegrationView({
         }
       }
     }
-  }, [preselectedMatnr, preselectedWerks, data.materials]);
+  }, [preselectedMatnr, preselectedWerks, data.materials, data.plants]);
 
   // Keep plant storage options valid
   const plantDef = data.plants.find((p) => p.werks === werks) || data.plants[0];
@@ -166,9 +204,9 @@ export function MmIntegrationView({
     setSelectedMatnr(matnr);
     const m = data.materials.find((x) => x.mara.matnr === matnr);
     if (m) {
-      const firstW = Object.keys(m.marc)[0] || '1000';
+      const firstW = Object.keys(m.marc)[0] || data.plants[0]?.werks || '1000';
       setWerks(firstW);
-      const firstS = Object.values(m.mard).find((s) => s.werks === firstW)?.lgort || '0001';
+      const firstS = Object.values(m.mard).find((s) => s.werks === firstW)?.lgort || data.plants[0]?.storageLocations[0]?.lgort || '0001';
       setLgort(firstS);
       const mbew = m.mbew[firstW] || Object.values(m.mbew)[0];
       if (mbew) {
