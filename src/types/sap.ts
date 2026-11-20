@@ -136,8 +136,31 @@ export interface MardStorageData {
   mhdhb: number; // Total shelf life
 }
 
+export type ValuationTypeCode = 'LOCAL' | 'IMPORT' | 'FREE' | 'OLD';
+
+export type ValuationCategoryCode = '' | 'H' | 'C' | 'Z';
+
+export interface ValuationTypeDefinition {
+  bwtar: ValuationTypeCode;
+  label: string;
+  description: string;
+  defaultPriceRule: string;
+}
+
+export interface SplitValuationItem {
+  bwtar: ValuationTypeCode;
+  bklas: string;
+  vprsv: 'V' | 'S';
+  verpr: number;
+  stprs: number;
+  peinh: number;
+  lbkum: number;
+  salk3: number;
+}
+
 export interface MbewValuationData {
   bwkey: string; // Valuation area (= werks)
+  bwtty?: ValuationCategoryCode; // Valuation category for split valuation
   bklas: string;
   vprsv: 'V' | 'S';
   verpr: number; // Moving average price
@@ -146,6 +169,7 @@ export interface MbewValuationData {
   waers: string;
   lbkum: number; // Total valuated stock
   salk3: number; // Total value
+  splitValuations?: Partial<Record<ValuationTypeCode, SplitValuationItem>>;
 }
 
 export interface MvkeSalesData {
@@ -181,6 +205,7 @@ export interface PurchaseRequisition {
   dispo: string;
   preis: number;
   waers: string;
+  bwtar?: ValuationTypeCode;
   status: 'Open' | 'Approved' | 'Converted to PO';
   ebeln?: string;
   createdAt: string;
@@ -201,6 +226,7 @@ export interface PurchaseOrder {
   netpr: number;
   peinh: number;
   waers: string;
+  bwtar?: ValuationTypeCode;
   ekgrp: string;
   eindt: string;
   status: 'Open' | 'Partially Received' | 'Completed';
@@ -227,6 +253,7 @@ export interface MaterialDocument {
   meins: string;
   dmbtr: number;
   waers: string;
+  bwtar?: ValuationTypeCode;
   belnr: string;
   budat: string;
   usnam: string;
@@ -257,4 +284,5 @@ export interface SapBootstrapPayload {
   vendors: VendorDefinition[];
   materialTypes: MaterialTypeDefinition[];
   industrySectors: IndustrySectorDefinition[];
+  valuationTypes: ValuationTypeDefinition[];
 }

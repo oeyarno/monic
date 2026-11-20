@@ -13,6 +13,7 @@ import type {
   MovementTypeCode,
   SapBootstrapPayload,
   StandardFieldRule,
+  ValuationTypeCode,
 } from './types/sap.ts';
 
 const ROUTE_BREADCRUMBS: Record<ActiveRoute, { section: string; title: string }> = {
@@ -156,6 +157,7 @@ export default function App() {
     matnr: string;
     werks: string;
     lgort: string;
+    bwtar?: ValuationTypeCode;
     menge: number;
     lfdat: string;
   }) => {
@@ -172,7 +174,7 @@ export default function App() {
 
   const handleConvertPrToPo = async (
     banfn: string,
-    payload: { lifnr: string; netpr: number; eindt: string }
+    payload: { lifnr: string; netpr: number; eindt: string; bwtar?: ValuationTypeCode }
   ) => {
     const res = await fetch(`/api/mm/prs/${banfn}/convert`, {
       method: 'POST',
@@ -190,6 +192,7 @@ export default function App() {
     matnr: string;
     werks: string;
     lgort: string;
+    bwtar?: ValuationTypeCode;
     menge: number;
     netpr: number;
     eindt: string;
@@ -211,6 +214,7 @@ export default function App() {
     werks: string;
     lgort: string;
     targetLgort?: string;
+    bwtar?: ValuationTypeCode;
     ebeln?: string;
     kostl?: string;
     menge: number;
