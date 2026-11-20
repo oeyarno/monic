@@ -3,18 +3,26 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { createInitialDatabase, INITIAL_MATERIALS, INITIAL_STANDARD_FIELD_RULES, VALUATION_TYPES } from './server/seedData.ts';
+import {
+  CORE_BUSINESS_OPTIONS, createInitialMultiTenantDatabase, createTenantTemplateWorkspace,
+  INDUSTRY_SECTORS, MATERIAL_TYPES, VALUATION_TYPES,
+} from './server/seedData.ts';
 import type {
   ChangeDocument,
   CustomIndustryField,
   MaterialDocument,
   MaterialMasterRecord,
   MovementTypeCode,
+  MultiTenantDatabase,
   PurchaseOrder,
   PurchaseRequisition,
   SapBootstrapPayload,
   SplitValuationItem,
   StandardFieldRule,
+  TenantCompany,
+  TenantCoreBusinessType,
+  TenantSummary,
+  TenantWorkspaceData,
   ValuationTypeCode,
 } from './src/types/sap.ts';
 
@@ -23,62 +31,74 @@ const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'sap-store.json');
 
-function loadDatabase(): SapBootstrapPayload {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(DB_FILE)) {
-    const initial = createInitialDatabase();
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
-    return initial;
-  }
-  try {
-    const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    const parsed = JSON.parse(raw) as SapBootstrapPayload;
-    let mutated = false;
-    if (!parsed.valuationTypes) {
-      parsed.valuationTypes = structuredClone(VALUATION_TYPES);
-      mutated = true;
-    }
-    if (!parsed.standardFieldRules.some((r) => r.fieldKey === 'bwtty')) {
-      const bwttyRule = INITIAL_STANDARD_FIELD_RULES.find((r) => r.fieldKey === 'bwtty');
-      if (bwttyRule) {
-        parsed.standardFieldRules.push(structuredClone(bwttyRule));
-        mutated = true;
-      }
-    }
-    // Hydrate splitValuations on initial materials if upgrading from earlier schema
-    for (const mat of parsed.materials) {
-      const seedMatch = INITIAL_MATERIALS.find((s) => s.mara.matnr === mat.mara.matnr);
-      if (seedMatch) {
-        for (const [bwkey, seedMbew] of Object.entries(seedMatch.mbew)) {
-          const currMbew = mat.mbew[bwkey];
-          if (currMbew && currMbew.bwtty === undefined && seedMbew.bwtty) {
-            currMbew.bwtty = seedMbew.bwtty;
-            currMbew.splitValuations = structuredClone(seedMbew.splitValuations);
-            mutated = true;
-          }
-        }
-      }
-    }
-    if (mutated) {
-      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
-    }
-    return parsed;
-  } catch {
-    const initial = createInitialDatabase();
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
-    return initial;
-  }
+type TenantDatabaseContext = { database: MultiTenantDatabase; tenantId: string };
+const databaseContexts = new WeakMap<object, TenantDatabaseContext>();
+function saveMultiTenantDatabase(db: MultiTenantDatabase): void {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  const tempFile = `${DB_FILE}.tmp`;
+  fs.writeFileSync(tempFile, JSON.stringify(db, null, 2), 'utf-8');
+  fs.renameSync(tempFile, DB_FILE);
 }
-
-function saveDatabase(db: SapBootstrapPayload): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+function loadMultiTenantDatabase(): MultiTenantDatabase {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(DB_FILE)) { const initial = createInitialMultiTenantDatabase(); saveMultiTenantDatabase(initial); return initial; }
+  let parsed: any;
+  try { parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8')); }
+  catch { throw new Error('Database MONIC tidak dapat dibaca. Data tidak diubah; perlu pemulihan manual.'); }
+  if (parsed && parsed.schemaVersion >= 2 && Array.isArray(parsed.tenantCompanies) && parsed.workspaces && typeof parsed.workspaces === 'object') return parsed as MultiTenantDatabase;
+  if (parsed && Array.isArray(parsed.materials)) {
+    const migrated = createInitialMultiTenantDatabase(), firstTenant = migrated.tenantCompanies[0];
+    const legacy = parsed as Partial<TenantWorkspaceData>;
+    migrated.workspaces[firstTenant.tenantId] = {
+      materials: legacy.materials || [], purchaseRequisitions: legacy.purchaseRequisitions || [],
+      purchaseOrders: legacy.purchaseOrders || [], materialDocuments: legacy.materialDocuments || [],
+      customIndustryFields: legacy.customIndustryFields || [], standardFieldRules: legacy.standardFieldRules || [],
+      changeDocuments: legacy.changeDocuments || [], plants: legacy.plants || [], vendors: legacy.vendors || [],
+    };
+    migrated.activeTenantId = firstTenant.tenantId;
+    // Preserve the original single-tenant database before the first schema migration.
+    // If the backup cannot be created, abort migration and leave the source file untouched.
+    const backupFile = `${DB_FILE}.pre-multitenant-${new Date().toISOString().replace(/[:.]/g, '-')}.bak`;
+    fs.copyFileSync(DB_FILE, backupFile, fs.constants.COPYFILE_EXCL);
+    saveMultiTenantDatabase(migrated);
+    return migrated;
   }
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+  throw new Error('Format database MONIC tidak dikenal. Data lama tidak ditimpa.');
 }
-
+function resolveTenantId(db: MultiTenantDatabase, req: express.Request): string {
+  const requested = (typeof req.query.tenantId === 'string' && req.query.tenantId.trim()) || req.header('x-tenant-id')?.trim() || db.activeTenantId;
+  const company = db.tenantCompanies.find((tenant) => tenant.tenantId === requested) || db.tenantCompanies[0];
+  if (!company) throw new Error('Belum ada tenant yang terdaftar.');
+  return company.tenantId;
+}
+function buildTenantSummaries(db: MultiTenantDatabase): TenantSummary[] {
+  return db.tenantCompanies.map((company) => {
+    const workspace = db.workspaces[company.tenantId];
+    const totalInventoryValue = (workspace?.materials || []).reduce((sum, material) => sum + Object.values(material.mbew).reduce((acc, item) => acc + item.salk3, 0), 0);
+    return { ...company, materialCount: workspace?.materials.length || 0, plantCount: workspace?.plants.length || 0,
+      totalInventoryValue, openPrCount: workspace?.purchaseRequisitions.filter((pr) => pr.status !== 'Converted to PO').length || 0,
+      openPoCount: workspace?.purchaseOrders.filter((po) => po.status !== 'Completed').length || 0 };
+  });
+}
+function buildBootstrapPayload(db: MultiTenantDatabase, tenantId: string): SapBootstrapPayload {
+  const company = db.tenantCompanies.find((tenant) => tenant.tenantId === tenantId) || db.tenantCompanies[0];
+  return { ...db.workspaces[company.tenantId], activeTenant: company, tenants: buildTenantSummaries(db),
+    materialTypes: MATERIAL_TYPES, industrySectors: INDUSTRY_SECTORS, valuationTypes: VALUATION_TYPES };
+}
+function loadDatabase(req: express.Request): SapBootstrapPayload {
+  const database = loadMultiTenantDatabase(), tenantId = resolveTenantId(database, req);
+  const payload = buildBootstrapPayload(database, tenantId); databaseContexts.set(payload, { database, tenantId }); return payload;
+}
+function saveDatabase(payload: SapBootstrapPayload): void {
+  const context = databaseContexts.get(payload);
+  if (!context) throw new Error('Konteks tenant tidak ditemukan saat menyimpan data.');
+  const workspace = context.database.workspaces[context.tenantId];
+  workspace.materials = payload.materials; workspace.purchaseRequisitions = payload.purchaseRequisitions;
+  workspace.purchaseOrders = payload.purchaseOrders; workspace.materialDocuments = payload.materialDocuments;
+  workspace.customIndustryFields = payload.customIndustryFields; workspace.standardFieldRules = payload.standardFieldRules;
+  workspace.changeDocuments = payload.changeDocuments; workspace.plants = payload.plants; workspace.vendors = payload.vendors;
+  saveMultiTenantDatabase(context.database);
+}
 function nextSequence(prefix: string, existing: string[], padLength: number): string {
   let maxNum = 0;
   for (const code of existing) {
@@ -174,9 +194,40 @@ async function startServer() {
   app.use(express.json({ limit: '4mb' }));
 
   // Bootstrap endpoint
-  app.get('/api/bootstrap', (_req, res) => {
-    const db = loadDatabase();
+  app.get('/api/bootstrap', (req, res) => {
+    const db = loadDatabase(req);
     res.json(db);
+  });
+
+
+  app.post('/api/tenants', (req, res) => {
+    const database = loadMultiTenantDatabase();
+    const body = req.body as { bukrs?: string; name?: string; coreBusinessType?: TenantCoreBusinessType; city?: string };
+    const bukrs = (body.bukrs || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    const name = (body.name || '').trim();
+    if (bukrs.length < 2) return res.status(400).json({ error: 'Company Code (BUKRS) minimal 2 karakter alfanumerik.' });
+    if (!name) return res.status(400).json({ error: 'Nama perusahaan wajib diisi.' });
+    if (database.tenantCompanies.some((tenant) => tenant.bukrs === bukrs)) return res.status(409).json({ error: `Company Code ${bukrs} sudah digunakan oleh tenant lain.` });
+    const coreMeta = CORE_BUSINESS_OPTIONS.find((option) => option.value === body.coreBusinessType) || CORE_BUSINESS_OPTIONS[0];
+    if (!coreMeta) return res.status(500).json({ error: 'Konfigurasi core business belum tersedia.' });
+    const tenantId = `tenant-${bukrs.toLowerCase()}-${Date.now().toString(36)}`;
+    const company: TenantCompany = { tenantId, bukrs, clientNumber: String((database.tenantCompanies.length + 1) * 100),
+      name, shortName: name.replace(/^PT\s+/i, '').split(' ').slice(0, 2).join(' ') || name,
+      coreBusiness: coreMeta.label, coreBusinessType: coreMeta.value, city: (body.city || 'Jakarta').trim(),
+      defaultIndustry: coreMeta.defaultIndustry, description: coreMeta.summary };
+    database.tenantCompanies.push(company);
+    database.workspaces[tenantId] = createTenantTemplateWorkspace(company, coreMeta.value);
+    database.activeTenantId = tenantId; saveMultiTenantDatabase(database);
+    return res.status(201).json(buildBootstrapPayload(database, tenantId));
+  });
+  app.delete('/api/tenants/:tenantId', (req, res) => {
+    const database = loadMultiTenantDatabase(), tenantId = req.params.tenantId;
+    if (database.tenantCompanies.length <= 1) return res.status(400).json({ error: 'Minimal harus ada 1 perusahaan tenant aktif di sistem.' });
+    const index = database.tenantCompanies.findIndex((tenant) => tenant.tenantId === tenantId);
+    if (index < 0) return res.status(404).json({ error: 'Tenant tidak ditemukan.' });
+    database.tenantCompanies.splice(index, 1); delete database.workspaces[tenantId];
+    if (database.activeTenantId === tenantId) database.activeTenantId = database.tenantCompanies[0].tenantId;
+    saveMultiTenantDatabase(database); return res.json(buildBootstrapPayload(database, database.activeTenantId));
   });
 
   // Public reset is disabled to prevent anyone from erasing shared application data.
@@ -186,7 +237,7 @@ async function startServer() {
 
   // MM01 - Create Material Master
   app.post('/api/materials', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { material, activeWerks = '1000', username = 'SAP_USER' } = req.body as {
       material: MaterialMasterRecord;
       activeWerks?: string;
@@ -229,7 +280,7 @@ async function startServer() {
 
   // MM02 - Update Material Master
   app.put('/api/materials/:matnr', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { matnr } = req.params;
     const { material, activeWerks = '1000', username = 'SAP_USER' } = req.body as {
       material: MaterialMasterRecord;
@@ -319,7 +370,7 @@ async function startServer() {
 
   // Delete / Archive Material
   app.delete('/api/materials/:matnr', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { matnr } = req.params;
     const idx = db.materials.findIndex((m) => m.mara.matnr === matnr);
     if (idx === -1) {
@@ -358,7 +409,7 @@ async function startServer() {
 
   // ME51N - Create Purchase Requisition
   app.post('/api/mm/prs', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { matnr, werks, lgort, menge, lfdat, bwtar, username = 'MRP_PLANNER' } = req.body as {
       matnr: string;
       werks: string;
@@ -436,7 +487,7 @@ async function startServer() {
 
   // Convert PR to PO
   app.post('/api/mm/prs/:banfn/convert', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { banfn } = req.params;
     const { lifnr, netpr, eindt, bwtar, username = 'BUYER_MM' } = req.body as {
       lifnr: string;
@@ -504,7 +555,7 @@ async function startServer() {
 
   // ME21N - Create Purchase Order directly
   app.post('/api/mm/pos', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { lifnr, matnr, werks, lgort, menge, netpr, eindt, bwtar, username = 'BUYER_MM' } = req.body as {
       lifnr: string;
       matnr: string;
@@ -579,7 +630,7 @@ async function startServer() {
 
   // MIGO - Goods Movement (101 GR, 201 GI, 311 Transfer, 561 Initial)
   app.post('/api/mm/migo', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const {
       bwart,
       matnr,
@@ -873,7 +924,7 @@ async function startServer() {
 
   // OMS9 - Update Standard Field Rules
   app.put('/api/customizing/standard-rules', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { rules, username = 'BASIS_ADMIN' } = req.body as {
       rules: StandardFieldRule[];
       username?: string;
@@ -897,7 +948,7 @@ async function startServer() {
 
   // Add Custom Industry Append Field (CI_MARA)
   app.post('/api/customizing/industry-fields', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { field, username = 'BASIS_ADMIN' } = req.body as {
       field: CustomIndustryField;
       username?: string;
@@ -938,7 +989,7 @@ async function startServer() {
 
   // Update Custom Industry Append Field
   app.put('/api/customizing/industry-fields/:id', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { id } = req.params;
     const { field, username = 'BASIS_ADMIN' } = req.body as {
       field: CustomIndustryField;
@@ -968,7 +1019,7 @@ async function startServer() {
 
   // Delete Custom Industry Append Field
   app.delete('/api/customizing/industry-fields/:id', (req, res) => {
-    const db = loadDatabase();
+    const db = loadDatabase(req);
     const { id } = req.params;
     const idx = db.customIndustryFields.findIndex((f) => f.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Custom field tidak ditemukan.' });
