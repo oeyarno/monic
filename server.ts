@@ -849,25 +849,43 @@ async function startServer() {
     return res.json({ db });
   });
 
+ 
   // Vite dev middleware or static production build
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
+
     app.use(vite.middlewares);
   } else {
     const distPath = path.resolve(__dirname, 'dist');
+
     app.use(express.static(distPath));
-    app.get('*', (_req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
-});
 
-const PORT = Number(process.env.PORT) || 3000;
+    // Return 404 for unknown API endpoints
+    app.use('/api', (_req, res) => {
+      res.status(404).json({
+        success: false,
+        message: 'API endpoint not found',
+      });
+    });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`MONIC server running on port ${PORT}`);
-});
+    // React SPA fallback (Express 4 compatible)
+    app.get('*', (_req, res, next) => {
+      res.sendFile(path.join(distPath, 'index.html'), (error) => {
+        if (error) next(error);
+      });
+    });
+  }
+
+  const PORT = Number(process.env.PORT) || 3000;
+
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`MONIC server running on port ${PORT}`);
+  });
 }
+
+startServer();
 
 startServer();
