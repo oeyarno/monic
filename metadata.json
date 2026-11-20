@@ -1,6 +1,0 @@
-{
-  "name": "SAP S/4HANA Material Master & MM",
-  "description": "Modul Material Master identik SAP S/4HANA terintegrasi dengan modul Materials Management (MM) dan kustomisasi field spesifik industri (OMS9 / CI_MARA).",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

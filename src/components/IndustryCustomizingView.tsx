@@ -41,7 +41,7 @@ export function IndustryCustomizingView({
   onDeleteCustomField,
 }: IndustryCustomizingViewProps) {
   const [selectedIndustry, setSelectedIndustry] = useState<IndustrySectorCode>(
-    initialIndustry || 'C'
+    initialIndustry || data.activeTenant?.defaultIndustry || 'C'
   );
   const [activeSubTab, setActiveSubTab] = useState<'oms9' | 'append'>('oms9');
   const [rulesDraft, setRulesDraft] = useState<StandardFieldRule[]>(() =>
@@ -63,10 +63,9 @@ export function IndustryCustomizingView({
   }, [data.standardFieldRules]);
 
   useEffect(() => {
-    if (initialIndustry) {
-      setSelectedIndustry(initialIndustry);
-    }
-  }, [initialIndustry]);
+    setSelectedIndustry(initialIndustry || data.activeTenant?.defaultIndustry || 'M');
+    setFeedback(null);
+  }, [initialIndustry, data.activeTenant.tenantId]);
 
   const industryDef = data.industrySectors.find((i) => i.mbrsh === selectedIndustry);
   const industryFields = data.customIndustryFields.filter(
