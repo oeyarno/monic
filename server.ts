@@ -179,11 +179,9 @@ async function startServer() {
     res.json(db);
   });
 
-  // Reset seed data
+  // Public reset is disabled to prevent anyone from erasing shared application data.
   app.post('/api/reset', (_req, res) => {
-    const fresh = createInitialDatabase();
-    saveDatabase(fresh);
-    res.json(fresh);
+    res.status(404).json({ error: 'Not found' });
   });
 
   // MM01 - Create Material Master
@@ -999,18 +997,33 @@ async function startServer() {
       server: { middlewareMode: true },
       appType: 'spa',
     });
+
     app.use(vite.middlewares);
   } else {
     const distPath = path.resolve(__dirname, 'dist');
+
     app.use(express.static(distPath));
-    app.get('/{*splat}', (_req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+
+    // Return 404 for unknown API endpoints
+    app.use('/api', (_req, res) => {
+      res.status(404).json({
+        success: false,
+        message: 'API endpoint not found',
+      });
+    });
+
+    // React SPA fallback (Express 4 compatible)
+    app.get('*', (_req, res, next) => {
+      res.sendFile(path.join(distPath, 'index.html'), (error) => {
+        if (error) next(error);
+      });
     });
   }
 
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
+
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`SAP S/4HANA Material Master & MM server running on http://0.0.0.0:${PORT}`);
+    console.log(`MONIC server running on port ${PORT}`);
   });
 }
 
