@@ -144,11 +144,9 @@ async function startServer() {
     res.json(db);
   });
 
-  // Reset seed data
+  // Public reset is disabled to prevent anyone from erasing shared application data.
   app.post('/api/reset', (_req, res) => {
-    const fresh = createInitialDatabase();
-    saveDatabase(fresh);
-    res.json(fresh);
+    res.status(404).json({ error: 'Not found' });
   });
 
   // MM01 - Create Material Master
