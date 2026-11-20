@@ -6,7 +6,6 @@ import {
   History,
   Layers,
   PackagePlus,
-  RotateCcw,
   Search,
   ShoppingCart,
   Sliders,
@@ -28,7 +27,6 @@ interface SidebarProps {
   activeRoute: ActiveRoute;
   onNavigate: (route: ActiveRoute) => void;
   onTcodeJump: (tcode: string) => void;
-  onResetDemo: () => void;
   counts: {
     materials: number;
     openPrs: number;
@@ -52,7 +50,6 @@ export function Sidebar({
   activeRoute,
   onNavigate,
   onTcodeJump,
-  onResetDemo,
   counts,
 }: SidebarProps) {
   const [tcodeInput, setTcodeInput] = useState('');
@@ -167,16 +164,6 @@ export function Sidebar({
         ))}
       </nav>
 
-      <div className="p-3 border-t border-slate-200">
-        <button
-          type="button"
-          onClick={onResetDemo}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors whitespace-nowrap"
-        >
-          <RotateCcw className="w-3.5 h-3.5 shrink-0" />
-          <span>Reset Data Standar SAP</span>
-        </button>
-      </div>
     </aside>
   );
 }

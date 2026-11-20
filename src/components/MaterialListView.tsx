@@ -13,6 +13,7 @@ import type {
   MaterialMasterRecord,
   MaterialTypeCode,
   SapBootstrapPayload,
+  ValuationTypeCode,
 } from '../types/sap.ts';
 import { formatCurrency, formatNumber, getMaterialStatusLabel } from '../utils/format.ts';
 
@@ -96,6 +97,20 @@ export function MaterialListView({
     const waers = primaryMbew?.waers || 'IDR';
     const isBelowRop = minReorder > 0 && stockTotal < minReorder;
     const primaryPlant = plants[0] || Object.keys(mat.marc)[0] || '1000';
+    const bwtty = primaryMbew?.bwtty || '';
+    const splitTypes: ValuationTypeCode[] = [];
+    const relevantMbew = Object.values(mat.mbew).filter(
+      (v) => selectedPlant === 'ALL' || v.bwkey === selectedPlant
+    );
+    for (const v of relevantMbew) {
+      if (v.bwtty && v.splitValuations) {
+        for (const key of Object.keys(v.splitValuations) as ValuationTypeCode[]) {
+          if (v.splitValuations[key] && !splitTypes.includes(key)) {
+            splitTypes.push(key);
+          }
+        }
+      }
+    }
 
     return {
       plants,
@@ -108,6 +123,8 @@ export function MaterialListView({
       waers,
       isBelowRop,
       primaryPlant,
+      bwtty,
+      splitTypes,
     };
   };
 
@@ -331,6 +348,11 @@ export function MaterialListView({
                         <div className="text-[11px] text-slate-500 mt-0.5">
                           BKLAS {summary.bklas} · {summary.priceCtrl === 'V' ? 'MAP (V)' : 'Std (S)'}
                         </div>
+                        {summary.bwtty && summary.splitTypes.length > 0 && (
+                          <div className="text-[11px] text-[#0064D9] mt-0.5">
+                            Split ({summary.bwtty}): {summary.splitTypes.join('/')}
+                          </div>
+                        )}
                       </td>
 
                       <td className="py-3 px-4 align-top text-right whitespace-nowrap font-mono tabular-nums">

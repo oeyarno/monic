@@ -13,6 +13,7 @@ import type {
   MovementTypeCode,
   SapBootstrapPayload,
   StandardFieldRule,
+  ValuationTypeCode,
 } from './types/sap.ts';
 
 const ROUTE_BREADCRUMBS: Record<ActiveRoute, { section: string; title: string }> = {
@@ -156,6 +157,7 @@ export default function App() {
     matnr: string;
     werks: string;
     lgort: string;
+    bwtar?: ValuationTypeCode;
     menge: number;
     lfdat: string;
   }) => {
@@ -172,7 +174,7 @@ export default function App() {
 
   const handleConvertPrToPo = async (
     banfn: string,
-    payload: { lifnr: string; netpr: number; eindt: string }
+    payload: { lifnr: string; netpr: number; eindt: string; bwtar?: ValuationTypeCode }
   ) => {
     const res = await fetch(`/api/mm/prs/${banfn}/convert`, {
       method: 'POST',
@@ -190,6 +192,7 @@ export default function App() {
     matnr: string;
     werks: string;
     lgort: string;
+    bwtar?: ValuationTypeCode;
     menge: number;
     netpr: number;
     eindt: string;
@@ -211,6 +214,7 @@ export default function App() {
     werks: string;
     lgort: string;
     targetLgort?: string;
+    bwtar?: ValuationTypeCode;
     ebeln?: string;
     kostl?: string;
     menge: number;
@@ -273,17 +277,6 @@ export default function App() {
     return { ok: true };
   };
 
-  const handleResetDemo = async () => {
-    const res = await fetch('/api/reset', { method: 'POST' });
-    if (res.ok) {
-      const fresh = (await res.json()) as SapBootstrapPayload;
-      setData(fresh);
-      setSelectedMatnr(fresh.materials[0]?.mara.matnr);
-      setActiveRoute('mm60');
-      showToast('Data Material Master, MM, dan OMS9 dikembalikan ke dataset standar.');
-    }
-  };
-
   const breadcrumb = ROUTE_BREADCRUMBS[activeRoute];
 
   return (
@@ -292,7 +285,6 @@ export default function App() {
         activeRoute={activeRoute}
         onNavigate={handleNavigate}
         onTcodeJump={handleTcodeJump}
-        onResetDemo={handleResetDemo}
         counts={{
           materials: data?.materials.length || 0,
           openPrs: data?.purchaseRequisitions.filter((p) => p.status !== 'Converted to PO').length || 0,

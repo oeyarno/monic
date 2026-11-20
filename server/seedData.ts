@@ -10,8 +10,36 @@ import type {
   PurchaseRequisition,
   SapBootstrapPayload,
   StandardFieldRule,
+  ValuationTypeDefinition,
   VendorDefinition,
 } from '../src/types/sap.ts';
+
+export const VALUATION_TYPES: ValuationTypeDefinition[] = [
+  {
+    bwtar: 'LOCAL',
+    label: 'Local Procurement',
+    description: 'Material yang diperoleh dari vendor domestik dalam negeri.',
+    defaultPriceRule: 'Harga beli lokal + ongkos kirim domestik',
+  },
+  {
+    bwtar: 'IMPORT',
+    label: 'Import Procurement',
+    description: 'Material impor dari luar negeri termasuk bea masuk & freight.',
+    defaultPriceRule: 'Harga CIF/FOB + Bea Masuk & Landing Cost',
+  },
+  {
+    bwtar: 'FREE',
+    label: 'Free of Charge (Gratis)',
+    description: 'Barang bonus vendor, sampel, atau hibah tanpa nilai perolehan.',
+    defaultPriceRule: 'Nilai perolehan 0 (Free Goods)',
+  },
+  {
+    bwtar: 'OLD',
+    label: 'Old / Reconditioned Stock',
+    description: 'Stok lama, barang rekondisi, atau material sisa proyek terdahulu.',
+    defaultPriceRule: 'Nilai buku terdepresiasi / harga rekondisi',
+  },
+];
 
 export const PLANTS: PlantDefinition[] = [
   {
@@ -233,6 +261,14 @@ export const INITIAL_STANDARD_FIELD_RULES: StandardFieldRule[] = [
     viewKey: 'storage',
     label: 'Serial Number Profile',
     rulesByIndustry: { M: 'optional', C: 'hide', P: 'hide', F: 'hide', R: 'optional', O: 'optional' },
+  },
+  {
+    fieldKey: 'bwtty',
+    technicalName: 'MBEW-BWTTY',
+    tableName: 'MBEW',
+    viewKey: 'accounting',
+    label: 'Valuation Category (Split Valuation)',
+    rulesByIndustry: { M: 'optional', C: 'optional', P: 'optional', F: 'optional', R: 'optional', O: 'optional' },
   },
 ];
 
@@ -514,17 +550,61 @@ export const INITIAL_MATERIALS: MaterialMasterRecord[] = [
     mbew: {
       '1000': {
         bwkey: '1000',
+        bwtty: 'Z',
         bklas: '3000',
         vprsv: 'V',
-        verpr: 14500,
+        verpr: 13496,
         stprs: 14500,
         peinh: 1,
         waers: 'IDR',
         lbkum: 3450,
-        salk3: 50025000,
+        salk3: 46560000,
+        splitValuations: {
+          LOCAL: {
+            bwtar: 'LOCAL',
+            bklas: '3000',
+            vprsv: 'V',
+            verpr: 13800,
+            stprs: 13800,
+            peinh: 1,
+            lbkum: 2200,
+            salk3: 30360000,
+          },
+          IMPORT: {
+            bwtar: 'IMPORT',
+            bklas: '3000',
+            vprsv: 'V',
+            verpr: 16200,
+            stprs: 16200,
+            peinh: 1,
+            lbkum: 1000,
+            salk3: 16200000,
+          },
+          FREE: {
+            bwtar: 'FREE',
+            bklas: '3000',
+            vprsv: 'V',
+            verpr: 0,
+            stprs: 0,
+            peinh: 1,
+            lbkum: 250,
+            salk3: 0,
+          },
+          OLD: {
+            bwtar: 'OLD',
+            bklas: '3000',
+            vprsv: 'V',
+            verpr: 11000,
+            stprs: 11000,
+            peinh: 1,
+            lbkum: 0,
+            salk3: 0,
+          },
+        },
       },
       '2000': {
         bwkey: '2000',
+        bwtty: '',
         bklas: '3000',
         vprsv: 'V',
         verpr: 14800,
@@ -723,14 +803,37 @@ export const INITIAL_MATERIALS: MaterialMasterRecord[] = [
     mbew: {
       '2000': {
         bwkey: '2000',
+        bwtty: 'Z',
         bklas: '7900',
         vprsv: 'S',
-        verpr: 428000,
+        verpr: 400000,
         stprs: 425000,
         peinh: 1,
         waers: 'IDR',
         lbkum: 150,
-        salk3: 63750000,
+        salk3: 60000000,
+        splitValuations: {
+          LOCAL: {
+            bwtar: 'LOCAL',
+            bklas: '7900',
+            vprsv: 'S',
+            verpr: 425000,
+            stprs: 425000,
+            peinh: 1,
+            lbkum: 120,
+            salk3: 51000000,
+          },
+          OLD: {
+            bwtar: 'OLD',
+            bklas: '7900',
+            vprsv: 'V',
+            verpr: 300000,
+            stprs: 300000,
+            peinh: 1,
+            lbkum: 30,
+            salk3: 9000000,
+          },
+        },
       },
     },
     mvke: {
@@ -997,6 +1100,7 @@ export const INITIAL_MATERIALS: MaterialMasterRecord[] = [
     mbew: {
       '3000': {
         bwkey: '3000',
+        bwtty: 'Z',
         bklas: '3040',
         vprsv: 'V',
         verpr: 82000,
@@ -1005,6 +1109,48 @@ export const INITIAL_MATERIALS: MaterialMasterRecord[] = [
         waers: 'IDR',
         lbkum: 418,
         salk3: 34276000,
+        splitValuations: {
+          LOCAL: {
+            bwtar: 'LOCAL',
+            bklas: '3040',
+            vprsv: 'V',
+            verpr: 78000,
+            stprs: 78000,
+            peinh: 1,
+            lbkum: 209,
+            salk3: 16302000,
+          },
+          IMPORT: {
+            bwtar: 'IMPORT',
+            bklas: '3040',
+            vprsv: 'V',
+            verpr: 86000,
+            stprs: 86000,
+            peinh: 1,
+            lbkum: 209,
+            salk3: 17974000,
+          },
+          FREE: {
+            bwtar: 'FREE',
+            bklas: '3040',
+            vprsv: 'V',
+            verpr: 0,
+            stprs: 0,
+            peinh: 1,
+            lbkum: 0,
+            salk3: 0,
+          },
+          OLD: {
+            bwtar: 'OLD',
+            bklas: '3040',
+            vprsv: 'V',
+            verpr: 52000,
+            stprs: 52000,
+            peinh: 1,
+            lbkum: 0,
+            salk3: 0,
+          },
+        },
       },
     },
     mvke: {
@@ -1076,6 +1222,7 @@ export const INITIAL_PURCHASE_ORDERS: PurchaseOrder[] = [
     netpr: 15200,
     peinh: 1,
     waers: 'IDR',
+    bwtar: 'IMPORT',
     ekgrp: 'P02',
     eindt: '2026-11-22',
     status: 'Open',
@@ -1096,6 +1243,7 @@ export const INITIAL_PURCHASE_ORDERS: PurchaseOrder[] = [
     netpr: 84500,
     peinh: 1,
     waers: 'IDR',
+    bwtar: 'IMPORT',
     ekgrp: 'P06',
     eindt: '2026-11-21',
     status: 'Partially Received',
@@ -1119,6 +1267,7 @@ export const INITIAL_MATERIAL_DOCUMENTS: MaterialDocument[] = [
     meins: 'L',
     dmbtr: 17660500,
     waers: 'IDR',
+    bwtar: 'IMPORT',
     belnr: '4900051102',
     budat: '2026-11-16',
     usnam: 'H.GUNAWAN',
@@ -1193,5 +1342,6 @@ export function createInitialDatabase(): SapBootstrapPayload {
     vendors: structuredClone(VENDORS),
     materialTypes: structuredClone(MATERIAL_TYPES),
     industrySectors: structuredClone(INDUSTRY_SECTORS),
+    valuationTypes: structuredClone(VALUATION_TYPES),
   };
 }

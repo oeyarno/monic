@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { createInitialDatabase } from './server/seedData.ts';
+import { createInitialDatabase, INITIAL_MATERIALS, INITIAL_STANDARD_FIELD_RULES, VALUATION_TYPES } from './server/seedData.ts';
 import type {
   ChangeDocument,
   CustomIndustryField,
@@ -13,7 +13,9 @@ import type {
   PurchaseOrder,
   PurchaseRequisition,
   SapBootstrapPayload,
+  SplitValuationItem,
   StandardFieldRule,
+  ValuationTypeCode,
 } from './src/types/sap.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,7 +34,37 @@ function loadDatabase(): SapBootstrapPayload {
   }
   try {
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    return JSON.parse(raw) as SapBootstrapPayload;
+    const parsed = JSON.parse(raw) as SapBootstrapPayload;
+    let mutated = false;
+    if (!parsed.valuationTypes) {
+      parsed.valuationTypes = structuredClone(VALUATION_TYPES);
+      mutated = true;
+    }
+    if (!parsed.standardFieldRules.some((r) => r.fieldKey === 'bwtty')) {
+      const bwttyRule = INITIAL_STANDARD_FIELD_RULES.find((r) => r.fieldKey === 'bwtty');
+      if (bwttyRule) {
+        parsed.standardFieldRules.push(structuredClone(bwttyRule));
+        mutated = true;
+      }
+    }
+    // Hydrate splitValuations on initial materials if upgrading from earlier schema
+    for (const mat of parsed.materials) {
+      const seedMatch = INITIAL_MATERIALS.find((s) => s.mara.matnr === mat.mara.matnr);
+      if (seedMatch) {
+        for (const [bwkey, seedMbew] of Object.entries(seedMatch.mbew)) {
+          const currMbew = mat.mbew[bwkey];
+          if (currMbew && currMbew.bwtty === undefined && seedMbew.bwtty) {
+            currMbew.bwtty = seedMbew.bwtty;
+            currMbew.splitValuations = structuredClone(seedMbew.splitValuations);
+            mutated = true;
+          }
+        }
+      }
+    }
+    if (mutated) {
+      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
+    }
+    return parsed;
   } catch {
     const initial = createInitialDatabase();
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
@@ -87,6 +119,7 @@ function validateMaterialAgainstOms9(
   const plantData = material.marc[activeWerks];
   const storageKeys = Object.keys(material.mard).filter((k) => k.startsWith(`${activeWerks}-`));
   const firstStorage = storageKeys.length > 0 ? material.mard[storageKeys[0]] : undefined;
+  const mbewData = material.mbew[activeWerks];
 
   for (const rule of db.standardFieldRules) {
     const status = rule.rulesByIndustry[mbrsh];
@@ -99,6 +132,8 @@ function validateMaterialAgainstOms9(
       value = (plantData as unknown as Record<string, unknown>)[rule.fieldKey];
     } else if (rule.tableName === 'MARD' && firstStorage) {
       value = (firstStorage as unknown as Record<string, unknown>)[rule.fieldKey];
+    } else if (rule.tableName === 'MBEW' && mbewData) {
+      value = (mbewData as unknown as Record<string, unknown>)[rule.fieldKey];
     }
 
     if (rule.fieldKey === 'xchpf' || rule.fieldKey === 'kautb') {
@@ -252,6 +287,7 @@ async function startServer() {
     const prevMbew = prev.mbew[activeWerks];
     const nextMbew = material.mbew[activeWerks];
     if (prevMbew && nextMbew) {
+      addDiff('MBEW', `BWTTY [${activeWerks}] (Val. Category)`, prevMbew.bwtty || 'None', nextMbew.bwtty || 'None');
       addDiff('MBEW', `VPRSV [${activeWerks}] (Price Ctrl)`, prevMbew.vprsv, nextMbew.vprsv);
       addDiff('MBEW', `VERPR [${activeWerks}] (MAP)`, prevMbew.verpr, nextMbew.verpr);
       addDiff('MBEW', `STPRS [${activeWerks}] (Std Price)`, prevMbew.stprs, nextMbew.stprs);
@@ -323,12 +359,13 @@ async function startServer() {
   // ME51N - Create Purchase Requisition
   app.post('/api/mm/prs', (req, res) => {
     const db = loadDatabase();
-    const { matnr, werks, lgort, menge, lfdat, username = 'MRP_PLANNER' } = req.body as {
+    const { matnr, werks, lgort, menge, lfdat, bwtar, username = 'MRP_PLANNER' } = req.body as {
       matnr: string;
       werks: string;
       lgort: string;
       menge: number;
       lfdat: string;
+      bwtar?: ValuationTypeCode;
       username?: string;
     };
 
@@ -342,6 +379,20 @@ async function startServer() {
 
     const marc = material.marc[werks] || Object.values(material.marc)[0];
     const mbew = material.mbew[werks] || Object.values(material.mbew)[0];
+    const splitActive = Boolean(mbew?.bwtty);
+    const chosenBwtar = splitActive ? bwtar || 'LOCAL' : undefined;
+    const splitRow = chosenBwtar ? mbew?.splitValuations?.[chosenBwtar] : undefined;
+    const suggestedPreis =
+      chosenBwtar === 'FREE'
+        ? 0
+        : splitRow
+        ? splitRow.vprsv === 'S'
+          ? splitRow.stprs
+          : splitRow.verpr
+        : mbew?.vprsv === 'S'
+        ? mbew.stprs
+        : mbew?.verpr || 10000;
+
     const banfn = nextSequence(
       '001000',
       db.purchaseRequisitions.map((p) => p.banfn),
@@ -359,8 +410,9 @@ async function startServer() {
       lfdat,
       ekgrp: marc?.ekgrp || 'P01',
       dispo: marc?.dispo || 'M01',
-      preis: mbew?.vprsv === 'S' ? mbew.stprs : mbew?.verpr || 10000,
+      preis: suggestedPreis,
       waers: mbew?.waers || 'IDR',
+      bwtar: chosenBwtar,
       status: 'Approved',
       createdAt: new Date().toISOString(),
       createdBy: username,
@@ -374,7 +426,7 @@ async function startServer() {
       tableName: 'EBAN',
       fieldName: 'CREATE_PR (ME51N)',
       oldValue: '-',
-      newValue: `${matnr} · ${menge} ${material.mara.meins} @ Plant ${werks}`,
+      newValue: `${matnr} · ${menge} ${material.mara.meins} @ Plant ${werks}${chosenBwtar ? ` [${chosenBwtar}]` : ''}`,
       username,
       timestamp: new Date().toISOString(),
     });
@@ -386,10 +438,11 @@ async function startServer() {
   app.post('/api/mm/prs/:banfn/convert', (req, res) => {
     const db = loadDatabase();
     const { banfn } = req.params;
-    const { lifnr, netpr, eindt, username = 'BUYER_MM' } = req.body as {
+    const { lifnr, netpr, eindt, bwtar, username = 'BUYER_MM' } = req.body as {
       lifnr: string;
       netpr?: number;
       eindt?: string;
+      bwtar?: ValuationTypeCode;
       username?: string;
     };
 
@@ -422,6 +475,7 @@ async function startServer() {
       netpr: netpr !== undefined ? Number(netpr) : pr.preis,
       peinh: 1,
       waers: pr.waers,
+      bwtar: bwtar || pr.bwtar,
       ekgrp: pr.ekgrp,
       eindt: eindt || pr.lfdat,
       status: 'Open',
@@ -451,7 +505,7 @@ async function startServer() {
   // ME21N - Create Purchase Order directly
   app.post('/api/mm/pos', (req, res) => {
     const db = loadDatabase();
-    const { lifnr, matnr, werks, lgort, menge, netpr, eindt, username = 'BUYER_MM' } = req.body as {
+    const { lifnr, matnr, werks, lgort, menge, netpr, eindt, bwtar, username = 'BUYER_MM' } = req.body as {
       lifnr: string;
       matnr: string;
       werks: string;
@@ -459,6 +513,7 @@ async function startServer() {
       menge: number;
       netpr: number;
       eindt: string;
+      bwtar?: ValuationTypeCode;
       username?: string;
     };
 
@@ -475,6 +530,8 @@ async function startServer() {
 
     const marc = material.marc[werks] || Object.values(material.marc)[0];
     const mbew = material.mbew[werks] || Object.values(material.mbew)[0];
+    const splitActive = Boolean(mbew?.bwtty);
+    const resolvedBwtar = splitActive ? bwtar || 'LOCAL' : undefined;
 
     const ebeln = nextSequence(
       '450000',
@@ -493,9 +550,10 @@ async function startServer() {
       menge: Number(menge),
       receivedQty: 0,
       meins: material.mara.meins,
-      netpr: Number(netpr),
+      netpr: resolvedBwtar === 'FREE' ? 0 : Number(netpr),
       peinh: mbew?.peinh || 1,
       waers: mbew?.waers || 'IDR',
+      bwtar: resolvedBwtar,
       ekgrp: marc?.ekgrp || 'P01',
       eindt,
       status: 'Open',
@@ -511,7 +569,7 @@ async function startServer() {
       tableName: 'EKKO / EKPO',
       fieldName: 'CREATE_PO (ME21N)',
       oldValue: '-',
-      newValue: `${matnr} · ${menge} ${material.mara.meins} @ ${netpr}`,
+      newValue: `${matnr} · ${menge} ${material.mara.meins} @ ${newPo.netpr}${resolvedBwtar ? ` [${resolvedBwtar}]` : ''}`,
       username,
       timestamp: new Date().toISOString(),
     });
@@ -531,6 +589,7 @@ async function startServer() {
       ebeln,
       kostl,
       menge,
+      bwtar,
       bktxt = '',
       username = 'WH_OPERATOR',
     } = req.body as {
@@ -542,6 +601,7 @@ async function startServer() {
       ebeln?: string;
       kostl?: string;
       menge: number;
+      bwtar?: ValuationTypeCode;
       bktxt?: string;
       username?: string;
     };
@@ -590,6 +650,7 @@ async function startServer() {
       const fallbackMbew = Object.values(material.mbew)[0];
       material.mbew[werks] = {
         bwkey: werks,
+        bwtty: fallbackMbew?.bwtty || '',
         bklas: fallbackMbew?.bklas || '3000',
         vprsv: fallbackMbew?.vprsv || 'V',
         verpr: fallbackMbew?.verpr || 10000,
@@ -602,6 +663,38 @@ async function startServer() {
     }
 
     const mbew = material.mbew[werks];
+    const isSplitActive = Boolean(mbew.bwtty);
+    let activeBwtar: ValuationTypeCode | undefined = undefined;
+
+    const ensureSplitRow = (vt: ValuationTypeCode): SplitValuationItem => {
+      if (!mbew.splitValuations) mbew.splitValuations = {};
+      if (!mbew.splitValuations[vt]) {
+        mbew.splitValuations[vt] = {
+          bwtar: vt,
+          bklas: mbew.bklas,
+          vprsv: mbew.vprsv,
+          verpr: vt === 'FREE' ? 0 : mbew.verpr,
+          stprs: vt === 'FREE' ? 0 : mbew.stprs,
+          peinh: mbew.peinh,
+          lbkum: 0,
+          salk3: 0,
+        };
+      }
+      return mbew.splitValuations[vt]!;
+    };
+
+    const recomputeHeaderFromSplits = () => {
+      if (!mbew.splitValuations) return;
+      const items = Object.values(mbew.splitValuations).filter((x): x is SplitValuationItem => Boolean(x));
+      const totalQty = items.reduce((s, x) => s + x.lbkum, 0);
+      const totalVal = items.reduce((s, x) => s + x.salk3, 0);
+      mbew.lbkum = totalQty;
+      mbew.salk3 = totalVal;
+      if (totalQty > 0) {
+        mbew.verpr = Math.round((totalVal / totalQty) * mbew.peinh);
+      }
+    };
+
     let unitPrice = mbew.vprsv === 'V' ? mbew.verpr : mbew.stprs;
     let dmbtr = 0;
     let bwartDesc = '';
@@ -619,23 +712,45 @@ async function startServer() {
         });
       }
 
-      unitPrice = po.netpr / (po.peinh || 1);
+      if (isSplitActive) {
+        activeBwtar = bwtar || po.bwtar || 'LOCAL';
+      }
+
+      unitPrice = activeBwtar === 'FREE' ? 0 : po.netpr / (po.peinh || 1);
       dmbtr = Math.round(qty * unitPrice);
 
       const mard = ensureMard(werks, lgort);
       mard.labst += qty;
 
-      // Recalculate Moving Average Price (VERPR) or Standard Valuation (MBEW)
-      const newLbkum = mbew.lbkum + qty;
-      if (mbew.vprsv === 'V') {
-        const newSalk3 = mbew.salk3 + dmbtr;
-        mbew.verpr = newLbkum > 0 ? Math.round((newSalk3 / newLbkum) * mbew.peinh) : unitPrice;
-        mbew.lbkum = newLbkum;
-        mbew.salk3 = newSalk3;
+      if (isSplitActive && activeBwtar) {
+        const splitRow = ensureSplitRow(activeBwtar);
+        const newSplitQty = splitRow.lbkum + qty;
+        if (splitRow.vprsv === 'V') {
+          const newSplitVal = splitRow.salk3 + dmbtr;
+          splitRow.verpr =
+            activeBwtar === 'FREE'
+              ? 0
+              : newSplitQty > 0
+              ? Math.round((newSplitVal / newSplitQty) * splitRow.peinh)
+              : unitPrice;
+          splitRow.lbkum = newSplitQty;
+          splitRow.salk3 = newSplitVal;
+        } else {
+          splitRow.lbkum = newSplitQty;
+          splitRow.salk3 = Math.round((newSplitQty * splitRow.stprs) / splitRow.peinh);
+        }
+        recomputeHeaderFromSplits();
       } else {
-        // Standard Price (S): Stock valuated at STPRS
-        mbew.lbkum = newLbkum;
-        mbew.salk3 = Math.round((newLbkum * mbew.stprs) / mbew.peinh);
+        const newLbkum = mbew.lbkum + qty;
+        if (mbew.vprsv === 'V') {
+          const newSalk3 = mbew.salk3 + dmbtr;
+          mbew.verpr = newLbkum > 0 ? Math.round((newSalk3 / newLbkum) * mbew.peinh) : unitPrice;
+          mbew.lbkum = newLbkum;
+          mbew.salk3 = newSalk3;
+        } else {
+          mbew.lbkum = newLbkum;
+          mbew.salk3 = Math.round((newLbkum * mbew.stprs) / mbew.peinh);
+        }
       }
 
       po.receivedQty += qty;
@@ -648,10 +763,27 @@ async function startServer() {
           error: `Stok Unrestricted di ${werks}/${lgort} (${mard?.labst || 0}) tidak mencukupi untuk Goods Issue ${qty}.`,
         });
       }
-      dmbtr = Math.round((qty * unitPrice) / (mbew.peinh || 1));
-      mard.labst -= qty;
-      mbew.lbkum = Math.max(0, mbew.lbkum - qty);
-      mbew.salk3 = Math.max(0, mbew.salk3 - dmbtr);
+
+      if (isSplitActive) {
+        activeBwtar = bwtar || 'LOCAL';
+        const splitRow = ensureSplitRow(activeBwtar);
+        if (splitRow.lbkum < qty) {
+          return res.status(400).json({
+            error: `Stok Valuation Type ${activeBwtar} di Plant ${werks} (${splitRow.lbkum} ${material.mara.meins}) tidak mencukupi untuk GI ${qty}.`,
+          });
+        }
+        const splitUnit = activeBwtar === 'FREE' ? 0 : splitRow.vprsv === 'V' ? splitRow.verpr : splitRow.stprs;
+        dmbtr = Math.round((qty * splitUnit) / (splitRow.peinh || 1));
+        splitRow.lbkum -= qty;
+        splitRow.salk3 = Math.max(0, splitRow.salk3 - dmbtr);
+        mard.labst -= qty;
+        recomputeHeaderFromSplits();
+      } else {
+        dmbtr = Math.round((qty * unitPrice) / (mbew.peinh || 1));
+        mard.labst -= qty;
+        mbew.lbkum = Math.max(0, mbew.lbkum - qty);
+        mbew.salk3 = Math.max(0, mbew.salk3 - dmbtr);
+      }
     } else if (bwart === '311') {
       bwartDesc = 'Transfer Posting Storage Location';
       if (!targetLgort || targetLgort === lgort) {
@@ -663,17 +795,28 @@ async function startServer() {
           error: `Stok Unrestricted di ${werks}/${lgort} (${sourceMard?.labst || 0}) tidak mencukupi untuk transfer.`,
         });
       }
+      if (isSplitActive) activeBwtar = bwtar || 'LOCAL';
       const targetMard = ensureMard(werks, targetLgort);
       sourceMard.labst -= qty;
       targetMard.labst += qty;
-      dmbtr = Math.round((qty * unitPrice) / (mbew.peinh || 1));
+      dmbtr = activeBwtar === 'FREE' ? 0 : Math.round((qty * unitPrice) / (mbew.peinh || 1));
     } else if (bwart === '561') {
       bwartDesc = 'Initial Entry of Stock Balances';
       const mard = ensureMard(werks, lgort);
       mard.labst += qty;
-      dmbtr = Math.round((qty * unitPrice) / (mbew.peinh || 1));
-      mbew.lbkum += qty;
-      mbew.salk3 += dmbtr;
+      if (isSplitActive) {
+        activeBwtar = bwtar || 'LOCAL';
+        const splitRow = ensureSplitRow(activeBwtar);
+        const splitUnit = activeBwtar === 'FREE' ? 0 : splitRow.vprsv === 'V' ? splitRow.verpr : splitRow.stprs;
+        dmbtr = Math.round((qty * splitUnit) / (splitRow.peinh || 1));
+        splitRow.lbkum += qty;
+        splitRow.salk3 += dmbtr;
+        recomputeHeaderFromSplits();
+      } else {
+        dmbtr = Math.round((qty * unitPrice) / (mbew.peinh || 1));
+        mbew.lbkum += qty;
+        mbew.salk3 += dmbtr;
+      }
     }
 
     const mblnr = nextSequence(
@@ -703,6 +846,7 @@ async function startServer() {
       meins: material.mara.meins,
       dmbtr,
       waers: mbew.waers,
+      bwtar: activeBwtar,
       belnr,
       budat: new Date().toISOString().slice(0, 10),
       usnam: username,
@@ -716,7 +860,7 @@ async function startServer() {
       objectClass: 'MM_DOC',
       objectId: mblnr,
       tableName: 'MARD / MBEW',
-      fieldName: `MIGO ${bwart} (${werks}/${lgort})`,
+      fieldName: `MIGO ${bwart} (${werks}/${lgort}${activeBwtar ? ` · ${activeBwtar}` : ''})`,
       oldValue: `${oldStock} ${material.mara.meins}`,
       newValue: `${newStock} ${material.mara.meins} · MAP ${mbew.verpr.toLocaleString('id-ID')} ${mbew.waers}`,
       username,
@@ -847,7 +991,6 @@ async function startServer() {
     return res.json({ db });
   });
 
- 
   // Vite dev middleware or static production build
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -885,4 +1028,3 @@ async function startServer() {
 }
 
 startServer();
-

@@ -8,7 +8,13 @@ import {
   ShoppingCart,
   Warehouse,
 } from 'lucide-react';
-import type { MovementTypeCode, PurchaseRequisition, SapBootstrapPayload } from '../types/sap.ts';
+import type {
+  MovementTypeCode,
+  PurchaseRequisition,
+  SapBootstrapPayload,
+  SplitValuationItem,
+  ValuationTypeCode,
+} from '../types/sap.ts';
 import { formatCurrency, formatNumber } from '../utils/format.ts';
 
 interface MmIntegrationViewProps {
@@ -24,10 +30,11 @@ interface MmIntegrationViewProps {
     lgort: string;
     menge: number;
     lfdat: string;
+    bwtar?: ValuationTypeCode;
   }) => Promise<{ ok: boolean; error?: string }>;
   onConvertPrToPo: (
     banfn: string,
-    payload: { lifnr: string; netpr: number; eindt: string }
+    payload: { lifnr: string; netpr: number; eindt: string; bwtar?: ValuationTypeCode }
   ) => Promise<{ ok: boolean; error?: string }>;
   onCreatePo: (payload: {
     lifnr: string;
@@ -37,6 +44,7 @@ interface MmIntegrationViewProps {
     menge: number;
     netpr: number;
     eindt: string;
+    bwtar?: ValuationTypeCode;
   }) => Promise<{ ok: boolean; error?: string }>;
   onPostMigo: (payload: {
     bwart: MovementTypeCode;
@@ -47,6 +55,7 @@ interface MmIntegrationViewProps {
     ebeln?: string;
     kostl?: string;
     menge: number;
+    bwtar?: ValuationTypeCode;
     bktxt?: string;
   }) => Promise<{ ok: boolean; error?: string; docNumber?: string }>;
 }
@@ -71,6 +80,7 @@ export function MmIntegrationView({
   const [dateInput, setDateInput] = useState('2026-11-30');
   const [lifnr, setLifnr] = useState(data.vendors[0]?.lifnr || 'V-100042');
   const [poPrice, setPoPrice] = useState(15000);
+  const [selectedBwtar, setSelectedBwtar] = useState<ValuationTypeCode>('LOCAL');
 
   // MIGO states
   const [bwart, setBwart] = useState<MovementTypeCode>('101');
@@ -85,6 +95,7 @@ export function MmIntegrationView({
   const [convertingPr, setConvertingPr] = useState<PurchaseRequisition | null>(null);
   const [convertLifnr, setConvertLifnr] = useState(data.vendors[0]?.lifnr || 'V-100042');
   const [convertPrice, setConvertPrice] = useState(0);
+  const [convertBwtar, setConvertBwtar] = useState<ValuationTypeCode>('LOCAL');
 
   const [feedback, setFeedback] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -93,6 +104,29 @@ export function MmIntegrationView({
     () => data.materials.find((m) => m.mara.matnr === selectedMatnr) || data.materials[0],
     [data.materials, selectedMatnr]
   );
+
+  const activePlantMbew = activeMaterial?.mbew[werks];
+  const isSplitActive = Boolean(activePlantMbew?.bwtty);
+  const availableValuationTypes: ValuationTypeCode[] = useMemo(() => {
+    if (!activePlantMbew?.bwtty) return [];
+    const configured = Object.keys(activePlantMbew.splitValuations || {}) as ValuationTypeCode[];
+    return configured.length > 0 ? configured : ['LOCAL', 'IMPORT', 'FREE', 'OLD'];
+  }, [activePlantMbew]);
+
+  const applyValuationTypePrice = (matnrVal: string, werksVal: string, bwtarVal: ValuationTypeCode) => {
+    if (bwtarVal === 'FREE') {
+      setPoPrice(0);
+      return;
+    }
+    const m = data.materials.find((x) => x.mara.matnr === matnrVal);
+    const mbew = m?.mbew[werksVal] || (m ? Object.values(m.mbew)[0] : undefined);
+    const splitRow = mbew?.splitValuations?.[bwtarVal];
+    if (splitRow) {
+      setPoPrice(splitRow.vprsv === 'S' ? splitRow.stprs : splitRow.verpr);
+    } else if (mbew) {
+      setPoPrice(mbew.vprsv === 'S' ? mbew.stprs : mbew.verpr);
+    }
+  };
 
   // Sync preselection from Material Master / List
   useEffect(() => {
@@ -105,7 +139,21 @@ export function MmIntegrationView({
         const firstS = Object.values(m.mard).find((s) => s.werks === firstW)?.lgort || '0001';
         setLgort(firstS);
         const mbew = m.mbew[firstW] || Object.values(m.mbew)[0];
-        if (mbew) setPoPrice(mbew.vprsv === 'V' ? mbew.verpr : mbew.stprs);
+        if (mbew) {
+          const splitKeys = Object.keys(mbew.splitValuations || {}) as ValuationTypeCode[];
+          const defaultVt = splitKeys[0] || 'LOCAL';
+          setSelectedBwtar(defaultVt);
+          const splitRow = mbew.bwtty ? mbew.splitValuations?.[defaultVt] : undefined;
+          setPoPrice(
+            splitRow
+              ? splitRow.vprsv === 'V'
+                ? splitRow.verpr
+                : splitRow.stprs
+              : mbew.vprsv === 'V'
+              ? mbew.verpr
+              : mbew.stprs
+          );
+        }
       }
     }
   }, [preselectedMatnr, preselectedWerks, data.materials]);
@@ -123,11 +171,25 @@ export function MmIntegrationView({
       const firstS = Object.values(m.mard).find((s) => s.werks === firstW)?.lgort || '0001';
       setLgort(firstS);
       const mbew = m.mbew[firstW] || Object.values(m.mbew)[0];
-      if (mbew) setPoPrice(mbew.vprsv === 'V' ? mbew.verpr : mbew.stprs);
+      if (mbew) {
+        const splitKeys = Object.keys(mbew.splitValuations || {}) as ValuationTypeCode[];
+        const defaultVt = splitKeys[0] || 'LOCAL';
+        setSelectedBwtar(defaultVt);
+        const splitRow = mbew.bwtty ? mbew.splitValuations?.[defaultVt] : undefined;
+        setPoPrice(
+          splitRow
+            ? splitRow.vprsv === 'V'
+              ? splitRow.verpr
+              : splitRow.stprs
+            : mbew.vprsv === 'V'
+            ? mbew.verpr
+            : mbew.stprs
+        );
+      }
     }
   };
 
-  // When selecting an Open PO in MIGO 101, auto-bind material, plant, storage, remaining qty
+  // When selecting an Open PO in MIGO 101, auto-bind material, plant, storage, remaining qty, valuation type
   const handleSelectPoForMigo = (ebeln: string) => {
     setSelectedEbeln(ebeln);
     const po = data.purchaseOrders.find((p) => p.ebeln === ebeln);
@@ -136,6 +198,7 @@ export function MmIntegrationView({
       setWerks(po.werks);
       setLgort(po.lgort);
       setQty(Math.max(1, po.menge - po.receivedQty));
+      if (po.bwtar) setSelectedBwtar(po.bwtar);
     }
   };
 
@@ -145,23 +208,37 @@ export function MmIntegrationView({
     const mardKey = `${werks}-${lgort}`;
     const currentStock = activeMaterial.mard[mardKey]?.labst || 0;
     const mbew = activeMaterial.mbew[werks] || Object.values(activeMaterial.mbew)[0];
-    const currentLbkum = mbew?.lbkum || 0;
-    const currentSalk3 = mbew?.salk3 || 0;
-    const currentVerpr = mbew?.verpr || 0;
-    const peinh = mbew?.peinh || 1;
+    const splitActive = Boolean(mbew?.bwtty);
+    const po = bwart === '101' ? data.purchaseOrders.find((p) => p.ebeln === selectedEbeln) : undefined;
+    const activeVt: ValuationTypeCode | undefined = splitActive
+      ? bwart === '101' && po?.bwtar
+        ? po.bwtar
+        : selectedBwtar
+      : undefined;
+    const splitRow = activeVt ? mbew?.splitValuations?.[activeVt] : undefined;
+
+    const currentLbkum = splitRow ? splitRow.lbkum : mbew?.lbkum || 0;
+    const currentSalk3 = splitRow ? splitRow.salk3 : mbew?.salk3 || 0;
+    const currentVerpr = activeVt === 'FREE' ? 0 : splitRow ? splitRow.verpr : mbew?.verpr || 0;
+    const peinh = splitRow ? splitRow.peinh : mbew?.peinh || 1;
     const waers = mbew?.waers || 'IDR';
-    const vprsv = mbew?.vprsv || 'V';
+    const vprsv = splitRow ? splitRow.vprsv : mbew?.vprsv || 'V';
 
     if (bwart === '101') {
-      const po = data.purchaseOrders.find((p) => p.ebeln === selectedEbeln);
-      const grPrice = po ? po.netpr / (po.peinh || 1) : currentVerpr;
+      const grPrice = activeVt === 'FREE' ? 0 : po ? po.netpr / (po.peinh || 1) : currentVerpr;
       const dmbtr = Math.round(qty * grPrice);
       const afterStock = currentStock + qty;
       const afterLbkum = currentLbkum + qty;
       const afterSalk3 =
-        vprsv === 'V' ? currentSalk3 + dmbtr : Math.round((afterLbkum * (mbew?.stprs || grPrice)) / peinh);
+        vprsv === 'V'
+          ? currentSalk3 + dmbtr
+          : Math.round((afterLbkum * (splitRow?.stprs ?? mbew?.stprs ?? grPrice)) / peinh);
       const afterVerpr =
-        vprsv === 'V' && afterLbkum > 0 ? Math.round((afterSalk3 / afterLbkum) * peinh) : currentVerpr;
+        activeVt === 'FREE'
+          ? 0
+          : vprsv === 'V' && afterLbkum > 0
+          ? Math.round((afterSalk3 / afterLbkum) * peinh)
+          : currentVerpr;
 
       return {
         beforeStock: currentStock,
@@ -171,11 +248,12 @@ export function MmIntegrationView({
         dmbtr,
         waers,
         vprsv,
+        activeVt,
       };
     }
 
     if (bwart === '201') {
-      const unitP = vprsv === 'V' ? currentVerpr : mbew?.stprs || 0;
+      const unitP = activeVt === 'FREE' ? 0 : vprsv === 'V' ? currentVerpr : splitRow?.stprs ?? mbew?.stprs ?? 0;
       return {
         beforeStock: currentStock,
         afterStock: currentStock - qty,
@@ -184,11 +262,12 @@ export function MmIntegrationView({
         dmbtr: Math.round((qty * unitP) / peinh),
         waers,
         vprsv,
+        activeVt,
       };
     }
 
     if (bwart === '311') {
-      const unitP = vprsv === 'V' ? currentVerpr : mbew?.stprs || 0;
+      const unitP = activeVt === 'FREE' ? 0 : vprsv === 'V' ? currentVerpr : splitRow?.stprs ?? mbew?.stprs ?? 0;
       return {
         beforeStock: currentStock,
         afterStock: currentStock - qty,
@@ -197,11 +276,12 @@ export function MmIntegrationView({
         dmbtr: Math.round((qty * unitP) / peinh),
         waers,
         vprsv,
+        activeVt,
       };
     }
 
     // 561
-    const unitP = vprsv === 'V' ? currentVerpr : mbew?.stprs || 0;
+    const unitP = activeVt === 'FREE' ? 0 : vprsv === 'V' ? currentVerpr : splitRow?.stprs ?? mbew?.stprs ?? 0;
     return {
       beforeStock: currentStock,
       afterStock: currentStock + qty,
@@ -210,8 +290,9 @@ export function MmIntegrationView({
       dmbtr: Math.round((qty * unitP) / peinh),
       waers,
       vprsv,
+      activeVt,
     };
-  }, [activeMaterial, werks, lgort, bwart, qty, selectedEbeln, data.purchaseOrders]);
+  }, [activeMaterial, werks, lgort, bwart, qty, selectedEbeln, selectedBwtar, data.purchaseOrders]);
 
   const openPos = data.purchaseOrders.filter((p) => p.status !== 'Completed');
 
@@ -310,6 +391,7 @@ export function MmIntegrationView({
                 lgort,
                 menge: qty,
                 lfdat: dateInput,
+                bwtar: isSplitActive ? selectedBwtar : undefined,
               });
               setSubmitting(false);
               setFeedback(
@@ -399,6 +481,29 @@ export function MmIntegrationView({
               </div>
             </div>
 
+            {isSplitActive && (
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Valuation Type (BWTAR)
+                </label>
+                <select
+                  value={selectedBwtar}
+                  onChange={(e) => {
+                    const vt = e.target.value as ValuationTypeCode;
+                    setSelectedBwtar(vt);
+                    applyValuationTypePrice(selectedMatnr, werks, vt);
+                  }}
+                  className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                >
+                  {availableValuationTypes.map((vt) => (
+                    <option key={vt} value={vt}>
+                      {vt} · {data.valuationTypes?.find((d) => d.bwtar === vt)?.label || vt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {activeMaterial && (
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-md text-xs space-y-1">
                 <div className="flex justify-between">
@@ -414,13 +519,21 @@ export function MmIntegrationView({
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Estimasi Nilai (MBEW):</span>
+                  <span className="text-slate-500">
+                    Estimasi Nilai ({isSplitActive ? selectedBwtar : 'MBEW'}):
+                  </span>
                   <span className="font-mono font-semibold text-slate-900 tabular-nums">
                     {formatCurrency(
-                      qty *
-                        (activeMaterial.mbew[werks]?.vprsv === 'S'
-                          ? activeMaterial.mbew[werks]?.stprs || 0
-                          : activeMaterial.mbew[werks]?.verpr || 0)
+                      isSplitActive && selectedBwtar === 'FREE'
+                        ? 0
+                        : qty *
+                            (isSplitActive && activePlantMbew?.splitValuations?.[selectedBwtar]
+                              ? activePlantMbew.splitValuations[selectedBwtar]!.vprsv === 'S'
+                                ? activePlantMbew.splitValuations[selectedBwtar]!.stprs
+                                : activePlantMbew.splitValuations[selectedBwtar]!.verpr
+                              : activeMaterial.mbew[werks]?.vprsv === 'S'
+                              ? activeMaterial.mbew[werks]?.stprs || 0
+                              : activeMaterial.mbew[werks]?.verpr || 0)
                     )}
                   </span>
                 </div>
@@ -472,7 +585,10 @@ export function MmIntegrationView({
                         <div className="text-slate-700 truncate max-w-[220px]">{pr.maktx}</div>
                       </td>
                       <td className="py-3 px-4 font-mono text-slate-700">
-                        {pr.werks} / {pr.lgort}
+                        <div>{pr.werks} / {pr.lgort}</div>
+                        {pr.bwtar && (
+                          <div className="text-[11px] font-semibold text-[#0064D9]">Val: {pr.bwtar}</div>
+                        )}
                       </td>
                       <td className="py-3 px-4 text-right font-mono tabular-nums font-medium text-slate-900">
                         {formatNumber(pr.menge)} {pr.meins}
@@ -493,6 +609,7 @@ export function MmIntegrationView({
                             onClick={() => {
                               setConvertingPr(pr);
                               setConvertPrice(pr.preis);
+                              setConvertBwtar(pr.bwtar || 'LOCAL');
                             }}
                             className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-white bg-[#0064D9] hover:bg-[#0052B4] rounded transition-colors whitespace-nowrap"
                           >
@@ -524,8 +641,9 @@ export function MmIntegrationView({
                 werks,
                 lgort,
                 menge: qty,
-                netpr: poPrice,
+                netpr: isSplitActive && selectedBwtar === 'FREE' ? 0 : poPrice,
                 eindt: dateInput,
+                bwtar: isSplitActive ? selectedBwtar : undefined,
               });
               setSubmitting(false);
               setFeedback(
@@ -604,6 +722,29 @@ export function MmIntegrationView({
               </div>
             </div>
 
+            {isSplitActive && (
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Valuation Type (EKPO-BWTAR)
+                </label>
+                <select
+                  value={selectedBwtar}
+                  onChange={(e) => {
+                    const vt = e.target.value as ValuationTypeCode;
+                    setSelectedBwtar(vt);
+                    applyValuationTypePrice(selectedMatnr, werks, vt);
+                  }}
+                  className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                >
+                  {availableValuationTypes.map((vt) => (
+                    <option key={vt} value={vt}>
+                      {vt} · {data.valuationTypes?.find((d) => d.bwtar === vt)?.label || vt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1">
@@ -622,11 +763,12 @@ export function MmIntegrationView({
                 <label className="block text-xs font-medium text-slate-700 mb-1">Net Price (NETPR)</label>
                 <input
                   type="number"
-                  min={1}
+                  min={0}
+                  disabled={isSplitActive && selectedBwtar === 'FREE'}
                   required
-                  value={poPrice}
+                  value={isSplitActive && selectedBwtar === 'FREE' ? 0 : poPrice}
                   onChange={(e) => setPoPrice(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                  className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
                 />
               </div>
             </div>
@@ -645,7 +787,7 @@ export function MmIntegrationView({
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-md flex items-center justify-between text-xs">
               <span className="text-slate-600">Total Nilai PO:</span>
               <span className="font-mono font-bold text-slate-900 tabular-nums">
-                {formatCurrency(qty * poPrice)}
+                {formatCurrency(qty * (isSplitActive && selectedBwtar === 'FREE' ? 0 : poPrice))}
               </span>
             </div>
 
@@ -682,7 +824,7 @@ export function MmIntegrationView({
                       <td className="py-3 px-4 font-mono font-semibold text-slate-900 tabular-nums">
                         {po.ebeln}
                         <div className="text-[11px] font-normal text-slate-500">
-                          {po.werks}/{po.lgort}
+                          {po.werks}/{po.lgort}{po.bwtar ? ` · ${po.bwtar}` : ''}
                         </div>
                       </td>
                       <td className="py-3 px-4">
@@ -751,6 +893,7 @@ export function MmIntegrationView({
                 ebeln: bwart === '101' ? selectedEbeln : undefined,
                 kostl: bwart === '201' ? kostl : undefined,
                 menge: qty,
+                bwtar: isSplitActive ? selectedBwtar : undefined,
                 bktxt,
               });
               setSubmitting(false);
@@ -924,10 +1067,34 @@ export function MmIntegrationView({
               </div>
             </div>
 
+            {isSplitActive && (
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Valuation Type (MSEG-BWTAR)
+                </label>
+                <select
+                  value={selectedBwtar}
+                  onChange={(e) => setSelectedBwtar(e.target.value as ValuationTypeCode)}
+                  className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                >
+                  {availableValuationTypes.map((vt) => {
+                    const splitStock = activePlantMbew?.splitValuations?.[vt]?.lbkum ?? 0;
+                    return (
+                      <option key={vt} value={vt}>
+                        {vt} · Stok {formatNumber(splitStock)} {activeMaterial?.mara.meins}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            )}
+
             {/* Real-Time Stock & Valuation Simulation Box */}
             {migoPreview && activeMaterial && (
               <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-md space-y-2 text-xs">
-                <div className="font-semibold text-slate-800">Simulasi Dampak Material Master</div>
+                <div className="font-semibold text-slate-800">
+                  Simulasi Dampak Material Master {migoPreview.activeVt ? `(${migoPreview.activeVt})` : ''}
+                </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Stok SLoc {werks}/{lgort}:</span>
                   <span className="font-mono tabular-nums text-slate-900">
@@ -1001,6 +1168,7 @@ export function MmIntegrationView({
                         <div className="font-mono font-medium text-slate-900">
                           {doc.matnr} · {doc.werks}/{doc.lgort}
                           {doc.targetLgort ? ` → ${doc.targetLgort}` : ''}
+                          {doc.bwtar ? ` · [${doc.bwtar}]` : ''}
                         </div>
                         <div className="text-[11px] text-slate-500 truncate max-w-[230px]">
                           {doc.bktxt}
@@ -1131,6 +1299,59 @@ export function MmIntegrationView({
                   </tbody>
                 </table>
               </div>
+
+              {/* Split Valuation Breakdown per Plant in MMBE */}
+              {Object.values(activeMaterial.mbew).some((m) => Boolean(m.bwtty)) && (
+                <div className="space-y-2.5 pt-2">
+                  <div className="text-xs font-semibold text-slate-800">
+                    Split Valuation Breakdown (MBEW-BWTAR: LOCAL · IMPORT · FREE · OLD)
+                  </div>
+                  <div className="overflow-x-auto border border-slate-200 rounded-md">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500">
+                          <th className="py-2.5 px-4">Plant (BWKEY)</th>
+                          <th className="py-2.5 px-4">Valuation Type (BWTAR)</th>
+                          <th className="py-2.5 px-4">Price Ctrl</th>
+                          <th className="py-2.5 px-4 text-right">Stok Valuasi (LBKUM)</th>
+                          <th className="py-2.5 px-4 text-right">Harga Unit</th>
+                          <th className="py-2.5 px-4 text-right">Total Nilai (SALK3)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200">
+                        {Object.values(activeMaterial.mbew)
+                          .filter((m) => Boolean(m.bwtty) && m.splitValuations)
+                          .flatMap((m) =>
+                            Object.values(m.splitValuations!)
+                              .filter((sv): sv is SplitValuationItem => Boolean(sv))
+                              .map((sv) => (
+                                <tr key={`${m.bwkey}-${sv.bwtar}`} className="hover:bg-slate-50">
+                                  <td className="py-2.5 px-4 font-mono font-semibold text-slate-800">
+                                    Plant {m.bwkey}
+                                  </td>
+                                  <td className="py-2.5 px-4 font-mono font-bold text-[#0064D9]">
+                                    {sv.bwtar}
+                                  </td>
+                                  <td className="py-2.5 px-4 font-mono text-slate-600">
+                                    {sv.vprsv === 'V' ? 'V (MAP)' : 'S (Std)'}
+                                  </td>
+                                  <td className="py-2.5 px-4 text-right font-mono tabular-nums font-semibold text-slate-900">
+                                    {formatNumber(sv.lbkum)} {activeMaterial.mara.meins}
+                                  </td>
+                                  <td className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-700">
+                                    {formatCurrency(sv.vprsv === 'V' ? sv.verpr : sv.stprs, m.waers)}
+                                  </td>
+                                  <td className="py-2.5 px-4 text-right font-mono tabular-nums font-semibold text-slate-900">
+                                    {formatCurrency(sv.salk3, m.waers)}
+                                  </td>
+                                </tr>
+                              ))
+                          )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1165,15 +1386,39 @@ export function MmIntegrationView({
               </select>
             </div>
 
+            {data.materials.find((m) => m.mara.matnr === convertingPr.matnr)?.mbew[convertingPr.werks]?.bwtty && (
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Valuation Type (BWTAR)
+                </label>
+                <select
+                  value={convertBwtar}
+                  onChange={(e) => {
+                    const vt = e.target.value as ValuationTypeCode;
+                    setConvertBwtar(vt);
+                    if (vt === 'FREE') setConvertPrice(0);
+                  }}
+                  className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                >
+                  {(['LOCAL', 'IMPORT', 'FREE', 'OLD'] as ValuationTypeCode[]).map((vt) => (
+                    <option key={vt} value={vt}>
+                      {vt} · {data.valuationTypes?.find((d) => d.bwtar === vt)?.label || vt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-medium text-slate-700 mb-1">
                 Harga Satuan PO ({convertingPr.waers})
               </label>
               <input
                 type="number"
-                value={convertPrice}
+                disabled={convertBwtar === 'FREE'}
+                value={convertBwtar === 'FREE' ? 0 : convertPrice}
                 onChange={(e) => setConvertPrice(Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md"
+                className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md disabled:bg-slate-100"
               />
             </div>
 
@@ -1188,10 +1433,16 @@ export function MmIntegrationView({
               <button
                 type="button"
                 onClick={async () => {
+                  const hasSplit = Boolean(
+                    data.materials.find((m) => m.mara.matnr === convertingPr.matnr)?.mbew[
+                      convertingPr.werks
+                    ]?.bwtty
+                  );
                   const res = await onConvertPrToPo(convertingPr.banfn, {
                     lifnr: convertLifnr,
-                    netpr: convertPrice,
+                    netpr: convertBwtar === 'FREE' ? 0 : convertPrice,
                     eindt: convertingPr.lfdat,
+                    bwtar: hasSplit ? convertBwtar : undefined,
                   });
                   setConvertingPr(null);
                   setFeedback(

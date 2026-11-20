@@ -26,6 +26,9 @@ import type {
   MaterialViewKey,
   MbewValuationData,
   SapBootstrapPayload,
+  SplitValuationItem,
+  ValuationCategoryCode,
+  ValuationTypeCode,
 } from '../types/sap.ts';
 import { formatCurrency, formatNumber } from '../utils/format.ts';
 
@@ -156,6 +159,7 @@ function createEmptyMaterial(
     mbew: {
       [plantDef.werks]: {
         bwkey: plantDef.werks,
+        bwtty: '',
         bklas: mtDef.defaultBklas,
         vprsv: mtDef.priceControlDefault,
         verpr: 10000,
@@ -354,13 +358,121 @@ export function MaterialMasterEditor({
       const existing = prev.mbew[activeWerks];
       if (!existing) return prev;
       const updated = { ...existing, [key]: value };
-      const unitPrice = updated.vprsv === 'V' ? updated.verpr : updated.stprs;
-      updated.salk3 = Math.round((updated.lbkum * unitPrice) / (updated.peinh || 1));
+      if (!updated.bwtty) {
+        const unitPrice = updated.vprsv === 'V' ? updated.verpr : updated.stprs;
+        updated.salk3 = Math.round((updated.lbkum * unitPrice) / (updated.peinh || 1));
+      }
       return {
         ...prev,
         mbew: {
           ...prev.mbew,
           [activeWerks]: updated,
+        },
+      };
+    });
+  };
+
+  const handleValuationCategoryChange = (bwtty: ValuationCategoryCode) => {
+    setDraft((prev) => {
+      const existing = prev.mbew[activeWerks];
+      if (!existing) return prev;
+      const nextSplit = structuredClone(existing.splitValuations || {});
+      if (bwtty !== '' && Object.keys(nextSplit).length === 0) {
+        const defaults: ValuationTypeCode[] =
+          bwtty === 'H' ? ['LOCAL', 'IMPORT'] : bwtty === 'C' ? ['FREE', 'OLD'] : ['LOCAL', 'IMPORT', 'FREE', 'OLD'];
+        for (const vt of defaults) {
+          nextSplit[vt] = {
+            bwtar: vt,
+            bklas: existing.bklas,
+            vprsv: existing.vprsv,
+            verpr: vt === 'FREE' ? 0 : existing.verpr,
+            stprs: vt === 'FREE' ? 0 : existing.stprs,
+            peinh: existing.peinh,
+            lbkum: vt === 'LOCAL' ? existing.lbkum : 0,
+            salk3: vt === 'LOCAL' ? existing.salk3 : 0,
+          };
+        }
+      }
+      return {
+        ...prev,
+        mbew: {
+          ...prev.mbew,
+          [activeWerks]: {
+            ...existing,
+            bwtty,
+            splitValuations: nextSplit,
+          },
+        },
+      };
+    });
+  };
+
+  const toggleSplitValuationType = (bwtar: ValuationTypeCode) => {
+    setDraft((prev) => {
+      const existing = prev.mbew[activeWerks];
+      if (!existing) return prev;
+      const nextSplit = structuredClone(existing.splitValuations || {});
+      if (nextSplit[bwtar]) {
+        if ((nextSplit[bwtar]?.lbkum || 0) > 0) return prev; // Keep active if stock > 0
+        delete nextSplit[bwtar];
+      } else {
+        nextSplit[bwtar] = {
+          bwtar,
+          bklas: existing.bklas,
+          vprsv: existing.vprsv,
+          verpr: bwtar === 'FREE' ? 0 : existing.verpr,
+          stprs: bwtar === 'FREE' ? 0 : existing.stprs,
+          peinh: existing.peinh,
+          lbkum: 0,
+          salk3: 0,
+        };
+      }
+      return {
+        ...prev,
+        mbew: {
+          ...prev.mbew,
+          [activeWerks]: {
+            ...existing,
+            splitValuations: nextSplit,
+          },
+        },
+      };
+    });
+  };
+
+  const updateSplitValuationItem = <K extends keyof SplitValuationItem>(
+    bwtar: ValuationTypeCode,
+    key: K,
+    value: SplitValuationItem[K]
+  ) => {
+    setDraft((prev) => {
+      const existing = prev.mbew[activeWerks];
+      if (!existing || !existing.splitValuations?.[bwtar]) return prev;
+      const nextSplit = structuredClone(existing.splitValuations);
+      const item = nextSplit[bwtar]!;
+      item[key] = value;
+      if (bwtar === 'FREE') {
+        item.verpr = 0;
+        item.stprs = 0;
+        item.salk3 = 0;
+      } else {
+        const uPrice = item.vprsv === 'V' ? item.verpr : item.stprs;
+        item.salk3 = Math.round((item.lbkum * uPrice) / (item.peinh || 1));
+      }
+      const rows = Object.values(nextSplit).filter((x): x is SplitValuationItem => Boolean(x));
+      const totalQty = rows.reduce((s, x) => s + x.lbkum, 0);
+      const totalVal = rows.reduce((s, x) => s + x.salk3, 0);
+      return {
+        ...prev,
+        mbew: {
+          ...prev.mbew,
+          [activeWerks]: {
+            ...existing,
+            lbkum: totalQty,
+            salk3: totalVal,
+            verpr: totalQty > 0 ? Math.round((totalVal / totalQty) * (existing.peinh || 1)) : existing.verpr,
+            splitValuations: nextSplit,
+          },
         },
       };
     });
@@ -1421,6 +1533,29 @@ export function MaterialMasterEditor({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {getStandardStatus('bwtty') !== 'hide' && (
+                    <div>
+                      {renderFieldLabel(
+                        'Valuation Category (Split Val.)',
+                        'MBEW-BWTTY',
+                        getStandardStatus('bwtty')
+                      )}
+                      <select
+                        disabled={isReadOnly || getStandardStatus('bwtty') === 'display'}
+                        value={activeMbew.bwtty || ''}
+                        onChange={(e) =>
+                          handleValuationCategoryChange(e.target.value as ValuationCategoryCode)
+                        }
+                        className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
+                      >
+                        <option value="">None — Single Valuation</option>
+                        <option value="Z">Z — Full Split (LOCAL, IMPORT, FREE, OLD)</option>
+                        <option value="H">H — Origin (LOCAL / IMPORT)</option>
+                        <option value="C">C — Condition (FREE / OLD)</option>
+                      </select>
+                    </div>
+                  )}
+
                   <div>
                     {renderFieldLabel('Valuation Class', 'MBEW-BKLAS', 'required')}
                     <select
@@ -1479,7 +1614,7 @@ export function MaterialMasterEditor({
                     {renderFieldLabel('Moving Average Price', 'MBEW-VERPR', 'optional')}
                     <input
                       type="number"
-                      disabled={isReadOnly || activeMbew.vprsv === 'S'}
+                      disabled={isReadOnly || activeMbew.vprsv === 'S' || Boolean(activeMbew.bwtty)}
                       value={activeMbew.verpr}
                       onChange={(e) => updateMbew('verpr', Number(e.target.value))}
                       className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
@@ -1498,8 +1633,130 @@ export function MaterialMasterEditor({
                   </div>
                 </div>
 
+                {/* Split Valuation Types Matrix (MBEW-BWTAR: LOCAL, IMPORT, FREE, OLD) */}
+                {activeMbew.bwtty && (
+                  <div className="pt-5 border-t border-slate-200 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-900">
+                          Split Valuation Types (MBEW-BWTAR · Plant {activeWerks})
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Aktifkan dan kelola harga/valuasi terpisah untuk LOCAL, IMPORT, FREE, dan OLD. Header Plant otomatis menghitung rata-rata tertimbang.
+                        </p>
+                      </div>
+                      {!isReadOnly && (
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {(['LOCAL', 'IMPORT', 'FREE', 'OLD'] as ValuationTypeCode[]).map((vt) => {
+                            const active = Boolean(activeMbew.splitValuations?.[vt]);
+                            const hasStock = (activeMbew.splitValuations?.[vt]?.lbkum || 0) > 0;
+                            return (
+                              <button
+                                key={vt}
+                                type="button"
+                                disabled={active && hasStock}
+                                onClick={() => toggleSplitValuationType(vt)}
+                                title={
+                                  active && hasStock
+                                    ? 'Tidak dapat dinonaktifkan karena masih memiliki stok'
+                                    : active
+                                    ? `Nonaktifkan ${vt}`
+                                    : `Aktifkan ${vt}`
+                                }
+                                className={`px-2.5 py-1 text-xs font-mono font-semibold rounded border transition-colors ${
+                                  active
+                                    ? 'bg-[#EAF2FD] border-[#0064D9] text-[#0064D9]'
+                                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-900'
+                                } disabled:opacity-75`}
+                              >
+                                {active ? `✓ ${vt}` : `+ ${vt}`}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="overflow-x-auto border border-slate-200 rounded-md">
+                      <table className="w-full text-left border-collapse text-xs">
+                        <thead>
+                          <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500">
+                            <th className="py-2.5 px-4">Valuation Type (BWTAR)</th>
+                            <th className="py-2.5 px-4">Val. Class</th>
+                            <th className="py-2.5 px-4">Price Ctrl</th>
+                            <th className="py-2.5 px-4 text-right">Harga Unit ({activeMbew.waers})</th>
+                            <th className="py-2.5 px-4 text-right">Stok (LBKUM)</th>
+                            <th className="py-2.5 px-4 text-right">Total Nilai (SALK3)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200">
+                          {(['LOCAL', 'IMPORT', 'FREE', 'OLD'] as ValuationTypeCode[])
+                            .filter((vt) => Boolean(activeMbew.splitValuations?.[vt]))
+                            .map((vt) => {
+                              const row = activeMbew.splitValuations![vt]!;
+                              const vtDef = data.valuationTypes?.find((d) => d.bwtar === vt);
+                              return (
+                                <tr key={vt} className="hover:bg-slate-50/80">
+                                  <td className="py-3 px-4">
+                                    <div className="font-mono font-bold text-[#0064D9]">{vt}</div>
+                                    <div className="text-[11px] text-slate-500">
+                                      {vtDef?.label || vt}
+                                    </div>
+                                  </td>
+                                  <td className="py-3 px-4">
+                                    <input
+                                      type="text"
+                                      disabled={isReadOnly}
+                                      value={row.bklas}
+                                      onChange={(e) => updateSplitValuationItem(vt, 'bklas', e.target.value)}
+                                      className="w-20 px-2 py-1 text-xs font-mono bg-white border border-slate-200 rounded disabled:bg-slate-100"
+                                    />
+                                  </td>
+                                  <td className="py-3 px-4">
+                                    <select
+                                      disabled={isReadOnly}
+                                      value={row.vprsv}
+                                      onChange={(e) =>
+                                        updateSplitValuationItem(vt, 'vprsv', e.target.value as 'V' | 'S')
+                                      }
+                                      className="px-2 py-1 text-xs font-mono bg-white border border-slate-200 rounded disabled:bg-slate-100"
+                                    >
+                                      <option value="V">V (MAP)</option>
+                                      <option value="S">S (Std)</option>
+                                    </select>
+                                  </td>
+                                  <td className="py-3 px-4 text-right">
+                                    <input
+                                      type="number"
+                                      disabled={isReadOnly || vt === 'FREE'}
+                                      value={row.vprsv === 'V' ? row.verpr : row.stprs}
+                                      onChange={(e) =>
+                                        updateSplitValuationItem(
+                                          vt,
+                                          row.vprsv === 'V' ? 'verpr' : 'stprs',
+                                          Math.max(0, Number(e.target.value))
+                                        )
+                                      }
+                                      className="w-32 px-2 py-1 text-right text-xs font-mono tabular-nums bg-white border border-slate-200 rounded disabled:bg-slate-100"
+                                    />
+                                  </td>
+                                  <td className="py-3 px-4 text-right font-mono tabular-nums font-semibold text-slate-900">
+                                    {formatNumber(row.lbkum)} {draft.mara.meins}
+                                  </td>
+                                  <td className="py-3 px-4 text-right font-mono tabular-nums font-semibold text-slate-900">
+                                    {formatCurrency(row.salk3, activeMbew.waers)}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
                 <p className="text-xs text-slate-500">
-                  Integrasi MM-FI: Saat posting Goods Receipt (MIGO 101), sistem otomatis menghitung ulang Moving Average Price (VERPR) jika Price Control = V, atau mencatat selisih harga pada akun PRD jika Price Control = S.
+                  Integrasi MM-FI: Saat posting Goods Receipt (MIGO 101), sistem otomatis menghitung ulang Moving Average Price (VERPR) per Valuation Type (LOCAL / IMPORT / FREE / OLD) jika Split Valuation aktif, atau langsung di Header MBEW.
                 </p>
               </div>
             ) : (
