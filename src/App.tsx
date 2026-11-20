@@ -277,17 +277,6 @@ export default function App() {
     return { ok: true };
   };
 
-  const handleResetDemo = async () => {
-    const res = await fetch('/api/reset', { method: 'POST' });
-    if (res.ok) {
-      const fresh = (await res.json()) as SapBootstrapPayload;
-      setData(fresh);
-      setSelectedMatnr(fresh.materials[0]?.mara.matnr);
-      setActiveRoute('mm60');
-      showToast('Data Material Master, MM, dan OMS9 dikembalikan ke dataset standar.');
-    }
-  };
-
   const breadcrumb = ROUTE_BREADCRUMBS[activeRoute];
 
   return (
@@ -296,7 +285,6 @@ export default function App() {
         activeRoute={activeRoute}
         onNavigate={handleNavigate}
         onTcodeJump={handleTcodeJump}
-        onResetDemo={handleResetDemo}
         counts={{
           materials: data?.materials.length || 0,
           openPrs: data?.purchaseRequisitions.filter((p) => p.status !== 'Converted to PO').length || 0,
