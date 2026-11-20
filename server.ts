@@ -55,7 +55,13 @@ function loadMultiTenantDatabase(): MultiTenantDatabase {
       customIndustryFields: legacy.customIndustryFields || [], standardFieldRules: legacy.standardFieldRules || [],
       changeDocuments: legacy.changeDocuments || [], plants: legacy.plants || [], vendors: legacy.vendors || [],
     };
-    migrated.activeTenantId = firstTenant.tenantId; saveMultiTenantDatabase(migrated); return migrated;
+    migrated.activeTenantId = firstTenant.tenantId;
+    // Preserve the original single-tenant database before the first schema migration.
+    // If the backup cannot be created, abort migration and leave the source file untouched.
+    const backupFile = `${DB_FILE}.pre-multitenant-${new Date().toISOString().replace(/[:.]/g, '-')}.bak`;
+    fs.copyFileSync(DB_FILE, backupFile, fs.constants.COPYFILE_EXCL);
+    saveMultiTenantDatabase(migrated);
+    return migrated;
   }
   throw new Error('Format database MONIC tidak dikenal. Data lama tidak ditimpa.');
 }
