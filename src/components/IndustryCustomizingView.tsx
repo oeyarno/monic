@@ -4,27 +4,34 @@ import {
   ArrowDown,
   ArrowUp,
   CheckCircle2,
+  Pencil,
   Plus,
+  Ruler,
   Save,
   Sliders,
   Trash2,
+  X,
 } from 'lucide-react';
-import type {
-  CharacteristicDataType,
-  CustomFieldDataType,
-  CustomIndustryField,
-  FieldStatus,
-  IndustrySectorCode,
-  MasterCharacteristic,
-  MaterialTypeCode,
-  SapBootstrapPayload,
-  StandardFieldRule,
+import {
+  VALUATION_CLASSES,
+  type CharacteristicDataType,
+  type CustomFieldDataType,
+  type CustomIndustryField,
+  type FieldStatus,
+  type IndustrySectorCode,
+  type MasterCharacteristic,
+  type MaterialTypeCode,
+  type SapBootstrapPayload,
+  type StandardFieldRule,
+  type UnitOfMeasureDefinition,
+  type UomDimension,
 } from '../types/sap.ts';
 import { formatCharacteristicPattern } from '../utils/format.ts';
 
 interface IndustryCustomizingViewProps {
   data: SapBootstrapPayload;
   initialIndustry?: IndustrySectorCode;
+  initialSubTab?: 'oms9' | 'append' | 'ct04' | 'cuni';
   onSaveStandardRules: (rules: StandardFieldRule[]) => Promise<{ ok: boolean; error?: string }>;
   onCreateCustomField: (field: CustomIndustryField) => Promise<{ ok: boolean; error?: string }>;
   onUpdateCustomField: (field: CustomIndustryField) => Promise<{ ok: boolean; error?: string }>;
@@ -33,8 +40,19 @@ interface IndustryCustomizingViewProps {
     matkl: string;
     label: string;
     defaultMtart?: MaterialTypeCode;
+    defaultBklas?: string;
     description?: string;
   }) => Promise<{ ok: boolean; error?: string }>;
+  onUpdateMaterialGroup: (
+    matkl: string,
+    group: {
+      label: string;
+      defaultMtart?: MaterialTypeCode;
+      defaultBklas?: string;
+      description?: string;
+    }
+  ) => Promise<{ ok: boolean; error?: string }>;
+  onDeleteMaterialGroup: (matkl: string) => Promise<{ ok: boolean; error?: string }>;
   onCreateCharacteristic: (
     matkl: string,
     characteristic: MasterCharacteristic
@@ -45,6 +63,16 @@ interface IndustryCustomizingViewProps {
   ) => Promise<{ ok: boolean; error?: string }>;
   onDeleteCharacteristic: (matkl: string, charId: string) => Promise<{ ok: boolean; error?: string }>;
   onReorderCharacteristics: (matkl: string, charIds: string[]) => Promise<{ ok: boolean; error?: string }>;
+  onCreateUom: (uom: {
+    msehi: string;
+    label: string;
+    isoCode?: string;
+    dimension?: UomDimension;
+    decimalPlaces?: number;
+    description?: string;
+  }) => Promise<{ ok: boolean; error?: string }>;
+  onUpdateUom: (msehi: string, uom: Partial<UnitOfMeasureDefinition>) => Promise<{ ok: boolean; error?: string }>;
+  onDeleteUom: (msehi: string) => Promise<{ ok: boolean; error?: string }>;
 }
 
 const STATUS_OPTIONS: { value: FieldStatus; label: string }[] = [
@@ -54,23 +82,33 @@ const STATUS_OPTIONS: { value: FieldStatus; label: string }[] = [
   { value: 'hide', label: 'Hide (Sembunyikan)' },
 ];
 
+const UOM_DIMENSIONS: UomDimension[] = ['Count', 'Weight', 'Volume', 'Length', 'Packaging', 'Time'];
+
 export function IndustryCustomizingView({
   data,
   initialIndustry,
+  initialSubTab,
   onSaveStandardRules,
   onCreateCustomField,
   onUpdateCustomField,
   onDeleteCustomField,
   onCreateMaterialGroup,
+  onUpdateMaterialGroup,
+  onDeleteMaterialGroup,
   onCreateCharacteristic,
   onUpdateCharacteristic,
   onDeleteCharacteristic,
   onReorderCharacteristics,
+  onCreateUom,
+  onUpdateUom,
+  onDeleteUom,
 }: IndustryCustomizingViewProps) {
   const [selectedIndustry, setSelectedIndustry] = useState<IndustrySectorCode>(
-    initialIndustry || data.activeTenant?.defaultIndustry || 'C'
+    initialIndustry || data.activeTenant?.defaultIndustry || data.industrySectors[0]?.mbrsh || 'M'
   );
-  const [activeSubTab, setActiveSubTab] = useState<'oms9' | 'append' | 'ct04'>('oms9');
+  const [activeSubTab, setActiveSubTab] = useState<'oms9' | 'append' | 'ct04' | 'cuni'>(
+    initialSubTab || 'oms9'
+  );
   const [rulesDraft, setRulesDraft] = useState<StandardFieldRule[]>(() =>
     structuredClone(data.standardFieldRules)
   );
@@ -92,8 +130,30 @@ export function IndustryCustomizingView({
   const [showNewGroupForm, setShowNewGroupForm] = useState(false);
   const [newGroupCode, setNewGroupCode] = useState('');
   const [newGroupLabel, setNewGroupLabel] = useState('');
-  const [newGroupMtart, setNewGroupMtart] = useState<MaterialTypeCode>('ROH');
+  const [newGroupMtart, setNewGroupMtart] = useState<MaterialTypeCode>('HAWA');
+  const [newGroupBklas, setNewGroupBklas] = useState<string>('3100');
   const [newGroupDesc, setNewGroupDesc] = useState('');
+
+  // Edit active Material Group state
+  const [editingGroupMatkl, setEditingGroupMatkl] = useState<string | null>(null);
+  const [editGroupLabel, setEditGroupLabel] = useState('');
+  const [editGroupMtart, setEditGroupMtart] = useState<MaterialTypeCode>('HAWA');
+  const [editGroupBklas, setEditGroupBklas] = useState<string>('3100');
+  const [editGroupDesc, setEditGroupDesc] = useState('');
+
+  // CUNI Master Unit of Measure state
+  const [newUomCode, setNewUomCode] = useState('');
+  const [newUomLabel, setNewUomLabel] = useState('');
+  const [newUomIso, setNewUomIso] = useState('');
+  const [newUomDimension, setNewUomDimension] = useState<UomDimension>('Count');
+  const [newUomDecimals, setNewUomDecimals] = useState<number>(0);
+  const [newUomDesc, setNewUomDesc] = useState('');
+
+  const [editingUomMsehi, setEditingUomMsehi] = useState<string | null>(null);
+  const [editUomLabel, setEditUomLabel] = useState('');
+  const [editUomIso, setEditUomIso] = useState('');
+  const [editUomDimension, setEditUomDimension] = useState<UomDimension>('Count');
+  const [editUomDesc, setEditUomDesc] = useState('');
 
   const [newCharName, setNewCharName] = useState('');
   const [newCharLabel, setNewCharLabel] = useState('');
@@ -108,8 +168,18 @@ export function IndustryCustomizingView({
   }, [data.standardFieldRules]);
 
   useEffect(() => {
-    setSelectedIndustry(initialIndustry || data.activeTenant?.defaultIndustry || 'M');
+    if (initialSubTab) {
+      setActiveSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
+
+  useEffect(() => {
+    setSelectedIndustry(
+      initialIndustry || data.activeTenant?.defaultIndustry || data.industrySectors[0]?.mbrsh || 'M'
+    );
     setSelectedMatkl(data.materialGroups?.[0]?.matkl || '');
+    setEditingGroupMatkl(null);
+    setEditingUomMsehi(null);
     setFeedback(null);
   }, [initialIndustry, data.activeTenant.tenantId]);
 
@@ -193,6 +263,7 @@ export function IndustryCustomizingView({
       matkl: cleanCode,
       label: newGroupLabel.trim(),
       defaultMtart: newGroupMtart,
+      defaultBklas: newGroupBklas,
       description: newGroupDesc.trim(),
     });
     if (res.ok) {
@@ -250,6 +321,122 @@ export function IndustryCustomizingView({
     }
   };
 
+  const handleStartEditMaterialGroup = () => {
+    if (!activeMaterialGroup) return;
+    setEditingGroupMatkl(activeMaterialGroup.matkl);
+    setEditGroupLabel(activeMaterialGroup.label);
+    setEditGroupMtart(activeMaterialGroup.defaultMtart || 'HAWA');
+    setEditGroupBklas(activeMaterialGroup.defaultBklas || '3100');
+    setEditGroupDesc(activeMaterialGroup.description || '');
+    setFeedback(null);
+  };
+
+  const handleSaveEditMaterialGroup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingGroupMatkl) return;
+    setFeedback(null);
+    const res = await onUpdateMaterialGroup(editingGroupMatkl, {
+      label: editGroupLabel.trim(),
+      defaultMtart: editGroupMtart,
+      defaultBklas: editGroupBklas,
+      description: editGroupDesc.trim(),
+    });
+    if (res.ok) {
+      setFeedback({
+        type: 'ok',
+        text: `Material Group ${editingGroupMatkl} pada T023 berhasil diperbarui.`,
+      });
+      setEditingGroupMatkl(null);
+    } else {
+      setFeedback({ type: 'err', text: res.error || 'Gagal memperbarui Material Group.' });
+    }
+  };
+
+  const handleDeleteActiveMaterialGroup = async () => {
+    if (!activeMaterialGroup) return;
+    setFeedback(null);
+    const target = activeMaterialGroup.matkl;
+    const res = await onDeleteMaterialGroup(target);
+    if (res.ok) {
+      setEditingGroupMatkl(null);
+      setFeedback({
+        type: 'ok',
+        text: `Material Group ${target} telah dihapus dari T023.`,
+      });
+    } else {
+      setFeedback({ type: 'err', text: res.error || `Gagal menghapus Material Group ${target}.` });
+    }
+  };
+
+  const handleCreateUomSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFeedback(null);
+    const cleanMsehi = newUomCode.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    const res = await onCreateUom({
+      msehi: cleanMsehi,
+      label: newUomLabel.trim(),
+      isoCode: newUomIso.trim().toUpperCase() || cleanMsehi,
+      dimension: newUomDimension,
+      decimalPlaces: newUomDecimals,
+      description: newUomDesc.trim() || newUomLabel.trim(),
+    });
+    if (res.ok) {
+      setFeedback({
+        type: 'ok',
+        text: `Satuan ${cleanMsehi} (${newUomLabel.trim()}) berhasil ditambahkan ke Master UoM T006 / CUNI dan langsung tersedia di MARA-MEINS.`,
+      });
+      setNewUomCode('');
+      setNewUomLabel('');
+      setNewUomIso('');
+      setNewUomDimension('Count');
+      setNewUomDecimals(0);
+      setNewUomDesc('');
+    } else {
+      setFeedback({ type: 'err', text: res.error || 'Gagal menambahkan Base Unit of Measure.' });
+    }
+  };
+
+  const handleStartEditUom = (u: UnitOfMeasureDefinition) => {
+    setEditingUomMsehi(u.msehi);
+    setEditUomLabel(u.label);
+    setEditUomIso(u.isoCode);
+    setEditUomDimension(u.dimension);
+    setEditUomDesc(u.description);
+    setFeedback(null);
+  };
+
+  const handleSaveEditUom = async (msehi: string) => {
+    setFeedback(null);
+    const res = await onUpdateUom(msehi, {
+      label: editUomLabel.trim(),
+      isoCode: editUomIso.trim().toUpperCase(),
+      dimension: editUomDimension,
+      description: editUomDesc.trim(),
+    });
+    if (res.ok) {
+      setEditingUomMsehi(null);
+      setFeedback({
+        type: 'ok',
+        text: `Satuan ${msehi} pada Master UoM T006 berhasil diperbarui.`,
+      });
+    } else {
+      setFeedback({ type: 'err', text: res.error || `Gagal memperbarui satuan ${msehi}.` });
+    }
+  };
+
+  const handleDeleteUomClick = async (msehi: string) => {
+    setFeedback(null);
+    const res = await onDeleteUom(msehi);
+    if (res.ok) {
+      setFeedback({
+        type: 'ok',
+        text: `Satuan ${msehi} telah dihapus dari Master UoM T006.`,
+      });
+    } else {
+      setFeedback({ type: 'err', text: res.error || `Gagal menghapus satuan ${msehi}.` });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header & Selector Strip */}
@@ -257,10 +444,10 @@ export function IndustryCustomizingView({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-semibold text-slate-900">
-              SPRO Customizing · OMS9, CI_MARA &amp; Master Characteristic per Material Group (CT04)
+              SPRO Customizing · OMS9, CI_MARA, Material Group (CT04) &amp; Master UoM (CUNI)
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Konfigurasi aturan field standar (OMS9), append field industri (CI_MARA), serta Master Characteristic wajib per Material Group (T023 / CT04).
+              Konfigurasi aturan field standar (OMS9), append field industri (CI_MARA), Master Characteristic per Material Group (T023 / CT04), serta Master Base Unit of Measure (T006 / CUNI).
             </p>
           </div>
 
@@ -271,7 +458,7 @@ export function IndustryCustomizingView({
                 setActiveSubTab('oms9');
                 setFeedback(null);
               }}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
                 activeSubTab === 'oms9' ? 'bg-white text-[#0064D9] shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -283,7 +470,7 @@ export function IndustryCustomizingView({
                 setActiveSubTab('append');
                 setFeedback(null);
               }}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
                 activeSubTab === 'append' ? 'bg-white text-[#0064D9] shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -295,64 +482,115 @@ export function IndustryCustomizingView({
                 setActiveSubTab('ct04');
                 setFeedback(null);
               }}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
                 activeSubTab === 'ct04' ? 'bg-white text-[#0064D9] shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Master Characteristic (CT04)
+              Master Group &amp; Char (CT04)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveSubTab('cuni');
+                setFeedback(null);
+              }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                activeSubTab === 'cuni' ? 'bg-white text-[#0064D9] shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Master Satuan / UoM (CUNI)
             </button>
           </div>
         </div>
 
-        {activeSubTab !== 'ct04' ? (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-              {data.industrySectors.map((ind) => {
-                const isSelected = ind.mbrsh === selectedIndustry;
-                const customCount = data.customIndustryFields.filter(
-                  (f) => f.industrySector === ind.mbrsh
-                ).length;
-                return (
-                  <button
-                    key={ind.mbrsh}
-                    type="button"
-                    onClick={() => {
-                      setSelectedIndustry(ind.mbrsh);
-                      setFeedback(null);
-                    }}
-                    className={`p-3 rounded-md border text-left transition-colors ${
-                      isSelected
-                        ? 'bg-[#EAF2FD] border-[#0064D9] text-[#0064D9]'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white'
-                    }`}
-                  >
-                    <div className="font-mono text-xs font-bold">MBRSH · {ind.mbrsh}</div>
-                    <div className="text-xs font-semibold mt-0.5 truncate">{ind.shortLabel}</div>
-                    <div className="text-[11px] text-slate-500 mt-1">{customCount} field CI_MARA</div>
-                  </button>
-                );
-              })}
-            </div>
+        {(activeSubTab === 'oms9' || activeSubTab === 'append') && (
+          <div className="pt-3 border-t border-slate-100 space-y-3">
+            {data.industrySectors.length > 1 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                {data.industrySectors.map((ind) => {
+                  const isSelected = ind.mbrsh === selectedIndustry;
+                  const customCount = data.customIndustryFields.filter(
+                    (f) => f.industrySector === ind.mbrsh
+                  ).length;
+                  return (
+                    <button
+                      key={ind.mbrsh}
+                      type="button"
+                      onClick={() => {
+                        setSelectedIndustry(ind.mbrsh);
+                        setFeedback(null);
+                      }}
+                      className={`p-3 rounded-md border text-left transition-colors ${
+                        isSelected
+                          ? 'bg-[#EAF2FD] border-[#0064D9] text-[#0064D9]'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white'
+                      }`}
+                    >
+                      <div className="font-mono text-xs font-bold">MBRSH · {ind.mbrsh}</div>
+                      <div className="text-xs font-semibold mt-0.5 truncate">{ind.shortLabel}</div>
+                      <div className="text-[11px] text-slate-500 mt-1">{customCount} field CI_MARA</div>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-md border border-[#0064D9]/30 bg-[#EAF2FD]/50 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="font-mono font-bold text-[#0064D9]">
+                      MBRSH · {selectedIndustry} (Mechanical Engineering)
+                    </span>
+                    <span className="text-slate-300">|</span>
+                    <span className="font-mono font-semibold text-slate-800">
+                      MTART · HAWA
+                    </span>
+                    <span className="text-slate-300">|</span>
+                    <span className="font-semibold text-slate-900">
+                      {data.activeTenant.bukrs} · {data.activeTenant.name}
+                    </span>
+                  </div>
+                  <div className="text-xs text-slate-700">
+                    <span className="font-semibold">{data.activeTenant.coreBusiness}</span>
+                    {' — '}
+                    {data.activeTenant.description}
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 shrink-0 text-xs font-mono tabular-nums text-slate-700">
+                  <div>
+                    <span className="text-slate-500">OMS9 Wajib: </span>
+                    <span className="font-bold text-slate-900">
+                      {rulesDraft.filter((r) => r.rulesByIndustry[selectedIndustry] === 'required').length}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">CI_MARA: </span>
+                    <span className="font-bold text-[#0064D9]">{industryFields.length} field</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {industryDef && (
-              <div className="pt-3 border-t border-slate-100 text-xs text-slate-600">
+              <div className="text-xs text-slate-600">
                 <span className="font-semibold text-slate-900">{industryDef.label}:</span>{' '}
                 {industryDef.regulatoryContext}
               </div>
             )}
-          </>
-        ) : (
+          </div>
+        )}
+
+        {activeSubTab === 'ct04' && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="text-xs text-slate-600">
                 Material Group aktif untuk tenant{' '}
                 <span className="font-mono font-semibold text-slate-900">{data.activeTenant.bukrs}</span>{' '}
-                ({data.materialGroups.length} grup T023)
+                (<span className="font-mono tabular-nums">{data.materialGroups.length}</span> grup T023)
               </div>
               <button
                 type="button"
                 onClick={() => setShowNewGroupForm((v) => !v)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#0064D9] bg-[#EAF2FD] hover:bg-[#dceafb] rounded-md transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#0064D9] bg-[#EAF2FD] hover:bg-[#dceafb] rounded-md transition-colors whitespace-nowrap shrink-0"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>{showNewGroupForm ? 'Tutup Form Material Group' : 'Tambah Material Group (T023)'}</span>
@@ -364,7 +602,7 @@ export function IndustryCustomizingView({
                 onSubmit={handleCreateMaterialGroupSubmit}
                 className="p-4 bg-slate-50 border border-slate-200 rounded-md grid grid-cols-1 md:grid-cols-12 gap-3 items-end"
               >
-                <div className="md:col-span-3">
+                <div className="md:col-span-2">
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                     Kode MATKL
                   </label>
@@ -373,7 +611,7 @@ export function IndustryCustomizingView({
                     required
                     value={newGroupCode}
                     onChange={(e) => setNewGroupCode(e.target.value.toUpperCase())}
-                    placeholder="mis. PIPE-SS atau PPE-GLV"
+                    placeholder="mis. UN-EXC"
                     className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
                   />
                 </div>
@@ -386,22 +624,38 @@ export function IndustryCustomizingView({
                     required
                     value={newGroupLabel}
                     onChange={(e) => setNewGroupLabel(e.target.value)}
-                    placeholder="mis. Safety Gloves & Hand PPE"
+                    placeholder="mis. Unit - Excavators"
                     className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-md"
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div className="md:col-span-1">
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                    Default MTART
+                    MTART
                   </label>
                   <select
                     value={newGroupMtart}
                     onChange={(e) => setNewGroupMtart(e.target.value as MaterialTypeCode)}
-                    className="w-full px-2.5 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                    className="w-full px-2 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
                   >
                     {data.materialTypes.map((mt) => (
                       <option key={mt.mtart} value={mt.mtart}>
                         {mt.mtart}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Val. Class (OMQW)
+                  </label>
+                  <select
+                    value={newGroupBklas}
+                    onChange={(e) => setNewGroupBklas(e.target.value)}
+                    className="w-full px-2 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                  >
+                    {VALUATION_CLASSES.map((vc) => (
+                      <option key={vc.bklas} value={vc.bklas}>
+                        {vc.bklas} — {vc.label}
                       </option>
                     ))}
                   </select>
@@ -421,7 +675,7 @@ export function IndustryCustomizingView({
                 <div className="md:col-span-1">
                   <button
                     type="submit"
-                    className="w-full py-1.5 px-3 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md"
+                    className="w-full py-1.5 px-3 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md whitespace-nowrap"
                   >
                     Simpan
                   </button>
@@ -439,6 +693,7 @@ export function IndustryCustomizingView({
                     type="button"
                     onClick={() => {
                       setSelectedMatkl(mg.matkl);
+                      setEditingGroupMatkl(null);
                       setFeedback(null);
                     }}
                     className={`p-3 rounded-md border text-left transition-colors ${
@@ -448,8 +703,15 @@ export function IndustryCustomizingView({
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-xs font-bold">{mg.matkl}</span>
-                      <span className="text-[11px] font-mono text-slate-500">
+                      <span className="font-mono text-xs font-bold">
+                        {mg.matkl}
+                        {mg.defaultBklas ? (
+                          <span className="ml-1.5 font-normal text-[11px] text-slate-500">
+                            · {mg.defaultBklas}
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="text-[11px] font-mono tabular-nums text-slate-500">
                         {mg.characteristics.length} char ({reqCount} wajib)
                       </span>
                     </div>
@@ -460,11 +722,139 @@ export function IndustryCustomizingView({
             </div>
 
             {activeMaterialGroup && (
-              <div className="pt-3 border-t border-slate-100 text-xs text-slate-600">
-                <span className="font-mono font-semibold text-slate-900">{activeMaterialGroup.matkl}</span>{' '}
-                — {activeMaterialGroup.description}
+              <div className="pt-3 border-t border-slate-100 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
+                  <div>
+                    <span className="font-mono font-semibold text-slate-900">
+                      {activeMaterialGroup.matkl}
+                    </span>{' '}
+                    · Default{' '}
+                    <span className="font-mono font-semibold text-slate-800">
+                      {activeMaterialGroup.defaultMtart || 'HAWA'}
+                    </span>
+                    {activeMaterialGroup.defaultBklas ? (
+                      <>
+                        {' '}· Val. Class{' '}
+                        <span className="font-mono font-semibold text-slate-800">
+                          {activeMaterialGroup.defaultBklas}
+                        </span>
+                      </>
+                    ) : null}{' '}
+                    — {activeMaterialGroup.description}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={handleStartEditMaterialGroup}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors whitespace-nowrap"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      <span>Edit Grup</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeleteActiveMaterialGroup}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-md transition-colors whitespace-nowrap"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Hapus Grup</span>
+                    </button>
+                  </div>
+                </div>
+
+                {editingGroupMatkl === activeMaterialGroup.matkl && (
+                  <form
+                    onSubmit={handleSaveEditMaterialGroup}
+                    className="p-3.5 bg-slate-50 border border-slate-200 rounded-md grid grid-cols-1 md:grid-cols-12 gap-3 items-end"
+                  >
+                    <div className="md:col-span-3">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Nama Material Group
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={editGroupLabel}
+                        onChange={(e) => setEditGroupLabel(e.target.value)}
+                        className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-md"
+                      />
+                    </div>
+                    <div className="md:col-span-1">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        MTART
+                      </label>
+                      <select
+                        value={editGroupMtart}
+                        onChange={(e) => setEditGroupMtart(e.target.value as MaterialTypeCode)}
+                        className="w-full px-2 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                      >
+                        {data.materialTypes.map((mt) => (
+                          <option key={mt.mtart} value={mt.mtart}>
+                            {mt.mtart}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Val. Class
+                      </label>
+                      <select
+                        value={editGroupBklas}
+                        onChange={(e) => setEditGroupBklas(e.target.value)}
+                        className="w-full px-2 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                      >
+                        {VALUATION_CLASSES.map((vc) => (
+                          <option key={vc.bklas} value={vc.bklas}>
+                            {vc.bklas} — {vc.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Deskripsi T023
+                      </label>
+                      <input
+                        type="text"
+                        value={editGroupDesc}
+                        onChange={(e) => setEditGroupDesc(e.target.value)}
+                        className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-md"
+                      />
+                    </div>
+                    <div className="md:col-span-2 flex items-center gap-1.5">
+                      <button
+                        type="submit"
+                        className="flex-1 py-1.5 px-2.5 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md whitespace-nowrap"
+                      >
+                        Simpan
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingGroupMatkl(null)}
+                        className="p-1.5 text-slate-500 hover:text-slate-900 bg-white border border-slate-200 rounded-md"
+                        title="Batal"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             )}
+          </div>
+        )}
+
+        {activeSubTab === 'cuni' && (
+          <div className="pt-3 border-t border-slate-100 text-xs text-slate-600 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              Master Satuan Dasar (Base Unit of Measure — <span className="font-mono font-semibold text-slate-900">T006 / CUNI</span>) untuk tenant{' '}
+              <span className="font-mono font-semibold text-slate-900">{data.activeTenant.bukrs}</span>.
+              Seluruh opsi di dropdown <span className="font-mono">MARA-MEINS</span> pada MM01/MM02 mengacu pada tabel master ini.
+            </div>
+            <div className="font-mono text-xs font-semibold text-slate-800 tabular-nums whitespace-nowrap">
+              {(data.unitsOfMeasure || []).length} satuan terdaftar
+            </div>
           </div>
         )}
       </div>
@@ -492,10 +882,10 @@ export function IndustryCustomizingView({
           <div className="px-5 py-3.5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-semibold text-slate-900">
-                OMS9 Field Reference Matrix — Sektor {selectedIndustry} ({industryDef?.shortLabel})
+                OMS9 Field Reference Matrix — {data.activeTenant.bukrs} {data.activeTenant.name} (HAWA · Sektor {selectedIndustry})
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Perubahan status langsung mengontrol visibilitas, read-only, dan validasi wajib isi di MM01/MM02.
+                Aturan field status untuk proses bisnis {data.activeTenant.coreBusiness}; langsung mengontrol visibilitas, read-only, dan validasi wajib isi di MM01/MM02.
               </p>
             </div>
             <button
@@ -504,7 +894,7 @@ export function IndustryCustomizingView({
                 const res = await onSaveStandardRules(rulesDraft);
                 setFeedback(
                   res.ok
-                    ? { type: 'ok', text: `Matriks OMS9 untuk sektor ${selectedIndustry} berhasil disimpan dan aktif.` }
+                    ? { type: 'ok', text: `Matriks OMS9 untuk ${data.activeTenant.name} (Sektor ${selectedIndustry}) berhasil disimpan dan aktif.` }
                     : { type: 'err', text: res.error || 'Gagal menyimpan matriks OMS9.' }
                 );
               }}
@@ -522,7 +912,7 @@ export function IndustryCustomizingView({
                   <th className="py-2.5 px-5">Technical Field</th>
                   <th className="py-2.5 px-5">Tabel / View MM01</th>
                   <th className="py-2.5 px-5">Nama Field</th>
-                  <th className="py-2.5 px-5">Status di Sektor {selectedIndustry}</th>
+                  <th className="py-2.5 px-5">Status di {data.activeTenant.name} (Sektor {selectedIndustry})</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -580,7 +970,7 @@ export function IndustryCustomizingView({
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4 text-[#0064D9]" />
               <h3 className="text-sm font-semibold text-slate-900">
-                Tambah Field Append CI_MARA ({selectedIndustry})
+                Tambah Field Append CI_MARA ({data.activeTenant.bukrs} · Sektor {selectedIndustry})
               </h3>
             </div>
 
@@ -693,12 +1083,12 @@ export function IndustryCustomizingView({
           <div className="lg:col-span-7 bg-white border border-slate-200 rounded-lg overflow-hidden">
             <div className="px-5 py-3.5 border-b border-slate-200">
               <h3 className="text-sm font-semibold text-slate-900">
-                Daftar Field Kustom CI_MARA — Sektor {selectedIndustry} ({industryFields.length})
+                Daftar Field Kustom CI_MARA — {data.activeTenant.name} · Sektor {selectedIndustry} ({industryFields.length})
               </h3>
             </div>
             {industryFields.length === 0 ? (
               <div className="p-8 text-center text-xs text-slate-500">
-                Belum ada field kustom CI_MARA untuk sektor industri {selectedIndustry}.
+                Belum ada field kustom CI_MARA untuk {data.activeTenant.name} (Sektor {selectedIndustry}).
               </div>
             ) : (
               <div className="divide-y divide-slate-200">
@@ -988,6 +1378,275 @@ export function IndustryCustomizingView({
             Belum ada Material Group pada tenant aktif. Gunakan tombol Tambah Material Group (T023) di atas.
           </div>
         )
+      )}
+
+      {/* SUBTAB 4: MASTER BASE UNIT OF MEASURE (T006 / CUNI) */}
+      {activeSubTab === 'cuni' && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <form
+            onSubmit={handleCreateUomSubmit}
+            className="lg:col-span-5 bg-white border border-slate-200 rounded-lg p-5 space-y-4"
+          >
+            <div className="flex items-center gap-2">
+              <Ruler className="w-4 h-4 text-[#0064D9]" />
+              <h3 className="text-sm font-semibold text-slate-900">
+                Tambah Base Unit of Measure (T006 / CUNI)
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Kode Satuan (MSEHI)
+                </label>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  value={newUomCode}
+                  onChange={(e) => setNewUomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                  placeholder="mis. KLT, UN, HR"
+                  className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  ISO Code
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={newUomIso}
+                  onChange={(e) => setNewUomIso(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                  placeholder="mis. KGM, LTR, PCE"
+                  className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">
+                Nama Satuan (Commercial Label)
+              </label>
+              <input
+                type="text"
+                required
+                value={newUomLabel}
+                onChange={(e) => setNewUomLabel(e.target.value)}
+                placeholder="mis. Koli / Crate atau Jam Operasi"
+                className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Dimensi</label>
+                <select
+                  value={newUomDimension}
+                  onChange={(e) => setNewUomDimension(e.target.value as UomDimension)}
+                  className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-md"
+                >
+                  {UOM_DIMENSIONS.map((dim) => (
+                    <option key={dim} value={dim}>
+                      {dim}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Decimal Places</label>
+                <select
+                  value={newUomDecimals}
+                  onChange={(e) => setNewUomDecimals(Number(e.target.value))}
+                  className="w-full px-3 py-2 text-xs font-mono tabular-nums bg-white border border-slate-200 rounded-md"
+                >
+                  <option value={0}>0 (Bilangan Bulat)</option>
+                  <option value={2}>2 (0.00)</option>
+                  <option value={3}>3 (0.000)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Keterangan Penggunaan</label>
+              <input
+                type="text"
+                value={newUomDesc}
+                onChange={(e) => setNewUomDesc(e.target.value)}
+                placeholder="mis. Satuan pengemasan ekspor / heavy cargo"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-md"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Simpan Satuan ke Master UoM (T006)</span>
+            </button>
+          </form>
+
+          <div className="lg:col-span-7 bg-white border border-slate-200 rounded-lg overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Daftar Master Base Unit of Measure ({(data.unitsOfMeasure || []).length})
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Satuan yang sedang dipakai material di MARA tidak dapat dihapus hingga material diperbarui.
+                </p>
+              </div>
+            </div>
+
+            {(data.unitsOfMeasure || []).length === 0 ? (
+              <div className="p-8 text-center text-xs text-slate-500">
+                Belum ada satuan terdaftar di T006.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500">
+                      <th className="py-2.5 px-4">MSEHI</th>
+                      <th className="py-2.5 px-4">Nama Satuan &amp; Deskripsi</th>
+                      <th className="py-2.5 px-4">Dimensi</th>
+                      <th className="py-2.5 px-4">Desimal</th>
+                      <th className="py-2.5 px-4 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {(data.unitsOfMeasure || []).map((u) => {
+                      const isEditing = editingUomMsehi === u.msehi;
+                      return (
+                        <tr key={u.msehi} className="hover:bg-slate-50">
+                          <td className="py-3 px-4 align-top">
+                            <div className="font-mono font-bold text-[#0064D9]">{u.msehi}</div>
+                            <div className="font-mono text-[11px] text-slate-400 mt-0.5">
+                              ISO: {u.isoCode}
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 align-top">
+                            {isEditing ? (
+                              <div className="space-y-1.5">
+                                <input
+                                  type="text"
+                                  value={editUomLabel}
+                                  onChange={(e) => setEditUomLabel(e.target.value)}
+                                  className="w-full px-2.5 py-1 text-xs bg-white border border-slate-300 rounded"
+                                  placeholder="Nama satuan"
+                                />
+                                <div className="flex gap-1.5">
+                                  <input
+                                    type="text"
+                                    maxLength={6}
+                                    value={editUomIso}
+                                    onChange={(e) =>
+                                      setEditUomIso(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))
+                                    }
+                                    className="w-24 px-2 py-1 text-[11px] font-mono bg-white border border-slate-300 rounded"
+                                    placeholder="ISO"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={editUomDesc}
+                                    onChange={(e) => setEditUomDesc(e.target.value)}
+                                    className="flex-1 px-2 py-1 text-[11px] bg-white border border-slate-300 rounded"
+                                    placeholder="Deskripsi"
+                                  />
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="font-semibold text-slate-900">{u.label}</div>
+                                <div className="text-[11px] text-slate-500 mt-0.5">{u.description}</div>
+                              </>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 align-top">
+                            {isEditing ? (
+                              <select
+                                value={editUomDimension}
+                                onChange={(e) => setEditUomDimension(e.target.value as UomDimension)}
+                                className="px-2 py-1 text-xs bg-white border border-slate-300 rounded"
+                              >
+                                {UOM_DIMENSIONS.map((dim) => (
+                                  <option key={dim} value={dim}>
+                                    {dim}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <span className="inline-block px-2 py-0.5 font-mono text-[11px] bg-slate-100 border border-slate-200 text-slate-700 rounded">
+                                {u.dimension}
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 align-top">
+                            <select
+                              value={u.decimalPlaces}
+                              onChange={(e) =>
+                                onUpdateUom(u.msehi, { decimalPlaces: Number(e.target.value) })
+                              }
+                              aria-label={`Desimal untuk ${u.msehi}`}
+                              className="px-2 py-1 text-xs font-mono tabular-nums bg-slate-50 border border-slate-200 rounded"
+                            >
+                              <option value={0}>0</option>
+                              <option value={2}>2</option>
+                              <option value={3}>3</option>
+                            </select>
+                          </td>
+                          <td className="py-3 px-4 align-top text-right">
+                            <div className="inline-flex items-center gap-1">
+                              {isEditing ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSaveEditUom(u.msehi)}
+                                    className="px-2 py-1 text-[11px] font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded whitespace-nowrap"
+                                  >
+                                    Simpan
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingUomMsehi(null)}
+                                    className="p-1 text-slate-500 hover:text-slate-900 rounded"
+                                    title="Batal"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleStartEditUom(u)}
+                                    title={`Edit ${u.msehi}`}
+                                    className="p-1.5 text-slate-400 hover:text-[#0064D9] hover:bg-slate-100 rounded transition-colors"
+                                  >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteUomClick(u.msehi)}
+                                    title={`Hapus ${u.msehi}`}
+                                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

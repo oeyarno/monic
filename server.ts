@@ -4,12 +4,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import {
+  buildMtCalibrationWorkspace,
   CORE_BUSINESS_OPTIONS,
+  createDefaultUnitsOfMeasure,
   createInitialMultiTenantDatabase,
+  createStandardFieldRulesForBusiness,
+  createStandardizedMaterialGroups,
+  createTemplateCustomFields,
   createTemplateMaterialGroups,
   createTenantTemplateWorkspace,
   INDUSTRY_SECTORS,
   MATERIAL_TYPES,
+  TENANT_COMPANIES,
   VALUATION_TYPES,
 } from './server/seedData.ts';
 import type {
@@ -31,6 +37,8 @@ import type {
   TenantCoreBusinessType,
   TenantSummary,
   TenantWorkspaceData,
+  UnitOfMeasureDefinition,
+  UomDimension,
   ValuationTypeCode,
 } from './src/types/sap.ts';
 import { buildMaterialShortDescription } from './src/utils/format.ts';
@@ -139,7 +147,7 @@ function loadDatabase(): MultiTenantDatabase {
   }
 
   const currentVersion = parsed.schemaVersion;
-  if (currentVersion < 6) {
+  if (currentVersion < 14) {
     try {
       createDatabaseBackup(DB_FILE, `pre-v${currentVersion}`);
     } catch (err) {
@@ -229,6 +237,303 @@ function loadDatabase(): MultiTenantDatabase {
       parsed.schemaVersion = 6;
     }
 
+    if (parsed.schemaVersion < 7) {
+      const defaults = createDefaultUnitsOfMeasure();
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+        if (!ws.unitsOfMeasure || ws.unitsOfMeasure.length === 0) {
+          ws.unitsOfMeasure = structuredClone(defaults);
+        } else {
+          for (const def of defaults) {
+            if (!ws.unitsOfMeasure.some((u) => u.msehi === def.msehi)) {
+              ws.unitsOfMeasure.push(structuredClone(def));
+            }
+          }
+        }
+      }
+      parsed.schemaVersion = 7;
+    }
+
+    if (parsed.schemaVersion < 8) {
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+        if (!ws.materialGroups) ws.materialGroups = [];
+        const templateGroups = createTemplateMaterialGroups(company.coreBusinessType);
+        const lightVehGroup = templateGroups.find((tg) => tg.matkl === 'LIGHT-VEH');
+        if (lightVehGroup && !ws.materialGroups.some((mg) => mg.matkl === 'LIGHT-VEH')) {
+          ws.materialGroups.push(structuredClone(lightVehGroup));
+        }
+      }
+      parsed.schemaVersion = 8;
+    }
+
+    if (parsed.schemaVersion < 9) {
+      const presetById = new Map(TENANT_COMPANIES.map((t) => [t.tenantId, t]));
+      for (let i = 0; i < parsed.tenantCompanies.length; i++) {
+        const existing = parsed.tenantCompanies[i];
+        const preset = presetById.get(existing.tenantId);
+        if (preset) {
+          parsed.tenantCompanies[i] = structuredClone(preset);
+        }
+      }
+
+      const mtPreset = presetById.get('tenant-mt');
+      if (mtPreset && !parsed.tenantCompanies.some((c) => c.tenantId === 'tenant-mt')) {
+        parsed.tenantCompanies.push(structuredClone(mtPreset));
+      }
+      if (!parsed.workspaces['tenant-mt']) {
+        parsed.workspaces['tenant-mt'] = buildMtCalibrationWorkspace();
+      }
+
+      const presetOrder = new Map(TENANT_COMPANIES.map((t, idx) => [t.tenantId, idx]));
+      parsed.tenantCompanies.sort((a, b) => {
+        const idxA = presetOrder.has(a.tenantId) ? presetOrder.get(a.tenantId)! : Number.MAX_SAFE_INTEGER;
+        const idxB = presetOrder.has(b.tenantId) ? presetOrder.get(b.tenantId)! : Number.MAX_SAFE_INTEGER;
+        return idxA - idxB;
+      });
+
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        for (const plant of ws.plants || []) {
+          plant.bukrs = company.bukrs;
+        }
+        for (const vendor of ws.vendors || []) {
+          vendor.ekorg = company.bukrs;
+        }
+        for (const mg of ws.materialGroups || []) {
+          mg.defaultMtart = 'HAWA';
+        }
+        for (const mat of ws.materials || []) {
+          // Pertahankan mara.matnr agar relasi PR/PO/MIGO/CDHDR tetap utuh, namun seragamkan MTART & VKORG
+          mat.mara.mtart = 'HAWA';
+          if (mat.mvke) {
+            mat.mvke.vkorg = company.bukrs;
+          }
+        }
+      }
+
+      parsed.schemaVersion = 9;
+    }
+
+    if (parsed.schemaVersion < 10) {
+      const defaultUoms = createDefaultUnitsOfMeasure();
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        const standardGroups = createStandardizedMaterialGroups(company.coreBusinessType);
+        const existingByMatkl = new Map((ws.materialGroups || []).map((g) => [g.matkl, g]));
+        const mergedGroups: MaterialGroupDefinition[] = [];
+
+        for (const std of standardGroups) {
+          const prev = existingByMatkl.get(std.matkl);
+          if (prev) {
+            mergedGroups.push({
+              ...std,
+              characteristics:
+                prev.characteristics && prev.characteristics.length > 0
+                  ? prev.characteristics
+                  : structuredClone(std.characteristics),
+            });
+            existingByMatkl.delete(std.matkl);
+          } else {
+            mergedGroups.push(structuredClone(std));
+          }
+        }
+
+        // Pertahankan Material Group kustom/lama (mis. MATERIAL, TOOLS, HEAVY-VECH, OCTG-PIPE, dll.)
+        for (const rem of existingByMatkl.values()) {
+          mergedGroups.push({
+            ...rem,
+            defaultMtart: 'HAWA',
+            defaultBklas:
+              rem.defaultBklas ||
+              (rem.matkl === 'HEAVY-EQ' || rem.matkl === 'HEAVY-VECH' || rem.matkl === 'LIGHT-VEH' || rem.matkl === 'UNIT-WL'
+                ? '3500'
+                : rem.matkl === 'LUBRICANT' || rem.matkl === 'LUBE-HD'
+                ? '3030'
+                : '3100'),
+          });
+        }
+        ws.materialGroups = mergedGroups;
+
+        if (!ws.unitsOfMeasure) ws.unitsOfMeasure = [];
+        for (const def of defaultUoms) {
+          if (!ws.unitsOfMeasure.some((u) => u.msehi === def.msehi)) {
+            ws.unitsOfMeasure.push(structuredClone(def));
+          }
+        }
+      }
+
+      parsed.schemaVersion = 10;
+    }
+
+    if (parsed.schemaVersion < 11) {
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        const standardGroups = createStandardizedMaterialGroups(company.coreBusinessType);
+        const existingByMatkl = new Map((ws.materialGroups || []).map((g) => [g.matkl, g]));
+        const mergedGroups: MaterialGroupDefinition[] = [];
+
+        for (const std of standardGroups) {
+          const prev = existingByMatkl.get(std.matkl);
+          if (prev) {
+            mergedGroups.push({
+              ...std,
+              characteristics:
+                prev.characteristics && prev.characteristics.length > 0
+                  ? prev.characteristics
+                  : structuredClone(std.characteristics),
+            });
+            existingByMatkl.delete(std.matkl);
+          } else {
+            mergedGroups.push(structuredClone(std));
+          }
+        }
+
+        for (const rem of existingByMatkl.values()) {
+          mergedGroups.push(rem);
+        }
+        ws.materialGroups = mergedGroups;
+      }
+
+      parsed.schemaVersion = 11;
+    }
+
+    if (parsed.schemaVersion < 12) {
+      const removedGroups = new Set(['LIGHT-VEH', 'HEAVY-EQ', 'LUBRICANT']);
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        for (const mat of ws.materials || []) {
+          if (mat.mara.matkl === 'LIGHT-VEH') {
+            mat.mara.matkl = 'UN-LVH';
+            const oldChars = mat.characteristics || {};
+            const typeMap: Record<string, string> = {
+              DC: 'Double Cabin',
+              SUV: 'SUV Operasional',
+              MPV: 'Minibus Kru',
+              Pickup: 'Single Cabin',
+            };
+            mat.characteristics = {
+              CHR_LV_MODEL: oldChars.CHR_LV_MODEL || oldChars.CHR_NAMA || 'Hilux',
+              CHR_LV_TYPE: oldChars.CHR_LV_TYPE || typeMap[String(oldChars.CHR_TYPE || '')] || 'Double Cabin',
+              CHR_LV_TRANS: oldChars.CHR_LV_TRANS || oldChars.CHR_TRANSMISI || 'Manual',
+              CHR_LV_DRIVE:
+                oldChars.CHR_LV_DRIVE || (oldChars.CHR_GARDAN === '2x4' ? '4x2' : oldChars.CHR_GARDAN) || '4x4',
+              CHR_LV_BRAND: oldChars.CHR_LV_BRAND || oldChars.CHR_BRAND || 'Toyota',
+            };
+            for (const mb of Object.values(mat.mbew || {})) {
+              mb.bklas = '3500';
+              if (mb.splitValuations) {
+                for (const sv of Object.values(mb.splitValuations)) {
+                  if (sv) sv.bklas = '3500';
+                }
+              }
+            }
+          } else if (mat.mara.matkl === 'HEAVY-EQ') {
+            mat.mara.matkl = 'UN-EXC';
+          } else if (mat.mara.matkl === 'LUBRICANT') {
+            mat.mara.matkl = 'MN-LUB';
+          }
+        }
+
+        ws.materialGroups = (ws.materialGroups || []).filter((mg) => !removedGroups.has(mg.matkl));
+      }
+
+      parsed.schemaVersion = 12;
+    }
+
+    if (parsed.schemaVersion < 13) {
+      for (const company of parsed.tenantCompanies) {
+        company.defaultIndustry = 'M';
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        for (const mat of ws.materials || []) {
+          mat.mara.mbrsh = 'M';
+          if (!mat.industryExtensions) mat.industryExtensions = {};
+          if (company.coreBusinessType === 'oil_gas_contractor' && !mat.industryExtensions.ZZ_PROJECT_SCOPE) {
+            mat.industryExtensions.ZZ_PROJECT_SCOPE =
+              mat.mara.matkl === 'OCTG-PIPE' || mat.mara.matkl === 'VALVE-HP'
+                ? 'Piping & Facility EPC'
+                : 'Maintenance Oil & Gas';
+          } else if (company.coreBusinessType === 'tools_ppe' && !mat.industryExtensions.ZZ_SALES_CHANNEL) {
+            mat.industryExtensions.ZZ_SALES_CHANNEL =
+              mat.mara.matkl === 'INST-CAL' || mat.mara.matkl === 'TOOL-TORQ'
+                ? 'Service Kalibrasi Alat'
+                : 'Intercompany & External';
+          } else if (company.coreBusinessType === 'unit_spareparts' && !mat.industryExtensions.ZZ_SALES_LINE) {
+            mat.industryExtensions.ZZ_SALES_LINE = 'Genuine Spare Part';
+          }
+        }
+
+        ws.standardFieldRules = createStandardFieldRulesForBusiness(company.coreBusinessType);
+
+        const templateCustom = createTemplateCustomFields(company.coreBusinessType);
+        const templateByName = new Map(templateCustom.map((cf) => [cf.fieldName, cf]));
+        const mergedCustomFields: CustomIndustryField[] = templateCustom.map((cf) => structuredClone(cf));
+        for (const existingCf of ws.customIndustryFields || []) {
+          if (!templateByName.has(existingCf.fieldName)) {
+            mergedCustomFields.push({
+              ...existingCf,
+              industrySector: 'M',
+            });
+          }
+        }
+        ws.customIndustryFields = mergedCustomFields;
+      }
+
+      parsed.schemaVersion = 13;
+    }
+
+    if (parsed.schemaVersion < 14) {
+      for (const company of parsed.tenantCompanies) {
+        company.defaultIndustry = 'M';
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        for (const mat of ws.materials || []) {
+          mat.mara.mbrsh = 'M';
+        }
+
+        ws.standardFieldRules = createStandardFieldRulesForBusiness(company.coreBusinessType);
+
+        const templateCustom = createTemplateCustomFields(company.coreBusinessType);
+        const templateByName = new Map(templateCustom.map((cf) => [cf.fieldName, cf]));
+        const normalizedFields: CustomIndustryField[] = [];
+        const seenNames = new Set<string>();
+
+        for (const existingCf of ws.customIndustryFields || []) {
+          if (seenNames.has(existingCf.fieldName)) continue;
+          seenNames.add(existingCf.fieldName);
+          normalizedFields.push({
+            ...existingCf,
+            industrySector: 'M',
+          });
+        }
+        for (const tplCf of templateCustom) {
+          if (!seenNames.has(tplCf.fieldName)) {
+            seenNames.add(tplCf.fieldName);
+            normalizedFields.push(structuredClone(tplCf));
+          } else {
+            // Ensure template field exists cleanly with industrySector: 'M'
+            void templateByName;
+          }
+        }
+        ws.customIndustryFields = normalizedFields;
+      }
+
+      parsed.schemaVersion = 14;
+    }
+
     saveDatabase(parsed as MultiTenantDatabase);
   }
 
@@ -285,6 +590,7 @@ function buildBootstrapPayload(
     customIndustryFields: ws.customIndustryFields,
     standardFieldRules: ws.standardFieldRules,
     materialGroups: ws.materialGroups || [],
+    unitsOfMeasure: ws.unitsOfMeasure || [],
     changeDocuments: ws.changeDocuments,
     plants: ws.plants,
     vendors: ws.vendors,
@@ -345,8 +651,27 @@ function validateMaterialAgainstOms9(
   const mbrsh = material.mara.mbrsh;
 
   if (!material.mara.matnr.trim()) errors.push('Material Number (MARA-MATNR) wajib diisi.');
+  if (!INDUSTRY_SECTORS.some((ind) => ind.mbrsh === material.mara.mbrsh)) {
+    errors.push(
+      `Industry Sector "${material.mara.mbrsh || '-'}" tidak diizinkan. Sistem saat ini hanya menggunakan Sektor Industri ${INDUSTRY_SECTORS.map((i) => i.mbrsh).join(', ')} (HAWA).`
+    );
+  }
+  if (!MATERIAL_TYPES.some((mt) => mt.mtart === material.mara.mtart)) {
+    errors.push(
+      `Material Type "${material.mara.mtart || '-'}" tidak diizinkan. Sistem saat ini hanya mengizinkan Material Type ${MATERIAL_TYPES.map((m) => m.mtart).join(', ')}.`
+    );
+  }
   if (!material.mara.maktx.trim()) errors.push('Material Description (MARA-MAKTX) wajib diisi.');
-  if (!material.mara.meins.trim()) errors.push('Base Unit of Measure (MARA-MEINS) wajib diisi.');
+  if (!material.mara.meins.trim()) {
+    errors.push('Base Unit of Measure (MARA-MEINS) wajib diisi.');
+  } else if (
+    (ws.unitsOfMeasure || []).length > 0 &&
+    !ws.unitsOfMeasure.some((u) => u.msehi === material.mara.meins)
+  ) {
+    errors.push(
+      `Base Unit of Measure "${material.mara.meins}" tidak terdaftar pada Master Satuan (T006 / CUNI) tenant ini.`
+    );
+  }
 
   const plantData = material.marc[activeWerks];
   const storageKeys = Object.keys(material.mard).filter((k) => k.startsWith(`${activeWerks}-`));
@@ -1281,18 +1606,20 @@ async function startServer() {
       ? field.fieldName.toUpperCase().replace(/[^A-Z0-9_]/g, '_')
       : `ZZ_${field.fieldName.toUpperCase().replace(/[^A-Z0-9_]/g, '_')}`;
 
+    const targetSector = INDUSTRY_SECTORS[0].mbrsh;
     if (
       workspace.customIndustryFields.some(
-        (f) => f.fieldName === normalizedName && f.industrySector === field.industrySector
+        (f) => f.fieldName === normalizedName && f.industrySector === targetSector
       )
     ) {
       return res.status(409).json({
-        error: `Field ${normalizedName} sudah ada di struktur CI_MARA tenant ini untuk industri ${field.industrySector}.`,
+        error: `Field ${normalizedName} sudah ada di struktur CI_MARA tenant ini untuk sektor ${targetSector}.`,
       });
     }
 
     const newField: CustomIndustryField = {
       ...field,
+      industrySector: targetSector,
       id: `cf-${Date.now()}`,
       fieldName: normalizedName,
     };
@@ -1328,11 +1655,15 @@ async function startServer() {
     if (idx === -1) return res.status(404).json({ error: 'Custom field tidak ditemukan.' });
 
     const prev = workspace.customIndustryFields[idx];
-    workspace.customIndustryFields[idx] = field;
+    const normalizedField: CustomIndustryField = {
+      ...field,
+      industrySector: INDUSTRY_SECTORS[0].mbrsh,
+    };
+    workspace.customIndustryFields[idx] = normalizedField;
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
-      objectId: `CI_MARA-${field.industrySector}`,
+      objectId: `CI_MARA-${normalizedField.industrySector}`,
       tableName: 'CI_MARA',
       fieldName: field.fieldName,
       oldValue: `${prev.label} (${prev.status})`,
@@ -1376,7 +1707,13 @@ async function startServer() {
     const db = loadDatabase();
     const { tenantId, workspace } = resolveTenantContext(db, req);
     const { group, username = 'BASIS_ADMIN' } = req.body as {
-      group: { matkl: string; label: string; defaultMtart?: MaterialTypeCode; description?: string };
+      group: {
+        matkl: string;
+        label: string;
+        defaultMtart?: MaterialTypeCode;
+        defaultBklas?: string;
+        description?: string;
+      };
       username?: string;
     };
 
@@ -1396,7 +1733,8 @@ async function startServer() {
     const newGroup: MaterialGroupDefinition = {
       matkl: cleanMatkl,
       label: cleanLabel,
-      defaultMtart: group.defaultMtart || 'ROH',
+      defaultMtart: group.defaultMtart || 'HAWA',
+      defaultBklas: group.defaultBklas?.trim() || '3100',
       description: (group.description || cleanLabel).trim(),
       characteristics: [],
     };
@@ -1409,13 +1747,225 @@ async function startServer() {
       tableName: 'T023',
       fieldName: 'CREATE_MATKL',
       oldValue: '-',
-      newValue: `${cleanMatkl} · ${cleanLabel}`,
+      newValue: `${cleanMatkl} · ${cleanLabel} (ValClass ${newGroup.defaultBklas})`,
       username,
       timestamp: new Date().toISOString(),
     });
 
     saveDatabase(db);
     return res.status(201).json({ materialGroup: newGroup, db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // T023 - Update Material Group
+  app.put('/api/customizing/material-groups/:matkl', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { matkl } = req.params;
+    const { group, username = 'BASIS_ADMIN' } = req.body as {
+      group: {
+        label: string;
+        defaultMtart?: MaterialTypeCode;
+        defaultBklas?: string;
+        description?: string;
+      };
+      username?: string;
+    };
+
+    const existing = (workspace.materialGroups || []).find((mg) => mg.matkl === matkl);
+    if (!existing) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+
+    const cleanLabel = (group?.label || '').trim();
+    if (!cleanLabel) {
+      return res.status(400).json({ error: 'Nama Material Group wajib diisi.' });
+    }
+
+    const prevLabel = existing.label;
+    existing.label = cleanLabel;
+    existing.defaultMtart = group.defaultMtart || existing.defaultMtart || 'HAWA';
+    if (group.defaultBklas !== undefined && group.defaultBklas.trim()) {
+      existing.defaultBklas = group.defaultBklas.trim();
+    }
+    existing.description = (group.description ?? cleanLabel).trim();
+
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: matkl,
+      tableName: 'T023',
+      fieldName: 'UPDATE_MATKL',
+      oldValue: prevLabel,
+      newValue: `${existing.label} (${existing.defaultMtart}${existing.defaultBklas ? ` · ValClass ${existing.defaultBklas}` : ''})`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.json({ materialGroup: existing, db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // T023 - Delete Material Group (blocked if referenced by materials in MARA)
+  app.delete('/api/customizing/material-groups/:matkl', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { matkl } = req.params;
+
+    if (!workspace.materialGroups) workspace.materialGroups = [];
+    const idx = workspace.materialGroups.findIndex((mg) => mg.matkl === matkl);
+    if (idx === -1) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+
+    const usedBy = workspace.materials.filter((m) => m.mara.matkl === matkl);
+    if (usedBy.length > 0) {
+      return res.status(400).json({
+        error: `Material Group ${matkl} sedang digunakan oleh ${usedBy.length} material (mis. ${usedBy[0].mara.matnr}). Tidak dapat dihapus.`,
+      });
+    }
+
+    const removed = workspace.materialGroups.splice(idx, 1)[0];
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: matkl,
+      tableName: 'T023',
+      fieldName: 'DROP_MATKL',
+      oldValue: `${removed.matkl} · ${removed.label}`,
+      newValue: 'Removed',
+      username: 'BASIS_ADMIN',
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // T006 / CUNI - Create Base Unit of Measure
+  app.post('/api/customizing/uoms', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { uom, username = 'BASIS_ADMIN' } = req.body as {
+      uom: {
+        msehi: string;
+        label: string;
+        isoCode?: string;
+        dimension?: UomDimension;
+        decimalPlaces?: number;
+        description?: string;
+      };
+      username?: string;
+    };
+
+    const cleanMsehi = (uom?.msehi || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    const cleanLabel = (uom?.label || '').trim();
+    if (!cleanMsehi || !cleanLabel) {
+      return res.status(400).json({ error: 'Kode UoM (MSEHI) dan Nama Satuan wajib diisi.' });
+    }
+    if (!workspace.unitsOfMeasure) workspace.unitsOfMeasure = [];
+    if (workspace.unitsOfMeasure.some((u) => u.msehi === cleanMsehi)) {
+      return res.status(409).json({ error: `Satuan ${cleanMsehi} sudah terdaftar di Master UoM (T006) tenant ini.` });
+    }
+
+    const parsedDec = Number.isFinite(Number(uom.decimalPlaces))
+      ? Math.max(0, Math.min(3, Math.trunc(Number(uom.decimalPlaces))))
+      : 0;
+
+    const newUom: UnitOfMeasureDefinition = {
+      msehi: cleanMsehi,
+      label: cleanLabel,
+      isoCode: (uom.isoCode || cleanMsehi).trim().toUpperCase().slice(0, 6),
+      dimension: uom.dimension || 'Count',
+      decimalPlaces: parsedDec,
+      description: (uom.description || cleanLabel).trim(),
+    };
+
+    workspace.unitsOfMeasure.push(newUom);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: cleanMsehi,
+      tableName: 'T006 / CUNI',
+      fieldName: 'CREATE_UOM',
+      oldValue: '-',
+      newValue: `${newUom.msehi} · ${newUom.label} (${newUom.dimension}, dec ${newUom.decimalPlaces})`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.status(201).json({ uom: newUom, db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // T006 / CUNI - Update Base Unit of Measure
+  app.put('/api/customizing/uoms/:msehi', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { msehi } = req.params;
+    const { uom, username = 'BASIS_ADMIN' } = req.body as {
+      uom: Partial<UnitOfMeasureDefinition>;
+      username?: string;
+    };
+
+    if (!workspace.unitsOfMeasure) workspace.unitsOfMeasure = [];
+    const existing = workspace.unitsOfMeasure.find((u) => u.msehi === msehi);
+    if (!existing) return res.status(404).json({ error: `Satuan ${msehi} tidak ditemukan.` });
+
+    const prevSummary = `${existing.label} (${existing.dimension}, dec ${existing.decimalPlaces})`;
+    if (uom.label !== undefined && uom.label.trim()) existing.label = uom.label.trim();
+    if (uom.isoCode !== undefined && uom.isoCode.trim()) {
+      existing.isoCode = uom.isoCode.trim().toUpperCase().slice(0, 6);
+    }
+    if (uom.dimension !== undefined) existing.dimension = uom.dimension;
+    if (uom.decimalPlaces !== undefined && Number.isFinite(Number(uom.decimalPlaces))) {
+      existing.decimalPlaces = Math.max(0, Math.min(3, Math.trunc(Number(uom.decimalPlaces))));
+    }
+    if (uom.description !== undefined) existing.description = uom.description.trim();
+
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: msehi,
+      tableName: 'T006 / CUNI',
+      fieldName: 'UPDATE_UOM',
+      oldValue: prevSummary,
+      newValue: `${existing.label} (${existing.dimension}, dec ${existing.decimalPlaces})`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.json({ uom: existing, db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // T006 / CUNI - Delete Base Unit of Measure (blocked if used by materials in MARA)
+  app.delete('/api/customizing/uoms/:msehi', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { msehi } = req.params;
+
+    if (!workspace.unitsOfMeasure) workspace.unitsOfMeasure = [];
+    const idx = workspace.unitsOfMeasure.findIndex((u) => u.msehi === msehi);
+    if (idx === -1) return res.status(404).json({ error: `Satuan ${msehi} tidak ditemukan.` });
+
+    const usedBy = workspace.materials.filter((m) => m.mara.meins === msehi);
+    if (usedBy.length > 0) {
+      return res.status(400).json({
+        error: `Satuan ${msehi} sedang dipakai oleh ${usedBy.length} material (mis. ${usedBy[0].mara.matnr}). Tidak dapat dihapus.`,
+      });
+    }
+
+    const removed = workspace.unitsOfMeasure.splice(idx, 1)[0];
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: msehi,
+      tableName: 'T006 / CUNI',
+      fieldName: 'DROP_UOM',
+      oldValue: `${removed.msehi} · ${removed.label}`,
+      newValue: 'Removed',
+      username: 'BASIS_ADMIN',
+      timestamp: new Date().toISOString(),
+    });
+
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
   // CT04 - Add Master Characteristic to a Material Group

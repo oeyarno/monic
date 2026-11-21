@@ -17,6 +17,8 @@ import type {
   SapBootstrapPayload,
   StandardFieldRule,
   TenantCoreBusinessType,
+  UnitOfMeasureDefinition,
+  UomDimension,
   ValuationTypeCode,
 } from './types/sap.ts';
 
@@ -29,7 +31,7 @@ const ROUTE_BREADCRUMBS: Record<ActiveRoute, { section: string; title: string }>
   migo: { section: 'Materials Management (MM)', title: 'MIGO · Goods Movement & Valuasi' },
   mmbe: { section: 'Materials Management (MM)', title: 'MMBE · Stock Overview' },
   ox02: { section: 'SPRO & Tata Kelola', title: 'OX02 · Multi-Tenant Company & Core Business' },
-  oms9: { section: 'SPRO Customizing', title: 'OMS9 · Kustomisasi Field Spesifik Industri' },
+  oms9: { section: 'SPRO Customizing', title: 'OMS9 · Kustomisasi Field & Master HAWA' },
   cdhdr: { section: 'Tata Kelola', title: 'CDHDR · Change Documents & Audit Trail' },
 };
 
@@ -53,6 +55,7 @@ export default function App() {
   const [mmPreselectMatnr, setMmPreselectMatnr] = useState<string | undefined>(undefined);
   const [mmPreselectWerks, setMmPreselectWerks] = useState<string | undefined>(undefined);
   const [customizingIndustry, setCustomizingIndustry] = useState<IndustrySectorCode | undefined>(undefined);
+  const [customizingSubTab, setCustomizingSubTab] = useState<'oms9' | 'append' | 'ct04' | 'cuni'>('oms9');
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const buildHeaders = useCallback(
@@ -194,16 +197,26 @@ export default function App() {
       ox02: 'ox02',
       oms9: 'oms9',
       oms3: 'oms9',
+      omsf: 'oms9',
       ct04: 'oms9',
       t023: 'oms9',
+      cuni: 'oms9',
+      t006: 'oms9',
       spro: 'oms9',
       cdhdr: 'cdhdr',
       cdpos: 'cdhdr',
     };
     const target = map[code];
     if (!target) {
-      showToast(`T-Code "${raw.toUpperCase()}" tidak dikenali. Gunakan MM60, MM01, MM02, ME51N, ME21N, MIGO, MMBE, OX02, OMS9, atau CDHDR.`);
+      showToast(`T-Code "${raw.toUpperCase()}" tidak dikenali. Gunakan MM60, MM01, MM02, ME51N, ME21N, MIGO, MMBE, OX02, OMS9, CT04, CUNI, atau CDHDR.`);
       return;
+    }
+    if (code === 'cuni' || code === 't006') {
+      setCustomizingSubTab('cuni');
+    } else if (code === 'ct04' || code === 't023' || code === 'omsf') {
+      setCustomizingSubTab('ct04');
+    } else if (target === 'oms9') {
+      setCustomizingSubTab('oms9');
     }
     if (code === 'mm03') {
       setActiveRoute('mm02');
@@ -390,12 +403,86 @@ export default function App() {
     matkl: string;
     label: string;
     defaultMtart?: MaterialTypeCode;
+    defaultBklas?: string;
     description?: string;
   }) => {
     const res = await fetch('/api/customizing/material-groups', {
       method: 'POST',
       headers: buildHeaders(true),
       body: JSON.stringify({ group }),
+    });
+    const json = await res.json();
+    if (!res.ok) return { ok: false, error: json.error };
+    setData(json.db);
+    return { ok: true };
+  };
+
+  const handleUpdateMaterialGroup = async (
+    matkl: string,
+    group: {
+      label: string;
+      defaultMtart?: MaterialTypeCode;
+      defaultBklas?: string;
+      description?: string;
+    }
+  ) => {
+    const res = await fetch(`/api/customizing/material-groups/${encodeURIComponent(matkl)}`, {
+      method: 'PUT',
+      headers: buildHeaders(true),
+      body: JSON.stringify({ group }),
+    });
+    const json = await res.json();
+    if (!res.ok) return { ok: false, error: json.error };
+    setData(json.db);
+    return { ok: true };
+  };
+
+  const handleDeleteMaterialGroup = async (matkl: string) => {
+    const res = await fetch(`/api/customizing/material-groups/${encodeURIComponent(matkl)}`, {
+      method: 'DELETE',
+      headers: buildHeaders(false),
+    });
+    const json = await res.json();
+    if (!res.ok) return { ok: false, error: json.error };
+    setData(json.db);
+    return { ok: true };
+  };
+
+  const handleCreateUom = async (uom: {
+    msehi: string;
+    label: string;
+    isoCode?: string;
+    dimension?: UomDimension;
+    decimalPlaces?: number;
+    description?: string;
+  }) => {
+    const res = await fetch('/api/customizing/uoms', {
+      method: 'POST',
+      headers: buildHeaders(true),
+      body: JSON.stringify({ uom }),
+    });
+    const json = await res.json();
+    if (!res.ok) return { ok: false, error: json.error };
+    setData(json.db);
+    return { ok: true };
+  };
+
+  const handleUpdateUom = async (msehi: string, uom: Partial<UnitOfMeasureDefinition>) => {
+    const res = await fetch(`/api/customizing/uoms/${encodeURIComponent(msehi)}`, {
+      method: 'PUT',
+      headers: buildHeaders(true),
+      body: JSON.stringify({ uom }),
+    });
+    const json = await res.json();
+    if (!res.ok) return { ok: false, error: json.error };
+    setData(json.db);
+    return { ok: true };
+  };
+
+  const handleDeleteUom = async (msehi: string) => {
+    const res = await fetch(`/api/customizing/uoms/${encodeURIComponent(msehi)}`, {
+      method: 'DELETE',
+      headers: buildHeaders(false),
     });
     const json = await res.json();
     if (!res.ok) return { ok: false, error: json.error };
@@ -474,7 +561,7 @@ export default function App() {
       const fresh = (await res.json()) as SapBootstrapPayload;
       applyBootstrapPayload(fresh, true);
       setActiveRoute('mm60');
-      showToast('Seluruh data multi-tenant (Oil & Gas, Workshop, Unit & Parts, Tools & APD) dikembalikan ke standar.');
+      showToast('Seluruh data multi-tenant (PT. VDI, PT. PA, PT. MT, PT. HRI, PT. HAMAC) dikembalikan ke standar.');
     }
   };
 
@@ -654,15 +741,21 @@ export default function App() {
                 <IndustryCustomizingView
                   data={data}
                   initialIndustry={customizingIndustry}
+                  initialSubTab={customizingSubTab}
                   onSaveStandardRules={handleSaveStandardRules}
                   onCreateCustomField={handleCreateCustomField}
                   onUpdateCustomField={handleUpdateCustomField}
                   onDeleteCustomField={handleDeleteCustomField}
                   onCreateMaterialGroup={handleCreateMaterialGroup}
+                  onUpdateMaterialGroup={handleUpdateMaterialGroup}
+                  onDeleteMaterialGroup={handleDeleteMaterialGroup}
                   onCreateCharacteristic={handleCreateCharacteristic}
                   onUpdateCharacteristic={handleUpdateCharacteristic}
                   onDeleteCharacteristic={handleDeleteCharacteristic}
                   onReorderCharacteristics={handleReorderCharacteristics}
+                  onCreateUom={handleCreateUom}
+                  onUpdateUom={handleUpdateUom}
+                  onDeleteUom={handleDeleteUom}
                 />
               )}
 

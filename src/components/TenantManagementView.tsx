@@ -31,23 +31,28 @@ const CORE_BUSINESS_TEMPLATES: {
 }[] = [
   {
     value: 'oil_gas_contractor',
-    label: 'Kontraktor Oil & Gas / EPC',
+    label: 'Kontraktor Alat Berat & Maintenance Oil & Gas',
     description: 'Plant supply base & fabrication yard, field API/ASME, NACE MR0175, MTC EN 10204 3.1, CAS.',
   },
   {
+    value: 'tools_ppe',
+    label: 'Penjualan Tools, Peralatan & Kalibrasi',
+    description: 'Penjualan tools, peralatan & APD (ke grup maupun pihak luar) serta layanan kalibrasi alat.',
+  },
+  {
+    value: 'calibration_service',
+    label: 'Jasa Kalibrasi Alat & Instrumen',
+    description: 'Laboratorium jasa kalibrasi alat ukur, gas detector, torque wrench & sertifikasi ISO/IEC 17025.',
+  },
+  {
     value: 'heavy_workshop',
-    label: 'Workshop Alat Berat & Kendaraan',
+    label: 'Workshop & Maintenance Alat Berat',
     description: 'Central rebuild & site workshop, model alat berat, OEM cross-ref, Core Exchange (OLD), HM.',
   },
   {
     value: 'unit_spareparts',
-    label: 'Penjualan Unit & Spare Parts',
+    label: 'Penjualan Alat Berat, Kendaraan & Spare Parts',
     description: 'Showroom PDI yard & parts DC, lini unit/parts, seri rangka, moving velocity, garansi & PDI.',
-  },
-  {
-    value: 'tools_ppe',
-    label: 'Penjualan Tools, Gas Detector & APD',
-    description: 'Hub perkakas & lab kalibrasi, sertifikasi ANSI/EN/ATEX, siklus kalibrasi, rating Ex-proof & ukuran.',
   },
   {
     value: 'general_industry',
@@ -191,7 +196,7 @@ export function TenantManagementView({
                     <td className="py-3.5 px-5 align-top max-w-md">
                       <div className="font-semibold text-slate-900">{tenant.name}</div>
                       <div className="text-[11px] text-[#0064D9] font-medium mt-0.5">
-                        {tenant.coreBusiness} · Sektor Default {tenant.defaultIndustry}
+                        {tenant.coreBusiness} · HAWA / Sektor {tenant.defaultIndustry}
                       </div>
                       <div className="text-[11px] text-slate-500 mt-1 leading-relaxed">
                         {tenant.description}
@@ -297,7 +302,7 @@ export function TenantManagementView({
               maxLength={4}
               value={bukrs}
               onChange={(e) => setBukrs(e.target.value.toUpperCase())}
-              placeholder="mis. PT50"
+              placeholder="mis. 006"
               className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
             />
           </div>

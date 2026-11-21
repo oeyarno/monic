@@ -15,21 +15,22 @@ import {
   Trash2,
   Warehouse,
 } from 'lucide-react';
-import type {
-  CustomIndustryField,
-  FieldStatus,
-  IndustrySectorCode,
-  MarcPlantData,
-  MardStorageData,
-  MasterCharacteristic,
-  MaterialMasterRecord,
-  MaterialTypeCode,
-  MaterialViewKey,
-  MbewValuationData,
-  SapBootstrapPayload,
-  SplitValuationItem,
-  ValuationCategoryCode,
-  ValuationTypeCode,
+import {
+  VALUATION_CLASSES,
+  type CustomIndustryField,
+  type FieldStatus,
+  type IndustrySectorCode,
+  type MarcPlantData,
+  type MardStorageData,
+  type MasterCharacteristic,
+  type MaterialMasterRecord,
+  type MaterialTypeCode,
+  type MaterialViewKey,
+  type MbewValuationData,
+  type SapBootstrapPayload,
+  type SplitValuationItem,
+  type ValuationCategoryCode,
+  type ValuationTypeCode,
 } from '../types/sap.ts';
 import {
   buildMaterialShortDescription,
@@ -75,7 +76,7 @@ function createEmptyMaterial(
   lgort = data.plants[0]?.storageLocations[0]?.lgort || '0001'
 ): MaterialMasterRecord {
   const defaultGroup = data.materialGroups?.[0];
-  const mtart: MaterialTypeCode = mtartOverride || defaultGroup?.defaultMtart || 'ROH';
+  const mtart: MaterialTypeCode = mtartOverride || defaultGroup?.defaultMtart || 'HAWA';
   const mtDef = data.materialTypes.find((m) => m.mtart === mtart) || data.materialTypes[0];
   const prefix = mtDef.internalNumberPrefix;
   let maxSeq = 100;
@@ -114,13 +115,15 @@ function createEmptyMaterial(
     }
   }
 
+  const defaultUom = data.unitsOfMeasure?.[0]?.msehi || 'PC';
+
   return {
     mara: {
       matnr,
       maktx: '',
       mtart,
       mbrsh,
-      meins: 'PC',
+      meins: defaultUom,
       matkl: defaultGroup?.matkl || 'GEN-001',
       bismt: '',
       spart: '01',
@@ -132,7 +135,7 @@ function createEmptyMaterial(
       groes: '',
       ean11: '',
       mstae: '',
-      xchpf: mbrsh === 'C' || mbrsh === 'P' || mbrsh === 'F',
+      xchpf: false,
       createdAt: new Date().toISOString(),
       createdBy: 'SAP_USER',
       updatedAt: new Date().toISOString(),
@@ -141,7 +144,7 @@ function createEmptyMaterial(
       [plantDef.werks]: {
         werks: plantDef.werks,
         ekgrp: 'P01',
-        bstme: 'KG',
+        bstme: defaultUom,
         ekwsl: 'Z001',
         kautb: false,
         webaz: 1,
@@ -181,7 +184,7 @@ function createEmptyMaterial(
       [plantDef.werks]: {
         bwkey: plantDef.werks,
         bwtty: '',
-        bklas: mtDef.defaultBklas,
+        bklas: defaultGroup?.defaultBklas || mtDef.defaultBklas,
         vprsv: mtDef.priceControlDefault,
         verpr: 10000,
         stprs: 10000,
@@ -349,10 +352,33 @@ export function MaterialMasterEditor({
       const nextMaktx = autoShortDesc
         ? buildMaterialShortDescription(mg, nextChars)
         : prev.mara.maktx;
+
+      let nextMbew = prev.mbew;
+      if (mode === 'create' && mg?.defaultBklas && prev.mbew[activeWerks]) {
+        const curMbew = prev.mbew[activeWerks];
+        const updatedSplits = curMbew.splitValuations
+          ? Object.fromEntries(
+              Object.entries(curMbew.splitValuations).map(([k, v]) => [
+                k,
+                v ? { ...v, bklas: mg.defaultBklas! } : v,
+              ])
+            )
+          : undefined;
+        nextMbew = {
+          ...prev.mbew,
+          [activeWerks]: {
+            ...curMbew,
+            bklas: mg.defaultBklas,
+            splitValuations: updatedSplits,
+          },
+        };
+      }
+
       return {
         ...prev,
         mara: { ...prev.mara, matkl: newMatkl, maktx: nextMaktx },
         characteristics: nextChars,
+        mbew: nextMbew,
       };
     });
   };
@@ -1069,14 +1095,14 @@ export function MaterialMasterEditor({
               Industry Sector (MARA-MBRSH)
             </label>
             <select
-              disabled={isReadOnly}
+              disabled={isReadOnly || data.industrySectors.length <= 1}
               value={draft.mara.mbrsh}
               onChange={(e) => handleIndustrySectorChange(e.target.value as IndustrySectorCode)}
               className="w-full px-3 py-1.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-md text-slate-900 disabled:opacity-75 focus:outline-none focus:border-[#0064D9]"
             >
               {data.industrySectors.map((ind) => (
                 <option key={ind.mbrsh} value={ind.mbrsh}>
-                  {ind.mbrsh} · {ind.label}
+                  {ind.mbrsh} · {ind.shortLabel}
                 </option>
               ))}
             </select>
@@ -1148,7 +1174,9 @@ export function MaterialMasterEditor({
         {/* OMS9 & CT04 Active Rule Context Line */}
         <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-slate-800">Aturan Aktif [{draft.mara.mbrsh} · {draft.mara.matkl}]:</span>
+            <span className="font-semibold text-slate-800">
+              Aturan Aktif [{data.activeTenant.bukrs} · {draft.mara.mbrsh} · {draft.mara.matkl}]:
+            </span>
             <span>{oms9Summary.requiredCount} Field OMS9 Wajib</span>
             <span aria-hidden="true">·</span>
             <span>{industryCustomFields.length} CI_MARA</span>
@@ -1321,20 +1349,21 @@ export function MaterialMasterEditor({
               </div>
 
               <div>
-                {renderFieldLabel('Base Unit of Measure', 'MARA-MEINS', 'required')}
+                {renderFieldLabel('Base Unit of Measure (Master CUNI)', 'MARA-MEINS', 'required')}
                 <select
                   disabled={isReadOnly}
                   value={draft.mara.meins}
                   onChange={(e) => updateMara('meins', e.target.value)}
                   className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
                 >
-                  <option value="KG">KG — Kilogram</option>
-                  <option value="PC">PC — Piece / Unit</option>
-                  <option value="L">L — Liter</option>
-                  <option value="M">M — Meter</option>
-                  <option value="BOX">BOX — Carton / Box</option>
-                  <option value="DRM">DRM — Drum</option>
-                  <option value="TON">TON — Metric Ton</option>
+                  {(data.unitsOfMeasure || []).map((u) => (
+                    <option key={u.msehi} value={u.msehi}>
+                      {u.msehi} — {u.label} ({u.dimension})
+                    </option>
+                  ))}
+                  {!(data.unitsOfMeasure || []).some((u) => u.msehi === draft.mara.meins) && (
+                    <option value={draft.mara.meins}>{draft.mara.meins} (Unregistered)</option>
+                  )}
                 </select>
               </div>
 
@@ -1501,11 +1530,19 @@ export function MaterialMasterEditor({
                   {renderFieldLabel('Order Unit', 'MARA-BSTME', 'optional')}
                   <input
                     type="text"
+                    list="uom-master-options"
                     disabled={isReadOnly}
                     value={activeMarc.bstme}
                     onChange={(e) => updateMarc('bstme', e.target.value.toUpperCase())}
                     className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
                   />
+                  <datalist id="uom-master-options">
+                    {(data.unitsOfMeasure || []).map((u) => (
+                      <option key={u.msehi} value={u.msehi}>
+                        {u.label} ({u.dimension})
+                      </option>
+                    ))}
+                  </datalist>
                 </div>
 
                 <div>
@@ -1903,12 +1940,11 @@ export function MaterialMasterEditor({
                       onChange={(e) => updateMbew('bklas', e.target.value)}
                       className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
                     >
-                      <option value="3000">3000 — Raw Materials (GL 140100)</option>
-                      <option value="3040">3040 — Spare Parts / MRO (GL 140200)</option>
-                      <option value="3050">3050 — Packaging Materials (GL 140300)</option>
-                      <option value="3100">3100 — Trading Goods (GL 141000)</option>
-                      <option value="7900">7900 — Semi-Finished Goods (GL 142000)</option>
-                      <option value="7920">7920 — Finished Goods (GL 143000)</option>
+                      {VALUATION_CLASSES.map((vc) => (
+                        <option key={vc.bklas} value={vc.bklas}>
+                          {vc.bklas} — {vc.label} (GL {vc.glAccount})
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -2210,11 +2246,10 @@ export function MaterialMasterEditor({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-200">
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900">
-                    Append Structure CI_MARA ·{' '}
-                    {data.industrySectors.find((i) => i.mbrsh === draft.mara.mbrsh)?.label}
+                    Append Structure CI_MARA · {data.activeTenant.bukrs} {data.activeTenant.name} (Sektor {draft.mara.mbrsh} · HAWA)
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    {data.industrySectors.find((i) => i.mbrsh === draft.mara.mbrsh)?.regulatoryContext}
+                    {data.activeTenant.coreBusiness} — {data.industrySectors.find((i) => i.mbrsh === draft.mara.mbrsh)?.regulatoryContext}
                   </p>
                 </div>
                 <button

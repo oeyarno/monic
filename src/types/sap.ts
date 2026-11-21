@@ -1,6 +1,6 @@
-export type MaterialTypeCode = 'ROH' | 'HALB' | 'FERT' | 'HAWA' | 'ERSA' | 'VERP';
+export type MaterialTypeCode = 'HAWA';
 
-export type IndustrySectorCode = 'M' | 'C' | 'P' | 'F' | 'R' | 'O';
+export type IndustrySectorCode = 'M';
 
 export type FieldStatus = 'required' | 'optional' | 'display' | 'hide';
 
@@ -93,8 +93,39 @@ export interface MaterialGroupDefinition {
   matkl: string; // MARA-MATKL
   label: string;
   defaultMtart?: MaterialTypeCode;
+  defaultBklas?: string; // OMQW default Valuation Class (e.g. 3500, 3040, 3030, 3100, 3200)
   description: string;
   characteristics: MasterCharacteristic[];
+}
+
+export interface ValuationClassDefinition {
+  bklas: string;
+  label: string;
+  glAccount: string;
+  description: string;
+}
+
+export const VALUATION_CLASSES: ValuationClassDefinition[] = [
+  { bklas: '3500', label: 'Heavy Equipment & Vehicle Units', glAccount: '145000', description: 'Unit alat berat & kendaraan operasional (UN-*)' },
+  { bklas: '3100', label: 'Trading Goods', glAccount: '141000', description: 'Barang dagang anak usaha & peralatan siap jual' },
+  { bklas: '3040', label: 'Spare Parts / MRO', glAccount: '140200', description: 'Suku cadang alat berat, kendaraan, filter & ban' },
+  { bklas: '3030', label: 'Operating Supplies & Consumables', glAccount: '140250', description: 'Pelumas, welding, tools & APD pemakaian operasional induk' },
+  { bklas: '3200', label: 'Services (OMQW)', glAccount: '510200', description: 'Jasa kalibrasi, refill APAR, repair & rental unit' },
+  { bklas: '3000', label: 'Raw Materials', glAccount: '140100', description: 'Bahan baku & material proyek langsung' },
+  { bklas: '3050', label: 'Packaging Materials', glAccount: '140300', description: 'Material kemasan & pengemasan' },
+  { bklas: '7900', label: 'Semi-Finished Goods', glAccount: '142000', description: 'Barang setengah jadi / fabrikasi' },
+  { bklas: '7920', label: 'Finished Goods', glAccount: '143000', description: 'Barang jadi hasil produksi' },
+];
+
+export type UomDimension = 'Count' | 'Weight' | 'Volume' | 'Length' | 'Packaging' | 'Time';
+
+export interface UnitOfMeasureDefinition {
+  msehi: string; // SAP T006 internal UoM code (e.g. PC, EA, UNIT, KG, L)
+  label: string;
+  isoCode: string;
+  dimension: UomDimension;
+  decimalPlaces: number;
+  description: string;
 }
 
 export interface MaraData {
@@ -300,6 +331,7 @@ export type TenantCoreBusinessType =
   | 'heavy_workshop'
   | 'unit_spareparts'
   | 'tools_ppe'
+  | 'calibration_service'
   | 'general_industry';
 
 export interface TenantCompany {
@@ -331,6 +363,7 @@ export interface TenantWorkspaceData {
   customIndustryFields: CustomIndustryField[];
   standardFieldRules: StandardFieldRule[];
   materialGroups: MaterialGroupDefinition[];
+  unitsOfMeasure: UnitOfMeasureDefinition[];
   changeDocuments: ChangeDocument[];
   plants: PlantDefinition[];
   vendors: VendorDefinition[];

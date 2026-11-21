@@ -34,6 +34,7 @@ export function MaterialListView({
 }: MaterialListViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndustry, setSelectedIndustry] = useState<'ALL' | IndustrySectorCode>('ALL');
+  const [selectedBklas, setSelectedBklas] = useState<'ALL' | string>('ALL');
   const [selectedType, setSelectedType] = useState<'ALL' | MaterialTypeCode>('ALL');
   const [selectedPlant, setSelectedPlant] = useState<'ALL' | string>('ALL');
 
@@ -69,6 +70,10 @@ export function MaterialListView({
       if (selectedIndustry !== 'ALL' && mat.mara.mbrsh !== selectedIndustry) return false;
       if (selectedType !== 'ALL' && mat.mara.mtart !== selectedType) return false;
       if (selectedPlant !== 'ALL' && !mat.marc[selectedPlant]) return false;
+      if (selectedBklas !== 'ALL') {
+        const hasBklas = Object.values(mat.mbew).some((m) => m.bklas === selectedBklas);
+        if (!hasBklas) return false;
+      }
       if (!q) return true;
       return (
         mat.mara.matnr.toLowerCase().includes(q) ||
@@ -77,7 +82,7 @@ export function MaterialListView({
         mat.mara.bismt.toLowerCase().includes(q)
       );
     });
-  }, [data.materials, searchQuery, selectedIndustry, selectedType, selectedPlant]);
+  }, [data.materials, searchQuery, selectedIndustry, selectedBklas, selectedType, selectedPlant]);
 
   const getMaterialSummary = (mat: MaterialMasterRecord) => {
     const plants = selectedPlant === 'ALL' ? Object.keys(mat.marc) : [selectedPlant].filter((p) => mat.marc[p]);
@@ -138,7 +143,7 @@ export function MaterialListView({
             {kpis.totalMaterials}
           </div>
           <div className="mt-1 text-xs text-slate-500">
-            {data.industrySectors.length} sektor industri aktif
+            {data.materialGroups.length} Material Group T023 · HAWA / Sektor {data.activeTenant.defaultIndustry}
           </div>
         </div>
 
@@ -225,37 +230,80 @@ export function MaterialListView({
           </div>
         </div>
 
-        {/* Segmented Industry Sector Filter */}
-        <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit">
-          <button
-            type="button"
-            onClick={() => setSelectedIndustry('ALL')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
-              selectedIndustry === 'ALL'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Semua Industri ({data.materials.length})
-          </button>
-          {data.industrySectors.map((ind) => {
-            const count = data.materials.filter((m) => m.mara.mbrsh === ind.mbrsh).length;
-            return (
-              <button
-                key={ind.mbrsh}
-                type="button"
-                onClick={() => setSelectedIndustry(ind.mbrsh)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
-                  selectedIndustry === ind.mbrsh
-                    ? 'bg-white text-[#0064D9] shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {ind.shortLabel} ({count})
-              </button>
-            );
-          })}
-        </div>
+        {/* Segmented Filter: Industry Sector if >1, otherwise Valuation Class (OMQW) */}
+        {data.industrySectors.length > 1 ? (
+          <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit">
+            <button
+              type="button"
+              onClick={() => setSelectedIndustry('ALL')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                selectedIndustry === 'ALL'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Semua Industri ({data.materials.length})
+            </button>
+            {data.industrySectors.map((ind) => {
+              const count = data.materials.filter((m) => m.mara.mbrsh === ind.mbrsh).length;
+              return (
+                <button
+                  key={ind.mbrsh}
+                  type="button"
+                  onClick={() => setSelectedIndustry(ind.mbrsh)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                    selectedIndustry === ind.mbrsh
+                      ? 'bg-white text-[#0064D9] shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {ind.shortLabel} ({count})
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit">
+            <button
+              type="button"
+              onClick={() => setSelectedBklas('ALL')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                selectedBklas === 'ALL'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Semua HAWA ({data.materials.length})
+            </button>
+            {[
+              { code: '3500', label: '3500 Unit' },
+              { code: '3040', label: '3040 Spare Parts' },
+              { code: '3030', label: '3030 Ops / GA / IT' },
+              { code: '3100', label: '3100 Trading / Tools' },
+              { code: '3200', label: '3200 Services' },
+              { code: '3000', label: '3000 Raw / Project' },
+            ].map((vc) => {
+              const count = data.materials.filter((m) =>
+                Object.values(m.mbew).some((mb) => mb.bklas === vc.code)
+              ).length;
+              if (count === 0) return null;
+              return (
+                <button
+                  key={vc.code}
+                  type="button"
+                  onClick={() => setSelectedBklas(vc.code)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                    selectedBklas === vc.code
+                      ? 'bg-white text-[#0064D9] shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {vc.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* High-Density SAP ALV Material Master Grid */}
