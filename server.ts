@@ -247,7 +247,8 @@ function nextChangeNumber(logs: ChangeDocument[]): string {
 function validateMaterialAgainstOms9(
   material: MaterialMasterRecord,
   db: SapBootstrapPayload,
-  activeWerks: string
+  activeWerks: string,
+  isCreate = false
 ): string[] {
   const errors: string[] = [];
   const mbrsh = material.mara.mbrsh;
@@ -257,7 +258,10 @@ function validateMaterialAgainstOms9(
   if (!material.mara.meins.trim()) errors.push('Base Unit of Measure (MARA-MEINS) wajib diisi.');
 
   const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
-  if (materialGroup) {
+  const hasAnyCharacteristicValue = Object.values(material.characteristics || {}).some(
+    (value) => value !== undefined && value !== null && String(value).trim() !== ''
+  );
+  if (materialGroup && (isCreate || hasAnyCharacteristicValue)) {
     for (const characteristic of materialGroup.characteristics) {
       if (!characteristic.required) continue;
       const value = material.characteristics?.[characteristic.charName];
@@ -389,7 +393,7 @@ async function startServer() {
       const generated = buildMaterialShortName(materialGroup, material.characteristics || {});
       if (generated) material.mara.maktx = generated;
     }
-    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks);
+    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks, true);
     if (validationErrors.length > 0) {
       return res.status(400).json({ error: validationErrors[0], details: validationErrors });
     }
