@@ -468,6 +468,12 @@ async function startServer() {
     addDiff('MARA', 'MSTAE (X-Plant Status)', prev.mara.mstae || 'Active', material.mara.mstae || 'Active');
     addDiff('MARA', 'XCHPF (Batch Mgmt)', prev.mara.xchpf, material.mara.xchpf);
 
+    if (materialGroup) {
+      for (const characteristic of materialGroup.characteristics) {
+        addDiff('AUSP', characteristic.charName, prev.characteristics?.[characteristic.charName], material.characteristics?.[characteristic.charName]);
+      }
+    }
+
     const prevMarc = prev.marc[activeWerks];
     const nextMarc = material.marc[activeWerks];
     if (prevMarc && nextMarc) {
