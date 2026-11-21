@@ -42,7 +42,8 @@ const REQUIRED_WORKSPACE_ARRAYS: (keyof TenantWorkspaceData)[] = [
 ];
 
 
-function ensureCharacteristicMasters(db: MultiTenantDatabase): void {
+function ensureCharacteristicMasters(db: MultiTenantDatabase): boolean {
+  let changed = false;
   for (const company of db.tenantCompanies) {
     const workspace = db.workspaces[company.tenantId] as TenantWorkspaceData & { materialGroups?: MaterialGroupDefinition[] };
     if (!Array.isArray(workspace.materialGroups)) workspace.materialGroups = [];
@@ -51,15 +52,18 @@ function ensureCharacteristicMasters(db: MultiTenantDatabase): void {
       const existingIndex = workspace.materialGroups.findIndex((group) => group.matkl === template.matkl);
       if (existingIndex < 0) {
         workspace.materialGroups.unshift(structuredClone(template));
+        changed = true;
       } else if (!workspace.materialGroups[existingIndex].characteristics?.length) {
         workspace.materialGroups[existingIndex] = {
           ...structuredClone(template),
           ...workspace.materialGroups[existingIndex],
           characteristics: structuredClone(template.characteristics),
         };
+        changed = true;
       }
     }
   }
+  return changed;
 }
 
 function buildMaterialShortName(group: MaterialGroupDefinition, values: Record<string, string | number | boolean> = {}): string {
@@ -129,8 +133,9 @@ function loadMultiTenantDatabase(): MultiTenantDatabase {
     throw new Error(`Database MONIC menggunakan schema versi ${parsed.schemaVersion}, lebih baru dari aplikasi. Data tidak diubah.`);
   }
   if (parsed && parsed.schemaVersion === 2) {
-    ensureCharacteristicMasters(parsed as MultiTenantDatabase);
+    const mastersChanged = ensureCharacteristicMasters(parsed as MultiTenantDatabase);
     validateMultiTenantDatabase(parsed);
+    if (mastersChanged) saveMultiTenantDatabase(parsed);
     return parsed;
   }
 
