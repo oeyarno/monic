@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import {
-  CORE_BUSINESS_OPTIONS, createInitialMultiTenantDatabase, createTenantTemplateWorkspace,
+  CORE_BUSINESS_OPTIONS, createInitialMultiTenantDatabase, createTenantTemplateWorkspace, createTemplateMaterialGroups,
   INDUSTRY_SECTORS, MATERIAL_TYPES, VALUATION_TYPES,
 } from './server/seedData.ts';
 import type {
@@ -42,25 +42,22 @@ const REQUIRED_WORKSPACE_ARRAYS: (keyof TenantWorkspaceData)[] = [
 ];
 
 
-const DEFAULT_LIGHT_VEH_GROUP: MaterialGroupDefinition = {
-  matkl: 'LIGHT-VEH',
-  label: 'Light Vehicle & Fleet Unit',
-  defaultMtart: 'HAWA',
-  description: 'Kendaraan operasional ringan — format Short Name: Nama-Type-Transmisi-Gardan-Brand.',
-  characteristics: [
-    { id: 'ch-lv-nm', charName: 'CHR_NAMA', label: 'Nama', dataType: 'select', options: ['Avanza', 'Hilux', 'Innova', 'Fortuner', 'Triton', 'Pajero', 'X-Trail', 'Navara', 'CR-V'], required: true, helpText: 'Model / nama unit kendaraan ringan' },
-    { id: 'ch-lv-tp', charName: 'CHR_TYPE', label: 'Type', dataType: 'select', options: ['SUV', 'DC', 'MPV', 'Pickup', 'Sedan'], required: true, helpText: 'Tipe bodi kendaraan (SUV / Double Cabin / MPV)' },
-    { id: 'ch-lv-tr', charName: 'CHR_TRANSMISI', label: 'Transmisi', dataType: 'select', options: ['Manual', 'Matic', 'Hybrid', 'Electric'], required: true, helpText: 'Sistem transmisi kendaraan' },
-    { id: 'ch-lv-gd', charName: 'CHR_GARDAN', label: 'Gardan', dataType: 'select', options: ['2x4', '4x4'], required: true, helpText: 'Konfigurasi penggerak gardan' },
-    { id: 'ch-lv-br', charName: 'CHR_BRAND', label: 'Brand', dataType: 'select', options: ['Toyota', 'Nissan', 'Honda', 'Mitsubishi'], required: true, helpText: 'Merek / pabrikan kendaraan' },
-  ],
-};
-
 function ensureCharacteristicMasters(db: MultiTenantDatabase): void {
   for (const company of db.tenantCompanies) {
     const workspace = db.workspaces[company.tenantId] as TenantWorkspaceData & { materialGroups?: MaterialGroupDefinition[] };
-    if (!Array.isArray(workspace.materialGroups) || workspace.materialGroups.length === 0) {
-      workspace.materialGroups = [structuredClone(DEFAULT_LIGHT_VEH_GROUP)];
+    if (!Array.isArray(workspace.materialGroups)) workspace.materialGroups = [];
+    const templates = createTemplateMaterialGroups(company.coreBusinessType);
+    for (const template of templates) {
+      const existingIndex = workspace.materialGroups.findIndex((group) => group.matkl === template.matkl);
+      if (existingIndex < 0) {
+        workspace.materialGroups.unshift(structuredClone(template));
+      } else if (!workspace.materialGroups[existingIndex].characteristics?.length) {
+        workspace.materialGroups[existingIndex] = {
+          ...structuredClone(template),
+          ...workspace.materialGroups[existingIndex],
+          characteristics: structuredClone(template.characteristics),
+        };
+      }
     }
   }
 }
