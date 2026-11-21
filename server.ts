@@ -12,6 +12,8 @@ import type {
   CustomIndustryField,
   MaterialDocument,
   MaterialMasterRecord,
+  MaterialGroupDefinition,
+  MasterCharacteristic,
   MovementTypeCode,
   MultiTenantDatabase,
   PurchaseOrder,
@@ -36,8 +38,36 @@ const databaseContexts = new WeakMap<object, TenantDatabaseContext>();
 
 const REQUIRED_WORKSPACE_ARRAYS: (keyof TenantWorkspaceData)[] = [
   'materials', 'purchaseRequisitions', 'purchaseOrders', 'materialDocuments',
-  'customIndustryFields', 'standardFieldRules', 'changeDocuments', 'plants', 'vendors',
+  'customIndustryFields', 'standardFieldRules', 'changeDocuments', 'plants', 'vendors', 'materialGroups',
 ];
+
+
+const DEFAULT_LIGHT_VEH_GROUP: MaterialGroupDefinition = {
+  matkl: 'LIGHT-VEH',
+  label: 'Light Vehicle & Fleet Unit',
+  defaultMtart: 'HAWA',
+  description: 'Kendaraan operasional ringan — format Short Name: Nama-Type-Transmisi-Gardan-Brand.',
+  characteristics: [
+    { id: 'ch-lv-nm', charName: 'CHR_NAMA', label: 'Nama', dataType: 'select', options: ['Avanza', 'Hilux', 'Innova', 'Fortuner', 'Triton', 'Pajero', 'X-Trail', 'Navara', 'CR-V'], required: true, helpText: 'Model / nama unit kendaraan ringan' },
+    { id: 'ch-lv-tp', charName: 'CHR_TYPE', label: 'Type', dataType: 'select', options: ['SUV', 'DC', 'MPV', 'Pickup', 'Sedan'], required: true, helpText: 'Tipe bodi kendaraan (SUV / Double Cabin / MPV)' },
+    { id: 'ch-lv-tr', charName: 'CHR_TRANSMISI', label: 'Transmisi', dataType: 'select', options: ['Manual', 'Matic', 'Hybrid', 'Electric'], required: true, helpText: 'Sistem transmisi kendaraan' },
+    { id: 'ch-lv-gd', charName: 'CHR_GARDAN', label: 'Gardan', dataType: 'select', options: ['2x4', '4x4'], required: true, helpText: 'Konfigurasi penggerak gardan' },
+    { id: 'ch-lv-br', charName: 'CHR_BRAND', label: 'Brand', dataType: 'select', options: ['Toyota', 'Nissan', 'Honda', 'Mitsubishi'], required: true, helpText: 'Merek / pabrikan kendaraan' },
+  ],
+};
+
+function ensureCharacteristicMasters(db: MultiTenantDatabase): void {
+  for (const company of db.tenantCompanies) {
+    const workspace = db.workspaces[company.tenantId] as TenantWorkspaceData & { materialGroups?: MaterialGroupDefinition[] };
+    if (!Array.isArray(workspace.materialGroups)) {
+      workspace.materialGroups = [structuredClone(DEFAULT_LIGHT_VEH_GROUP)];
+    }
+  }
+}
+
+function buildMaterialShortName(group: MaterialGroupDefinition, values: Record<string, string | number | boolean> = {}): string {
+  return group.characteristics.map((ch) => String(values[ch.charName] ?? '').trim()).filter(Boolean).join('-');
+}
 
 function validateMultiTenantDatabase(value: unknown): asserts value is MultiTenantDatabase {
   if (!value || typeof value !== 'object') {
@@ -86,6 +116,7 @@ function loadMultiTenantDatabase(): MultiTenantDatabase {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(DB_FILE)) {
     const initial = createInitialMultiTenantDatabase();
+    ensureCharacteristicMasters(initial);
     saveMultiTenantDatabase(initial);
     return initial;
   }
@@ -101,6 +132,7 @@ function loadMultiTenantDatabase(): MultiTenantDatabase {
     throw new Error(`Database MONIC menggunakan schema versi ${parsed.schemaVersion}, lebih baru dari aplikasi. Data tidak diubah.`);
   }
   if (parsed && parsed.schemaVersion === 2) {
+    ensureCharacteristicMasters(parsed as MultiTenantDatabase);
     validateMultiTenantDatabase(parsed);
     return parsed;
   }
@@ -120,8 +152,9 @@ function loadMultiTenantDatabase(): MultiTenantDatabase {
       materials: legacy.materials || [], purchaseRequisitions: legacy.purchaseRequisitions || [],
       purchaseOrders: legacy.purchaseOrders || [], materialDocuments: legacy.materialDocuments || [],
       customIndustryFields: legacy.customIndustryFields || [], standardFieldRules: legacy.standardFieldRules || [],
-      changeDocuments: legacy.changeDocuments || [], plants: legacy.plants || [], vendors: legacy.vendors || [],
+      changeDocuments: legacy.changeDocuments || [], plants: legacy.plants || [], vendors: legacy.vendors || [], materialGroups: [],
     };
+    ensureCharacteristicMasters(migrated);
     migrated.activeTenantId = firstTenant.tenantId;
     // Back up the original before migration. If backup or save fails, the original remains untouched.
     const backupFile = `${DB_FILE}.pre-multitenant-${new Date().toISOString().replace(/[:.]/g, '-')}.bak`;
@@ -182,7 +215,7 @@ function saveDatabase(payload: SapBootstrapPayload): void {
   workspace.materials = payload.materials; workspace.purchaseRequisitions = payload.purchaseRequisitions;
   workspace.purchaseOrders = payload.purchaseOrders; workspace.materialDocuments = payload.materialDocuments;
   workspace.customIndustryFields = payload.customIndustryFields; workspace.standardFieldRules = payload.standardFieldRules;
-  workspace.changeDocuments = payload.changeDocuments; workspace.plants = payload.plants; workspace.vendors = payload.vendors;
+  workspace.changeDocuments = payload.changeDocuments; workspace.plants = payload.plants; workspace.vendors = payload.vendors; workspace.materialGroups = payload.materialGroups;
   saveMultiTenantDatabase(context.database);
 }
 function nextSequence(prefix: string, existing: string[], padLength: number): string {
@@ -220,6 +253,17 @@ function validateMaterialAgainstOms9(
   if (!material.mara.matnr.trim()) errors.push('Material Number (MARA-MATNR) wajib diisi.');
   if (!material.mara.maktx.trim()) errors.push('Material Description (MARA-MAKTX) wajib diisi.');
   if (!material.mara.meins.trim()) errors.push('Base Unit of Measure (MARA-MEINS) wajib diisi.');
+
+  const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
+  if (materialGroup) {
+    for (const characteristic of materialGroup.characteristics) {
+      if (!characteristic.required) continue;
+      const value = material.characteristics?.[characteristic.charName];
+      if (value === undefined || value === null || String(value).trim() === '') {
+        errors.push(`CT04 [${materialGroup.matkl}]: Karakteristik wajib "${characteristic.label}" (${characteristic.charName}) wajib diisi.`);
+      }
+    }
+  }
 
   // Standard OMS9 field rules check
   const plantData = material.marc[activeWerks];
@@ -342,6 +386,11 @@ async function startServer() {
       return res.status(400).json({ error: validationErrors[0], details: validationErrors });
     }
 
+    const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
+    if (materialGroup) {
+      const generated = buildMaterialShortName(materialGroup, material.characteristics || {});
+      if (generated) material.mara.maktx = generated;
+    }
     const now = new Date().toISOString();
     material.mara.createdAt = now;
     material.mara.updatedAt = now;
@@ -385,6 +434,11 @@ async function startServer() {
     }
 
     const prev = db.materials[idx];
+    const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
+    if (materialGroup) {
+      const generated = buildMaterialShortName(materialGroup, material.characteristics || {});
+      if (generated) material.mara.maktx = generated;
+    }
     const now = new Date().toISOString();
     material.mara.updatedAt = now;
 
@@ -1124,6 +1178,94 @@ async function startServer() {
       timestamp: new Date().toISOString(),
     });
 
+    saveDatabase(db);
+    return res.json({ db });
+  });
+
+
+  // CT04 / T023 - Material Group and Master Characteristic, scoped to the selected tenant.
+  app.post('/api/customizing/material-groups', (req, res) => {
+    const db = loadDatabase(req);
+    const body = req.body as { group?: MaterialGroupDefinition };
+    const group = body.group;
+    const matkl = (group?.matkl || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+    if (!matkl || !group?.label?.trim()) return res.status(400).json({ error: 'Kode dan nama Material Group wajib diisi.' });
+    if (db.materialGroups.some((item) => item.matkl === matkl)) return res.status(409).json({ error: `Material Group ${matkl} sudah ada.` });
+    const created: MaterialGroupDefinition = { ...group, matkl, characteristics: Array.isArray(group.characteristics) ? group.characteristics : [] };
+    db.materialGroups.push(created);
+    db.changeDocuments.unshift({ changenr: nextChangeNumber(db.changeDocuments), objectClass: 'CUSTOMIZING', objectId: matkl, tableName: 'T023', fieldName: 'CREATE_MATERIAL_GROUP', oldValue: '-', newValue: created.label, username: 'BASIS_ADMIN', timestamp: new Date().toISOString() });
+    saveDatabase(db);
+    return res.status(201).json({ group: created, db });
+  });
+
+  app.put('/api/customizing/material-groups/:matkl', (req, res) => {
+    const db = loadDatabase(req);
+    const idx = db.materialGroups.findIndex((item) => item.matkl === req.params.matkl);
+    if (idx < 0) return res.status(404).json({ error: 'Material Group tidak ditemukan.' });
+    const incoming = (req.body as { group?: MaterialGroupDefinition }).group;
+    if (!incoming || !incoming.label?.trim()) return res.status(400).json({ error: 'Nama Material Group wajib diisi.' });
+    db.materialGroups[idx] = { ...db.materialGroups[idx], ...incoming, matkl: db.materialGroups[idx].matkl };
+    saveDatabase(db);
+    return res.json({ db });
+  });
+
+  app.post('/api/customizing/material-groups/:matkl/characteristics', (req, res) => {
+    const db = loadDatabase(req);
+    const group = db.materialGroups.find((item) => item.matkl === req.params.matkl);
+    if (!group) return res.status(404).json({ error: 'Material Group tidak ditemukan.' });
+    const incoming = (req.body as { characteristic?: MasterCharacteristic }).characteristic;
+    const charName = (incoming?.charName || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+    if (!charName.startsWith('CHR_') || !incoming?.label?.trim()) return res.status(400).json({ error: 'Nama karakteristik harus diawali CHR_ dan label wajib diisi.' });
+    if (group.characteristics.some((item) => item.charName === charName)) return res.status(409).json({ error: 'Kode karakteristik sudah digunakan.' });
+    const characteristic: MasterCharacteristic = { ...incoming, id: incoming.id || `chr-${Date.now()}`, charName, options: incoming.dataType === 'select' ? (incoming.options || []).filter(Boolean) : undefined };
+    group.characteristics.push(characteristic);
+    db.changeDocuments.unshift({ changenr: nextChangeNumber(db.changeDocuments), objectClass: 'CUSTOMIZING', objectId: group.matkl, tableName: 'CT04 / CABN', fieldName: `ADD ${charName}`, oldValue: '-', newValue: characteristic.label, username: 'BASIS_ADMIN', timestamp: new Date().toISOString() });
+    saveDatabase(db);
+    return res.status(201).json({ characteristic, db });
+  });
+
+  app.put('/api/customizing/material-groups/:matkl/characteristics/:charId', (req, res) => {
+    const db = loadDatabase(req);
+    const group = db.materialGroups.find((item) => item.matkl === req.params.matkl);
+    if (!group) return res.status(404).json({ error: 'Material Group tidak ditemukan.' });
+    const idx = group.characteristics.findIndex((item) => item.id === req.params.charId);
+    if (idx < 0) return res.status(404).json({ error: 'Karakteristik tidak ditemukan.' });
+    const incoming = (req.body as { characteristic?: MasterCharacteristic }).characteristic;
+    if (!incoming?.label?.trim()) return res.status(400).json({ error: 'Label karakteristik wajib diisi.' });
+    group.characteristics[idx] = { ...group.characteristics[idx], ...incoming, id: group.characteristics[idx].id, charName: group.characteristics[idx].charName };
+    saveDatabase(db);
+    return res.json({ db });
+  });
+
+  app.delete('/api/customizing/material-groups/:matkl/characteristics/:charId', (req, res) => {
+    const db = loadDatabase(req);
+    const group = db.materialGroups.find((item) => item.matkl === req.params.matkl);
+    if (!group) return res.status(404).json({ error: 'Material Group tidak ditemukan.' });
+    const idx = group.characteristics.findIndex((item) => item.id === req.params.charId);
+    if (idx < 0) return res.status(404).json({ error: 'Karakteristik tidak ditemukan.' });
+    group.characteristics.splice(idx, 1);
+    saveDatabase(db);
+    return res.json({ db });
+  });
+
+  app.put('/api/customizing/material-groups/:matkl/reorder', (req, res) => {
+    const db = loadDatabase(req);
+    const group = db.materialGroups.find((item) => item.matkl === req.params.matkl);
+    if (!group) return res.status(404).json({ error: 'Material Group tidak ditemukan.' });
+    const ids = (req.body as { ids?: string[] }).ids || [];
+    if (ids.length !== group.characteristics.length || new Set(ids).size !== ids.length || ids.some((id) => !group.characteristics.some((ch) => ch.id === id))) return res.status(400).json({ error: 'Urutan karakteristik tidak valid.' });
+    const byId = new Map(group.characteristics.map((ch) => [ch.id, ch]));
+    group.characteristics = ids.map((id) => byId.get(id)!);
+    saveDatabase(db);
+    return res.json({ db });
+  });
+
+  app.delete('/api/customizing/material-groups/:matkl', (req, res) => {
+    const db = loadDatabase(req);
+    const idx = db.materialGroups.findIndex((item) => item.matkl === req.params.matkl);
+    if (idx < 0) return res.status(404).json({ error: 'Material Group tidak ditemukan.' });
+    if (db.materials.some((material) => material.mara.matkl === req.params.matkl)) return res.status(409).json({ error: 'Material Group masih digunakan oleh material.' });
+    db.materialGroups.splice(idx, 1);
     saveDatabase(db);
     return res.json({ db });
   });
