@@ -62,11 +62,13 @@ const VIEW_TABS: { key: MaterialViewKey; label: string; tableHint: string }[] = 
 
 function createEmptyMaterial(
   data: SapBootstrapPayload,
-  mtart: MaterialTypeCode = 'ROH',
+  mtartOverride?: MaterialTypeCode,
   mbrsh: IndustrySectorCode = data.activeTenant?.defaultIndustry || 'M',
   werks = data.plants[0]?.werks || '1000',
   lgort = data.plants[0]?.storageLocations[0]?.lgort || '0001'
 ): MaterialMasterRecord {
+  const defaultGroup = data.materialGroups?.[0];
+  const mtart = mtartOverride || defaultGroup?.defaultMtart || 'ROH';
   const mtDef = data.materialTypes.find((m) => m.mtart === mtart) || data.materialTypes[0];
   const prefix = mtDef.internalNumberPrefix;
   let maxSeq = 100;
@@ -101,7 +103,7 @@ function createEmptyMaterial(
       mtart,
       mbrsh,
       meins: 'KG',
-      matkl: data.materialGroups?.[0]?.matkl || 'GEN-001',
+      matkl: defaultGroup?.matkl || 'GEN-001',
       bismt: '',
       spart: '01',
       brgew: 1,
@@ -182,7 +184,9 @@ function createEmptyMaterial(
       ladgr: '0001',
     },
     industryExtensions: extensions,
-    characteristics: {},
+    characteristics: Object.fromEntries((defaultGroup?.characteristics || []).map((ch) => [
+      ch.charName, ch.dataType === 'boolean' ? false : '',
+    ])),
   };
 }
 
