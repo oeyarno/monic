@@ -101,7 +101,7 @@ function createEmptyMaterial(
       mtart,
       mbrsh,
       meins: 'KG',
-      matkl: 'GEN-001',
+      matkl: data.materialGroups?.[0]?.matkl || 'GEN-001',
       bismt: '',
       spart: '01',
       brgew: 1,
