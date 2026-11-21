@@ -59,7 +59,7 @@ const DEFAULT_LIGHT_VEH_GROUP: MaterialGroupDefinition = {
 function ensureCharacteristicMasters(db: MultiTenantDatabase): void {
   for (const company of db.tenantCompanies) {
     const workspace = db.workspaces[company.tenantId] as TenantWorkspaceData & { materialGroups?: MaterialGroupDefinition[] };
-    if (!Array.isArray(workspace.materialGroups)) {
+    if (!Array.isArray(workspace.materialGroups) || workspace.materialGroups.length === 0) {
       workspace.materialGroups = [structuredClone(DEFAULT_LIGHT_VEH_GROUP)];
     }
   }
