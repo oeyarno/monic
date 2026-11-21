@@ -7,6 +7,7 @@ export type FieldStatus = 'required' | 'optional' | 'display' | 'hide';
 export type CustomFieldDataType = 'text' | 'number' | 'select' | 'boolean' | 'date';
 
 export type MaterialViewKey =
+  | 'classification'
   | 'basic'
   | 'purchasing'
   | 'mrp'
@@ -183,6 +184,27 @@ export interface MvkeSalesData {
   ladgr: string;
 }
 
+export type CharacteristicDataType = 'text' | 'number' | 'select' | 'boolean';
+
+export interface MasterCharacteristic {
+  id: string;
+  charName: string;
+  label: string;
+  dataType: CharacteristicDataType;
+  unit?: string;
+  options?: string[];
+  required: boolean;
+  helpText: string;
+}
+
+export interface MaterialGroupDefinition {
+  matkl: string;
+  label: string;
+  defaultMtart: MaterialTypeCode;
+  description: string;
+  characteristics: MasterCharacteristic[];
+}
+
 export interface MaterialMasterRecord {
   mara: MaraData;
   marc: Record<string, MarcPlantData>;
@@ -190,6 +212,7 @@ export interface MaterialMasterRecord {
   mbew: Record<string, MbewValuationData>; // key: `${werks}`
   mvke: MvkeSalesData;
   industryExtensions: Record<string, string | number | boolean>;
+  characteristics?: Record<string, string | number | boolean>;
 }
 
 export interface PurchaseRequisition {
@@ -310,6 +333,7 @@ export interface TenantWorkspaceData {
   changeDocuments: ChangeDocument[];
   plants: PlantDefinition[];
   vendors: VendorDefinition[];
+  materialGroups: MaterialGroupDefinition[];
 }
 
 export interface MultiTenantDatabase {

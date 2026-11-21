@@ -51,6 +51,7 @@ interface MaterialMasterEditorProps {
 
 const VIEW_TABS: { key: MaterialViewKey; label: string; tableHint: string }[] = [
   { key: 'basic', label: 'Basic Data 1 & 2', tableHint: 'MARA' },
+  { key: 'classification', label: 'Classification & Karakteristik', tableHint: 'CT04' },
   { key: 'purchasing', label: 'Purchasing', tableHint: 'MARA · MARC' },
   { key: 'mrp', label: 'MRP 1–4', tableHint: 'MARC' },
   { key: 'storage', label: 'Plant / Storage', tableHint: 'MARC · MARD' },
@@ -100,7 +101,7 @@ function createEmptyMaterial(
       mtart,
       mbrsh,
       meins: 'KG',
-      matkl: 'GEN-001',
+      matkl: data.materialGroups?.[0]?.matkl || 'GEN-001',
       bismt: '',
       spart: '01',
       brgew: 1,
@@ -181,6 +182,7 @@ function createEmptyMaterial(
       ladgr: '0001',
     },
     industryExtensions: extensions,
+    characteristics: {},
   };
 }
 
@@ -210,6 +212,12 @@ export function MaterialMasterEditor({
   const [errorBanner, setErrorBanner] = useState<string[] | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [materialGroups, setMaterialGroups] = useState(data.materialGroups || []);
+  const [manageCt04, setManageCt04] = useState(false);
+  const [newCharName, setNewCharName] = useState('');
+  const [newCharLabel, setNewCharLabel] = useState('');
+  const [newCharOptions, setNewCharOptions] = useState('');
+  const [ct04Message, setCt04Message] = useState<string | null>(null);
 
   // Sync draft when switching selected material, mode, or tenant
   useEffect(() => {
@@ -238,6 +246,8 @@ export function MaterialMasterEditor({
     }
   }, [mode, initialMatnr, data.materials, data.activeTenant.tenantId]);
 
+  useEffect(() => { setMaterialGroups(data.materialGroups || []); }, [data.materialGroups, data.activeTenant.tenantId]);
+
   const isReadOnly = mode === 'view';
   const currentPlantDef = data.plants.find((p) => p.werks === activeWerks) || data.plants[0];
   const activeMarc: MarcPlantData | undefined = draft.marc[activeWerks];
@@ -250,6 +260,43 @@ export function MaterialMasterEditor({
     const rule = data.standardFieldRules.find((r) => r.fieldKey === fieldKey);
     if (!rule) return 'optional';
     return rule.rulesByIndustry[draft.mara.mbrsh] || 'optional';
+  };
+
+  const activeMaterialGroup = materialGroups.find((group) => group.matkl === draft.mara.matkl);
+  const characteristicValues = draft.characteristics || {};
+  const requiredCharacteristicCount = activeMaterialGroup?.characteristics.filter((ch) => ch.required).length || 0;
+  const filledCharacteristicCount = activeMaterialGroup?.characteristics.filter((ch) => ch.required && String(characteristicValues[ch.charName] ?? '').trim()).length || 0;
+  const generatedShortName = activeMaterialGroup?.characteristics.map((ch) => String(characteristicValues[ch.charName] ?? '').trim()).filter(Boolean).join('-') || '';
+
+  const updateCharacteristicValue = (charName: string, value: string | number | boolean) => {
+    setDraft((prev) => ({ ...prev, characteristics: { ...(prev.characteristics || {}), [charName]: value } }));
+  };
+
+  const persistCt04Group = async (group: (typeof materialGroups)[number]) => {
+    const response = await fetch(`/api/customizing/material-groups/${encodeURIComponent(group.matkl)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Tenant-Id': data.activeTenant.tenantId }, body: JSON.stringify({ group }) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Gagal menyimpan CT04.');
+    setCt04Message('Master Characteristic berhasil disimpan.');
+  };
+
+  const addCt04Characteristic = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!activeMaterialGroup) return;
+    const characteristic = { id: '', charName: newCharName.trim().toUpperCase(), label: newCharLabel.trim(), dataType: 'select' as const, options: newCharOptions.split(',').map((value) => value.trim()).filter(Boolean), required: true, helpText: '' };
+    const response = await fetch(`/api/customizing/material-groups/${encodeURIComponent(activeMaterialGroup.matkl)}/characteristics`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Tenant-Id': data.activeTenant.tenantId }, body: JSON.stringify({ characteristic }) });
+    const result = await response.json();
+    if (!response.ok) { setCt04Message(result.error || 'Gagal menambah karakteristik.'); return; }
+    setMaterialGroups((current) => current.map((group) => group.matkl === activeMaterialGroup.matkl ? result.db.materialGroups.find((item: any) => item.matkl === group.matkl) : group));
+    setNewCharName(''); setNewCharLabel(''); setNewCharOptions(''); setCt04Message('Karakteristik baru berhasil ditambahkan.');
+  };
+
+  const deleteCt04Characteristic = async (charId: string) => {
+    if (!activeMaterialGroup) return;
+    const response = await fetch(`/api/customizing/material-groups/${encodeURIComponent(activeMaterialGroup.matkl)}/characteristics/${encodeURIComponent(charId)}`, { method: 'DELETE', headers: { 'X-Tenant-Id': data.activeTenant.tenantId } });
+    const result = await response.json();
+    if (!response.ok) { setCt04Message(result.error || 'Gagal menghapus karakteristik.'); return; }
+    setMaterialGroups(result.db.materialGroups);
+    setCt04Message('Karakteristik dihapus.');
   };
 
   const industryCustomFields = useMemo(() => {
@@ -997,6 +1044,70 @@ export function MaterialMasterEditor({
         </div>
 
         <div className="p-6">
+
+          {activeView === 'classification' && (
+            <div className="space-y-5">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-slate-200 pb-4">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-900">Karakteristik Material sesuai Master Characteristic (CT04 · {draft.mara.matkl})</h3>
+                  <p className="text-xs text-slate-500 mt-1">{activeMaterialGroup?.label || 'Material Group belum memiliki master karakteristik.'} — Format Short Name: {activeMaterialGroup?.characteristics.map((ch) => ch.label).join('-') || 'Belum ditentukan'}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-xs font-mono font-semibold ${filledCharacteristicCount === requiredCharacteristicCount ? 'text-emerald-700' : 'text-amber-700'}`}>{filledCharacteristicCount}/{requiredCharacteristicCount} wajib terisi</span>
+                  <button type="button" onClick={() => setManageCt04((value) => !value)} className="text-xs font-semibold text-[#0064D9] hover:underline">{manageCt04 ? 'Tutup Kelola CT04' : 'Kelola CT04'}</button>
+                </div>
+              </div>
+              {activeMaterialGroup && activeMaterialGroup.characteristics.length > 0 && (
+                <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">Preview Short Name (Urutan #1–#{activeMaterialGroup.characteristics.length}): <strong className="font-mono text-slate-900">{generatedShortName || activeMaterialGroup.characteristics.map((ch) => ch.label).join('-')}</strong></div>
+              )}
+              {!activeMaterialGroup ? <p className="text-sm text-slate-500">Material Group {draft.mara.matkl} belum memiliki master CT04. Pilih Material Group lain atau buat konfigurasi CT04.</p> : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {activeMaterialGroup.characteristics.map((ch, index) => (
+                    <div key={ch.id} className="space-y-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <label className="text-xs font-medium text-slate-800">#{index + 1} {ch.label}{ch.required && <span className="ml-1 text-red-600">*</span>}</label>
+                        <span className="text-[11px] font-mono text-slate-400">{ch.charName}</span>
+                      </div>
+                      {ch.dataType === 'select' ? (
+                        <select disabled={isReadOnly} value={String(characteristicValues[ch.charName] ?? '')} onChange={(event) => updateCharacteristicValue(ch.charName, event.target.value)} className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md">
+                          <option value="">-- Pilih nilai karakteristik --</option>
+                          {(ch.options || []).map((option) => <option key={option} value={option}>{option}</option>)}
+                        </select>
+                      ) : ch.dataType === 'boolean' ? (
+                        <input type="checkbox" disabled={isReadOnly} checked={Boolean(characteristicValues[ch.charName])} onChange={(event) => updateCharacteristicValue(ch.charName, event.target.checked)} />
+                      ) : (
+                        <input type={ch.dataType === 'number' ? 'number' : 'text'} disabled={isReadOnly} value={String(characteristicValues[ch.charName] ?? '')} onChange={(event) => updateCharacteristicValue(ch.charName, ch.dataType === 'number' ? Number(event.target.value) : event.target.value)} className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md" />
+                      )}
+                      <p className="text-[11px] text-slate-500">{ch.helpText}{ch.unit ? ` · ${ch.unit}` : ''}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {manageCt04 && activeMaterialGroup && (
+                <div className="rounded-lg border border-blue-200 bg-blue-50/40 p-4 space-y-3">
+                  <h4 className="text-sm font-semibold text-slate-900">Kelola Master Characteristic — {activeMaterialGroup.matkl}</h4>
+                  {ct04Message && <p className="text-xs text-slate-700">{ct04Message}</p>}
+                  {activeMaterialGroup.characteristics.map((ch, index) => (
+                    <div key={ch.id} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto_auto_auto] gap-2 items-center border-b border-blue-100 pb-2">
+                      <div className="min-w-0"><div className="font-mono text-[11px] text-slate-500">{ch.charName}</div><div className="text-xs font-medium">{ch.label}</div></div>
+                      <input aria-label={`Pilihan ${ch.label}`} value={(ch.options || []).join(', ')} onChange={(event) => setMaterialGroups((current) => current.map((group) => group.matkl === activeMaterialGroup.matkl ? { ...group, characteristics: group.characteristics.map((item) => item.id === ch.id ? { ...item, options: event.target.value.split(',').map((value) => value.trim()).filter(Boolean) } : item) } : group))} placeholder="Opsi dropdown dipisah koma" className="px-2 py-1.5 text-xs border rounded-md" />
+                      <label className="text-[11px] flex items-center gap-1"><input type="checkbox" checked={ch.required} onChange={(event) => setMaterialGroups((current) => current.map((group) => group.matkl === activeMaterialGroup.matkl ? { ...group, characteristics: group.characteristics.map((item) => item.id === ch.id ? { ...item, required: event.target.checked } : item) } : group))} />Wajib</label>
+                      <button type="button" disabled={index === 0} onClick={() => { const next = { ...activeMaterialGroup, characteristics: [...activeMaterialGroup.characteristics] }; [next.characteristics[index - 1], next.characteristics[index]] = [next.characteristics[index], next.characteristics[index - 1]]; setMaterialGroups((current) => current.map((group) => group.matkl === next.matkl ? next : group)); void persistCt04Group(next).catch((error) => setCt04Message(error.message)); }} className="text-xs text-[#0064D9] disabled:opacity-30">↑</button>
+                      <div className="flex gap-2"><button type="button" onClick={() => persistCt04Group({ ...activeMaterialGroup, characteristics: activeMaterialGroup.characteristics.map((item) => item.id === ch.id ? { ...item, options: ch.options } : item) }).catch((error) => setCt04Message(error.message))} className="text-xs text-[#0064D9]">Simpan</button><button type="button" onClick={() => deleteCt04Characteristic(ch.id)} className="text-xs text-red-600 hover:underline">Hapus</button></div>
+                    </div>
+                  ))}
+                  <form onSubmit={addCt04Characteristic} className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input required value={newCharName} onChange={(event) => setNewCharName(event.target.value.toUpperCase())} placeholder="CHR_KODE" className="px-3 py-2 text-xs border rounded-md" />
+                    <input required value={newCharLabel} onChange={(event) => setNewCharLabel(event.target.value)} placeholder="Nama karakteristik" className="px-3 py-2 text-xs border rounded-md" />
+                    <input required value={newCharOptions} onChange={(event) => setNewCharOptions(event.target.value)} placeholder="Pilihan dipisah koma" className="px-3 py-2 text-xs border rounded-md" />
+                    <button type="submit" className="md:col-span-3 px-3 py-2 text-xs font-semibold text-white bg-[#0064D9] rounded-md">Tambah Karakteristik Dropdown</button>
+                  </form>
+                  <p className="text-[11px] text-slate-500">Perubahan master berlaku untuk tenant/perusahaan aktif dan tidak mengubah nilai karakteristik material yang sudah tersimpan.</p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* VIEW 1: BASIC DATA 1 & 2 */}
           {activeView === 'basic' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1043,13 +1154,15 @@ export function MaterialMasterEditor({
 
               <div>
                 {renderFieldLabel('Material Group', 'MARA-MATKL', 'required')}
-                <input
-                  type="text"
+                <select
                   disabled={isReadOnly}
                   value={draft.mara.matkl}
-                  onChange={(e) => updateMara('matkl', e.target.value.toUpperCase())}
+                  onChange={(e) => updateMara('matkl', e.target.value)}
                   className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
-                />
+                >
+                  {materialGroups.map((group) => <option key={group.matkl} value={group.matkl}>{group.matkl} — {group.label}</option>)}
+                  {!materialGroups.some((group) => group.matkl === draft.mara.matkl) && <option value={draft.mara.matkl}>{draft.mara.matkl}</option>}
+                </select>
               </div>
 
               <div>
