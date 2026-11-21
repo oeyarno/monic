@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "activeTenantId": "tenant-oilgas",
+  "schemaVersion": 5,
+  "activeTenantId": "tenant-unitparts",
   "tenantCompanies": [
     {
       "tenantId": "tenant-oilgas",
@@ -233,6 +233,12 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_PIPE_OD": "8\"",
+            "CHR_PIPE_SCH": "Sch.80",
+            "CHR_STEEL_GRADE": "API 5L X52 PSL2",
+            "CHR_END_CONN": "Beveled End (BE)"
+          },
           "industryExtensions": {
             "ZZ_API_SPEC": "API 5L X52 PSL2",
             "ZZ_PRESSURE_CLASS": "Class 600",
@@ -359,6 +365,12 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_VALVE_SIZE": "4\"",
+            "CHR_VALVE_CLASS": "Class 600",
+            "CHR_BODY_MAT": "ASTM A216 WCB",
+            "CHR_TRIM_SPEC": "Trim 8 (13Cr / Stellite 6)"
+          },
           "industryExtensions": {
             "ZZ_API_SPEC": "API 600 / ASME B16.34",
             "ZZ_PRESSURE_CLASS": "Class 600",
@@ -452,6 +464,11 @@
             "kondm": "01",
             "tragr": "0001",
             "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_SG_MIN": 4.2,
+            "CHR_PURITY_PCT": 96.5,
+            "CHR_PACK_TYPE": "Sak 25 KG"
           },
           "industryExtensions": {
             "ZZ_CAS_NUMBER": "7727-43-7",
@@ -771,6 +788,176 @@
           }
         }
       ],
+      "materialGroups": [
+        {
+          "matkl": "OCTG-PIPE",
+          "label": "Seamless Line Pipe & OCTG",
+          "defaultMtart": "ROH",
+          "description": "Pipa saluran migas seamless, casing, dan tubing berstandar API 5L / 5CT.",
+          "characteristics": [
+            {
+              "id": "ch-og-od",
+              "charName": "CHR_PIPE_OD",
+              "label": "Nominal Pipe Size (OD)",
+              "dataType": "select",
+              "options": [
+                "4\"",
+                "6\"",
+                "8\"",
+                "10\"",
+                "12\"",
+                "16\""
+              ],
+              "required": true,
+              "helpText": "Diameter nominal pipa dalam inci"
+            },
+            {
+              "id": "ch-og-sch",
+              "charName": "CHR_PIPE_SCH",
+              "label": "Wall Schedule",
+              "dataType": "select",
+              "options": [
+                "Sch.40",
+                "Sch.80",
+                "Sch.160",
+                "STD",
+                "XS",
+                "XXS"
+              ],
+              "required": true,
+              "helpText": "Ketebalan dinding pipa sesuai ASME B36.10M"
+            },
+            {
+              "id": "ch-og-grd",
+              "charName": "CHR_STEEL_GRADE",
+              "label": "Material Steel Grade",
+              "dataType": "select",
+              "options": [
+                "API 5L Gr.B",
+                "API 5L X52 PSL2",
+                "API 5L X65 PSL2",
+                "ASTM A312 TP316L"
+              ],
+              "required": true,
+              "helpText": "Grade baja pipa untuk tekanan & sour service"
+            },
+            {
+              "id": "ch-og-end",
+              "charName": "CHR_END_CONN",
+              "label": "End Connection",
+              "dataType": "select",
+              "options": [
+                "Beveled End (BE)",
+                "Plain End (PE)",
+                "Threaded & Coupled (T&C)"
+              ],
+              "required": false,
+              "helpText": "Bentuk ujung pipa untuk pengelasan atau ulir"
+            }
+          ]
+        },
+        {
+          "matkl": "VALVE-HP",
+          "label": "High-Pressure Valve & Fitting",
+          "defaultMtart": "ERSA",
+          "description": "Gate, Ball, Globe, Check Valve serta flange bertekanan tinggi untuk fasilitas EPC.",
+          "characteristics": [
+            {
+              "id": "ch-og-vsz",
+              "charName": "CHR_VALVE_SIZE",
+              "label": "Nominal Valve Size",
+              "dataType": "select",
+              "options": [
+                "2\"",
+                "3\"",
+                "4\"",
+                "6\"",
+                "8\"",
+                "12\""
+              ],
+              "required": true,
+              "helpText": "Ukuran nominal bore valve"
+            },
+            {
+              "id": "ch-og-vcls",
+              "charName": "CHR_VALVE_CLASS",
+              "label": "ASME Pressure Class",
+              "dataType": "select",
+              "options": [
+                "Class 150",
+                "Class 300",
+                "Class 600",
+                "Class 900",
+                "Class 1500"
+              ],
+              "required": true,
+              "helpText": "Rating tekanan flange ASME B16.5"
+            },
+            {
+              "id": "ch-og-vbod",
+              "charName": "CHR_BODY_MAT",
+              "label": "Body Material",
+              "dataType": "select",
+              "options": [
+                "ASTM A216 WCB",
+                "ASTM A105N",
+                "ASTM A351 CF8M",
+                "Duplex F51"
+              ],
+              "required": true,
+              "helpText": "Material utama bodi valve"
+            },
+            {
+              "id": "ch-og-vtrm",
+              "charName": "CHR_TRIM_SPEC",
+              "label": "API Trim Specification",
+              "dataType": "text",
+              "required": false,
+              "helpText": "Mis. Trim 8 (13Cr / Stellite 6)"
+            }
+          ]
+        },
+        {
+          "matkl": "DRILL-MUD",
+          "label": "Drilling Mud & Chemical Additive",
+          "defaultMtart": "ROH",
+          "description": "Material lumpur pengeboran (Barite, Bentonite) dan aditif kimia sumur.",
+          "characteristics": [
+            {
+              "id": "ch-og-sg",
+              "charName": "CHR_SG_MIN",
+              "label": "Specific Gravity (Min)",
+              "dataType": "number",
+              "unit": "g/cm³",
+              "required": true,
+              "helpText": "Berat jenis minimal sesuai standar API 13A"
+            },
+            {
+              "id": "ch-og-pur",
+              "charName": "CHR_PURITY_PCT",
+              "label": "Kadar Kemurnian / Aktif",
+              "dataType": "number",
+              "unit": "%",
+              "required": true,
+              "helpText": "Persentase kemurnian zat aktif"
+            },
+            {
+              "id": "ch-og-pck",
+              "charName": "CHR_PACK_TYPE",
+              "label": "Jenis Kemasan",
+              "dataType": "select",
+              "options": [
+                "Sak 25 KG",
+                "Big Bag 1.000 KG",
+                "Drum 200 L",
+                "IBC Tank 1.000 L"
+              ],
+              "required": true,
+              "helpText": "Format kemasan pengiriman ke rig"
+            }
+          ]
+        }
+      ],
       "changeDocuments": [
         {
           "changenr": "CHG-000812",
@@ -792,7 +979,7 @@
           "oldValue": "-",
           "newValue": "PT Energi Epik Offshore (Kontraktor Oil & Gas / EPC)",
           "username": "BASIS_ADMIN",
-          "timestamp": "2026-11-20T07:02:36.498Z"
+          "timestamp": "2026-11-20T09:32:01.216Z"
         }
       ],
       "plants": [
@@ -1057,6 +1244,12 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_DISP_CC": 112,
+            "CHR_MAX_PRESS": 343,
+            "CHR_ROTATION": "Clockwise (CW)",
+            "CHR_PART_GRADE": "Genuine OEM"
+          },
           "industryExtensions": {
             "ZZ_EQUIP_MODEL": "PC200-8 / SK200-8 / ZX200-5G",
             "ZZ_OEM_PART_NO": "708-2L-00300 / K3V112DT",
@@ -1183,6 +1376,11 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_MICRON_RATING": 5,
+            "CHR_PM_INTERVAL": "500 HM",
+            "CHR_KIT_CONTENTS": "2x Fuel Filter, 2x Engine Oil Filter, 1x Hydraulic Return Filter"
+          },
           "industryExtensions": {
             "ZZ_EQUIP_MODEL": "Komatsu HD785-7 / CAT 777D",
             "ZZ_OEM_PART_NO": "600-211-1340-SET",
@@ -1276,6 +1474,11 @@
             "kondm": "01",
             "tragr": "0001",
             "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_SAE_VISC": "SAE 15W-40",
+            "CHR_API_CLASS": "API CI-4",
+            "CHR_PACK_VOL": 209
           },
           "industryExtensions": {
             "ZZ_FLUID_GRADE": "SAE 15W-40 CI-4"
@@ -1576,6 +1779,228 @@
           }
         }
       ],
+      "materialGroups": [
+        {
+          "matkl": "HYD-PUMP",
+          "label": "Hydraulic Pump, Motor & Cylinder",
+          "defaultMtart": "ERSA",
+          "description": "Komponen utama sistem hidrolik alat berat untuk overhaul maupun rekondisi.",
+          "characteristics": [
+            {
+              "id": "ch-ws-disp",
+              "charName": "CHR_DISP_CC",
+              "label": "Displacement",
+              "dataType": "number",
+              "unit": "cc/rev",
+              "required": true,
+              "helpText": "Kapasitas volume per putaran pompa hidrolik"
+            },
+            {
+              "id": "ch-ws-prs",
+              "charName": "CHR_MAX_PRESS",
+              "label": "Max Operating Pressure",
+              "dataType": "number",
+              "unit": "bar",
+              "required": true,
+              "helpText": "Tekanan kerja maksimum sistem hidrolik"
+            },
+            {
+              "id": "ch-ws-rot",
+              "charName": "CHR_ROTATION",
+              "label": "Arah Putaran Shaft",
+              "dataType": "select",
+              "options": [
+                "Clockwise (CW)",
+                "Counter-Clockwise (CCW)",
+                "Bi-Directional"
+              ],
+              "required": true,
+              "helpText": "Arah rotasi input shaft"
+            },
+            {
+              "id": "ch-ws-cnd",
+              "charName": "CHR_PART_GRADE",
+              "label": "Klasifikasi Komponen",
+              "dataType": "select",
+              "options": [
+                "Genuine OEM",
+                "OEM Equivalent",
+                "Reconditioned / Core"
+              ],
+              "required": false,
+              "helpText": "Grade komponen workshop"
+            }
+          ]
+        },
+        {
+          "matkl": "FLT-KIT",
+          "label": "PM Service Filter & Seal Kit",
+          "defaultMtart": "ERSA",
+          "description": "Paket filter bahan bakar, oli, udara, dan seal preventive maintenance.",
+          "characteristics": [
+            {
+              "id": "ch-ws-mic",
+              "charName": "CHR_MICRON_RATING",
+              "label": "Filtration Rating",
+              "dataType": "number",
+              "unit": "µm",
+              "required": true,
+              "helpText": "Ukuran partikel penyaringan dalam mikron"
+            },
+            {
+              "id": "ch-ws-int",
+              "charName": "CHR_PM_INTERVAL",
+              "label": "Interval Preventive Maintenance",
+              "dataType": "select",
+              "options": [
+                "250 HM",
+                "500 HM",
+                "1000 HM",
+                "2000 HM"
+              ],
+              "required": true,
+              "helpText": "Jadwal PM alat berat yang memakai kit ini"
+            },
+            {
+              "id": "ch-ws-cnt",
+              "charName": "CHR_KIT_CONTENTS",
+              "label": "Rincian Isi Kit",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Daftar filter/seal yang termasuk dalam satu set"
+            }
+          ]
+        },
+        {
+          "matkl": "LUBE-HD",
+          "label": "Heavy Duty Lubricants & Coolant",
+          "defaultMtart": "ROH",
+          "description": "Pelumas mesin diesel berat, oli hidrolik, transmisi, dan grease.",
+          "characteristics": [
+            {
+              "id": "ch-ws-vis",
+              "charName": "CHR_SAE_VISC",
+              "label": "Viskositas SAE / ISO",
+              "dataType": "select",
+              "options": [
+                "SAE 15W-40",
+                "SAE 10W-30",
+                "SAE 85W-140",
+                "ISO VG 46",
+                "ISO VG 68"
+              ],
+              "required": true,
+              "helpText": "Standar kekentalan pelumas"
+            },
+            {
+              "id": "ch-ws-api",
+              "charName": "CHR_API_CLASS",
+              "label": "API / JASO Performance",
+              "dataType": "select",
+              "options": [
+                "API CI-4",
+                "API CK-4",
+                "API GL-5",
+                "Caterpillar TO-4",
+                "DIN 51524 HLP"
+              ],
+              "required": true,
+              "helpText": "Standar performa pelumas OEM"
+            },
+            {
+              "id": "ch-ws-vol",
+              "charName": "CHR_PACK_VOL",
+              "label": "Volume Kemasan",
+              "dataType": "number",
+              "unit": "L",
+              "required": true,
+              "helpText": "Isi bersih per drum / pail"
+            }
+          ]
+        },
+        {
+          "matkl": "LIGHT-VEH",
+          "label": "Light Vehicle & Operational Fleet",
+          "defaultMtart": "HAWA",
+          "description": "Kendaraan operasional ringan (MPV, SUV, Double Cabin) dengan format Short Desc Nama-Type-Transmisi-Gardan-Brand.",
+          "characteristics": [
+            {
+              "id": "ch-lv-nm",
+              "charName": "CHR_NAMA",
+              "label": "Nama",
+              "dataType": "select",
+              "options": [
+                "Avanza",
+                "Hilux",
+                "Innova",
+                "Fortuner",
+                "Triton",
+                "Pajero",
+                "X-Trail",
+                "Navara",
+                "CR-V"
+              ],
+              "required": true,
+              "helpText": "Model / nama unit kendaraan ringan"
+            },
+            {
+              "id": "ch-lv-tp",
+              "charName": "CHR_TYPE",
+              "label": "Type",
+              "dataType": "select",
+              "options": [
+                "SUV",
+                "DC",
+                "MPV",
+                "Pickup",
+                "Sedan"
+              ],
+              "required": true,
+              "helpText": "Tipe bodi kendaraan (SUV / Double Cabin / MPV)"
+            },
+            {
+              "id": "ch-lv-tr",
+              "charName": "CHR_TRANSMISI",
+              "label": "Transmisi",
+              "dataType": "select",
+              "options": [
+                "Manual",
+                "Matic",
+                "Hybrid",
+                "Electric"
+              ],
+              "required": true,
+              "helpText": "Sistem transmisi kendaraan"
+            },
+            {
+              "id": "ch-lv-gd",
+              "charName": "CHR_GARDAN",
+              "label": "Gardan",
+              "dataType": "select",
+              "options": [
+                "2x4",
+                "4x4"
+              ],
+              "required": true,
+              "helpText": "Konfigurasi penggerak gardan"
+            },
+            {
+              "id": "ch-lv-br",
+              "charName": "CHR_BRAND",
+              "label": "Brand",
+              "dataType": "select",
+              "options": [
+                "Toyota",
+                "Nissan",
+                "Honda",
+                "Mitsubishi"
+              ],
+              "required": true,
+              "helpText": "Merek / pabrikan kendaraan"
+            }
+          ]
+        }
+      ],
       "changeDocuments": [
         {
           "changenr": "CHG-000902",
@@ -1597,7 +2022,7 @@
           "oldValue": "-",
           "newValue": "PT Traktor Prima Service (Workshop Alat Berat & Kendaraan)",
           "username": "BASIS_ADMIN",
-          "timestamp": "2026-11-20T07:02:36.499Z"
+          "timestamp": "2026-11-20T09:32:01.216Z"
         }
       ],
       "plants": [
@@ -1802,6 +2227,12 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_ENGINE_POWER": 125,
+            "CHR_OP_WEIGHT": 10800,
+            "CHR_BUCKET_CAP": 1.8,
+            "CHR_DRIVE_TYPE": "4WD Articulated"
+          },
           "industryExtensions": {
             "ZZ_SALES_LINE": "Unit Alat Berat",
             "ZZ_CHASSIS_SERIES": "CLG835H-MY2026",
@@ -1929,6 +2360,11 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_VOLTAGE": "24V DC",
+            "CHR_AMPERAGE": 80,
+            "CHR_CONNECTOR_TYPE": "2-Groove V-Pulley · 3-Pin Regulator Socket"
+          },
           "industryExtensions": {
             "ZZ_SALES_LINE": "Genuine Spare Part",
             "ZZ_CHASSIS_SERIES": "Hino 500 / Fuso Fighter / Loader",
@@ -2046,8 +2482,127 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_TRACK_PITCH": 190,
+            "CHR_LINK_COUNT": 45,
+            "CHR_SHOE_WIDTH": 600
+          },
           "industryExtensions": {
             "ZZ_ALLOY_GRADE": "Boron Steel 35MnB5"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "400000104",
+            "maktx": "Hilux-DC-Manual-4x4-Toyota",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "LIGHT-VEH",
+            "bismt": "TOY-HILUX-DC-4X4",
+            "spart": "03",
+            "brgew": 2150,
+            "ntgew": 2150,
+            "gewei": "KG",
+            "volum": 14.5,
+            "voleh": "M3",
+            "groes": "5325 x 1855 x 1815 mm",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-10-05T08:00:00Z",
+            "createdBy": "D.HENDRA",
+            "updatedAt": "2026-11-16T09:00:00Z"
+          },
+          "marc": {
+            "US01": {
+              "werks": "US01",
+              "ekgrp": "P30",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 2,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "US1",
+              "minbe": 2,
+              "disls": "EX",
+              "bstmi": 1,
+              "bstma": 10,
+              "bstfe": 2,
+              "eisbe": 1,
+              "beskz": "F",
+              "plifz": 21,
+              "mtvfp": "02",
+              "prctr": "PC-US01-LV",
+              "sernp": "ZSER"
+            }
+          },
+          "mard": {
+            "US01-0001": {
+              "werks": "US01",
+              "lgort": "0001",
+              "lgobe": "Showroom Unit Ready Stock",
+              "lgpbe": "LV-BAY-01",
+              "labst": 4,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 730,
+              "mhdrz": 0,
+              "mhdhb": 730
+            }
+          },
+          "mbew": {
+            "US01": {
+              "bwkey": "US01",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 525000000,
+              "stprs": 525000000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 4,
+              "salk3": 2100000000,
+              "splitValuations": {
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 525000000,
+                  "stprs": 525000000,
+                  "peinh": 1,
+                  "lbkum": 4,
+                  "salk3": 2100000000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "US30",
+            "vtweg": "10",
+            "dwerk": "US01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_NAMA": "Hilux",
+            "CHR_TYPE": "DC",
+            "CHR_TRANSMISI": "Manual",
+            "CHR_GARDAN": "4x4",
+            "CHR_BRAND": "Toyota"
+          },
+          "industryExtensions": {
+            "ZZ_SALES_LINE": "Unit Kendaraan Niaga",
+            "ZZ_CHASSIS_SERIES": "HILUX-REVO-2026",
+            "ZZ_PARTS_MOVING": "Unit Indent",
+            "ZZ_WARRANTY_MO": 36,
+            "ZZ_PDI_CHECK": true
           }
         }
       ],
@@ -2141,8 +2696,8 @@
           "industrySector": "R",
           "targetView": "industry",
           "dataType": "text",
-          "helpText": "Kode seri model atau tahun perakitan unit / kecocokan part",
-          "status": "required"
+          "helpText": "Kode seri model atau tahun perakitan unit / kecocokan part (opsional)",
+          "status": "optional"
         },
         {
           "id": "cf-us-vel",
@@ -2368,6 +2923,211 @@
           }
         }
       ],
+      "materialGroups": [
+        {
+          "matkl": "LIGHT-VEH",
+          "label": "Light Vehicle & Fleet Unit",
+          "defaultMtart": "HAWA",
+          "description": "Penjualan unit kendaraan ringan (Avanza, Hilux, Innova, SUV/DC/MPV) — format Short Desc: Nama-Type-Transmisi-Gardan-Brand.",
+          "characteristics": [
+            {
+              "id": "ch-lv-nm",
+              "charName": "CHR_NAMA",
+              "label": "Nama",
+              "dataType": "select",
+              "options": [
+                "Avanza",
+                "Hilux",
+                "Innova",
+                "Fortuner",
+                "Triton",
+                "Pajero",
+                "X-Trail",
+                "Navara",
+                "CR-V"
+              ],
+              "required": true,
+              "helpText": "Model / nama unit kendaraan ringan"
+            },
+            {
+              "id": "ch-lv-tp",
+              "charName": "CHR_TYPE",
+              "label": "Type",
+              "dataType": "select",
+              "options": [
+                "SUV",
+                "DC",
+                "MPV",
+                "Pickup",
+                "Sedan"
+              ],
+              "required": true,
+              "helpText": "Tipe bodi kendaraan (SUV / Double Cabin / MPV)"
+            },
+            {
+              "id": "ch-lv-tr",
+              "charName": "CHR_TRANSMISI",
+              "label": "Transmisi",
+              "dataType": "select",
+              "options": [
+                "Manual",
+                "Matic",
+                "Hybrid",
+                "Electric"
+              ],
+              "required": true,
+              "helpText": "Sistem transmisi kendaraan"
+            },
+            {
+              "id": "ch-lv-gd",
+              "charName": "CHR_GARDAN",
+              "label": "Gardan",
+              "dataType": "select",
+              "options": [
+                "2x4",
+                "4x4"
+              ],
+              "required": true,
+              "helpText": "Konfigurasi penggerak gardan"
+            },
+            {
+              "id": "ch-lv-br",
+              "charName": "CHR_BRAND",
+              "label": "Brand",
+              "dataType": "select",
+              "options": [
+                "Toyota",
+                "Nissan",
+                "Honda",
+                "Mitsubishi"
+              ],
+              "required": true,
+              "helpText": "Merek / pabrikan kendaraan"
+            }
+          ]
+        },
+        {
+          "matkl": "UNIT-WL",
+          "label": "Heavy Unit & Commercial Vehicle",
+          "defaultMtart": "HAWA",
+          "description": "Unit alat berat & kendaraan niaga lengkap siap jual (Wheel Loader, Excavator, Dump Truck).",
+          "characteristics": [
+            {
+              "id": "ch-us-hp",
+              "charName": "CHR_ENGINE_POWER",
+              "label": "Engine Net Power",
+              "dataType": "number",
+              "unit": "HP",
+              "required": true,
+              "helpText": "Daya mesin terukur dalam Horsepower"
+            },
+            {
+              "id": "ch-us-wt",
+              "charName": "CHR_OP_WEIGHT",
+              "label": "Operating Weight",
+              "dataType": "number",
+              "unit": "kg",
+              "required": true,
+              "helpText": "Bobot operasi standar unit"
+            },
+            {
+              "id": "ch-us-bkt",
+              "charName": "CHR_BUCKET_CAP",
+              "label": "Bucket / Payload Capacity",
+              "dataType": "number",
+              "unit": "m³",
+              "required": true,
+              "helpText": "Kapasitas bucket atau bak standar"
+            },
+            {
+              "id": "ch-us-drv",
+              "charName": "CHR_DRIVE_TYPE",
+              "label": "Konfigurasi Penggerak",
+              "dataType": "select",
+              "options": [
+                "4WD Articulated",
+                "Crawler Track",
+                "6x4 Heavy Duty",
+                "8x4 Mining"
+              ],
+              "required": true,
+              "helpText": "Tipe sistem penggerak unit"
+            }
+          ]
+        },
+        {
+          "matkl": "PART-ELEC",
+          "label": "Electrical & Sensor Spare Parts",
+          "defaultMtart": "HAWA",
+          "description": "Alternator, starter motor, ECU, solenoid, dan sensor kelistrikan unit.",
+          "characteristics": [
+            {
+              "id": "ch-us-vlt",
+              "charName": "CHR_VOLTAGE",
+              "label": "Nominal Voltage",
+              "dataType": "select",
+              "options": [
+                "12V DC",
+                "24V DC"
+              ],
+              "required": true,
+              "helpText": "Tegangan sistem kelistrikan unit"
+            },
+            {
+              "id": "ch-us-amp",
+              "charName": "CHR_AMPERAGE",
+              "label": "Output / Arus Nominal",
+              "dataType": "number",
+              "unit": "A",
+              "required": true,
+              "helpText": "Kapasitas arus listrik dalam Ampere"
+            },
+            {
+              "id": "ch-us-plg",
+              "charName": "CHR_CONNECTOR_TYPE",
+              "label": "Tipe Pulley / Konektor",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Spesifikasi konektor pin atau groove pulley"
+            }
+          ]
+        },
+        {
+          "matkl": "PART-UC",
+          "label": "Undercarriage & Ground Engaging",
+          "defaultMtart": "ERSA",
+          "description": "Track link, track shoe, roller, idler, sprocket, dan bucket teeth.",
+          "characteristics": [
+            {
+              "id": "ch-us-ptc",
+              "charName": "CHR_TRACK_PITCH",
+              "label": "Link Pitch",
+              "dataType": "number",
+              "unit": "mm",
+              "required": true,
+              "helpText": "Jarak antar pin track link"
+            },
+            {
+              "id": "ch-us-lnk",
+              "charName": "CHR_LINK_COUNT",
+              "label": "Jumlah Link",
+              "dataType": "number",
+              "unit": "Links",
+              "required": true,
+              "helpText": "Total mata rantai per sisi track"
+            },
+            {
+              "id": "ch-us-shw",
+              "charName": "CHR_SHOE_WIDTH",
+              "label": "Lebar Track Shoe",
+              "dataType": "number",
+              "unit": "mm",
+              "required": true,
+              "helpText": "Lebar pelat shoe track"
+            }
+          ]
+        }
+      ],
       "changeDocuments": [
         {
           "changenr": "CHG-000702",
@@ -2389,7 +3149,7 @@
           "oldValue": "-",
           "newValue": "PT Mitra Armada Niaga (Penjualan Unit & Spare Parts)",
           "username": "BASIS_ADMIN",
-          "timestamp": "2026-11-20T07:02:36.500Z"
+          "timestamp": "2026-11-20T09:32:01.217Z"
         }
       ],
       "plants": [
@@ -2645,6 +3405,11 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_SENSOR_GASES": "H2S, CO, O2, LEL (CH4)",
+            "CHR_ATEX_CERT": "ATEX Zone 0 / Ex ia",
+            "CHR_BATTERY_LIFE": 24
+          },
           "industryExtensions": {
             "ZZ_TOOL_PPE_GROUP": "Gas Detector & Instrument",
             "ZZ_SAFETY_STD": "ATEX / IECEx",
@@ -2762,6 +3527,11 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_SIZE_RANGE": "8, 10, 12, 13, 14, 17, 19, 22, 24, 27, 30, 32 mm",
+            "CHR_PCS_COUNT": 14,
+            "CHR_TOOL_ALLOY": "Chrome Vanadium (Cr-V)"
+          },
           "industryExtensions": {
             "ZZ_TOOL_PPE_GROUP": "Hand Tools & Kunci",
             "ZZ_SAFETY_STD": "DIN / ISO",
@@ -2878,6 +3648,11 @@
             "kondm": "01",
             "tragr": "0001",
             "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_DRIVE_SIZE": "1/2\"",
+            "CHR_TORQUE_RANGE": "40 - 200 Nm",
+            "CHR_ACCURACY": "±3% ISO 6789"
           },
           "industryExtensions": {
             "ZZ_TOOL_PPE_GROUP": "Torque & Precision Tool",
@@ -3006,6 +3781,11 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_MAX_LOAD_KG": 140,
+            "CHR_D_RING_COUNT": "2 Dorsal + Sternal",
+            "CHR_LANYARD_TYPE": "Double Webbing + Absorber"
+          },
           "industryExtensions": {
             "ZZ_TOOL_PPE_GROUP": "APD Fall Protection",
             "ZZ_SAFETY_STD": "EN / CE",
@@ -3101,6 +3881,11 @@
             "tragr": "0001",
             "ladgr": "0001"
           },
+          "characteristics": {
+            "CHR_DIELECTRIC_CLS": "Class E (20,000V)",
+            "CHR_SUSPENSION": "4-Point Ratchet",
+            "CHR_COLOR_CODE": "Putih"
+          },
           "industryExtensions": {
             "ZZ_TOOL_PPE_GROUP": "APD Kepala & Mata",
             "ZZ_SAFETY_STD": "ANSI / ISEA",
@@ -3195,6 +3980,11 @@
             "kondm": "01",
             "tragr": "0001",
             "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_CYLINDER_VOL": 58,
+            "CHR_GAS_BLEND": "25ppm H2S / 60ppm CO / 1.45% CH4 / 15% O2",
+            "CHR_STABILITY_MO": 24
           },
           "industryExtensions": {
             "ZZ_GAS_MIX_SPEC": "1.45% CH4 / 15% O2 / 60ppm CO / 25ppm H2S bal N2"
@@ -3513,6 +4303,257 @@
           }
         }
       ],
+      "materialGroups": [
+        {
+          "matkl": "INST-GAS",
+          "label": "Gas Detector & Calibration Instrument",
+          "defaultMtart": "HAWA",
+          "description": "Detektor gas portabel maupun fixed (H2S, CO, O2, LEL, VOC) bersertifikat ATEX/IECEx.",
+          "characteristics": [
+            {
+              "id": "ch-tl-gas",
+              "charName": "CHR_SENSOR_GASES",
+              "label": "Target Gas Sensor",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Daftar gas yang dideteksi (mis. H2S, CO, O2, LEL)"
+            },
+            {
+              "id": "ch-tl-atx",
+              "charName": "CHR_ATEX_CERT",
+              "label": "Klasifikasi Area Berbahaya",
+              "dataType": "select",
+              "options": [
+                "ATEX Zone 0 / Ex ia",
+                "ATEX Zone 1 / Ex ib",
+                "IECEx",
+                "Non-Ex Safe Area"
+              ],
+              "required": true,
+              "helpText": "Sertifikasi keselamatan area gas mudah terbakar"
+            },
+            {
+              "id": "ch-tl-bat",
+              "charName": "CHR_BATTERY_LIFE",
+              "label": "Daya Tahan Baterai",
+              "dataType": "number",
+              "unit": "Jam",
+              "required": true,
+              "helpText": "Durasi operasi kontinu sekali pengisian"
+            }
+          ]
+        },
+        {
+          "matkl": "TOOL-HAND",
+          "label": "Hand Tools & Kunci-kunci Industri",
+          "defaultMtart": "HAWA",
+          "description": "Kunci pas ring, kunci sok, kunci L, obeng insulated, dan tool set bengkel.",
+          "characteristics": [
+            {
+              "id": "ch-tl-rng",
+              "charName": "CHR_SIZE_RANGE",
+              "label": "Rentang Ukuran Kunci",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Mis. 8–32 mm atau 3/8\"–1-1/4\""
+            },
+            {
+              "id": "ch-tl-pcs",
+              "charName": "CHR_PCS_COUNT",
+              "label": "Jumlah Isi / Pieces",
+              "dataType": "number",
+              "unit": "Pcs",
+              "required": true,
+              "helpText": "Total item di dalam set atau satuan"
+            },
+            {
+              "id": "ch-tl-aly",
+              "charName": "CHR_TOOL_ALLOY",
+              "label": "Material Baja Perkakas",
+              "dataType": "select",
+              "options": [
+                "Chrome Vanadium (Cr-V)",
+                "Chrome Molybdenum (Cr-Mo)",
+                "Non-Sparking Cu-Be",
+                "VDE Insulated 1000V"
+              ],
+              "required": true,
+              "helpText": "Jenis baja / standar isolasi perkakas"
+            }
+          ]
+        },
+        {
+          "matkl": "TOOL-TORQ",
+          "label": "Torque Wrench & Precision Tools",
+          "defaultMtart": "HAWA",
+          "description": "Kunci momen (click, dial, digital), torque multiplier, dan alat ukur presisi.",
+          "characteristics": [
+            {
+              "id": "ch-tl-drv",
+              "charName": "CHR_DRIVE_SIZE",
+              "label": "Square Drive Size",
+              "dataType": "select",
+              "options": [
+                "1/4\"",
+                "3/8\"",
+                "1/2\"",
+                "3/4\"",
+                "1\""
+              ],
+              "required": true,
+              "helpText": "Ukuran kepala square drive"
+            },
+            {
+              "id": "ch-tl-trq",
+              "charName": "CHR_TORQUE_RANGE",
+              "label": "Rentang Torsi Kerja",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Kapasitas torsi minimum–maksimum (mis. 40–200 Nm)"
+            },
+            {
+              "id": "ch-tl-acc",
+              "charName": "CHR_ACCURACY",
+              "label": "Toleransi Akurasi",
+              "dataType": "select",
+              "options": [
+                "±2% Digital",
+                "±3% ISO 6789",
+                "±4% Standard"
+              ],
+              "required": true,
+              "helpText": "Akurasi kalibrasi pabrikan"
+            }
+          ]
+        },
+        {
+          "matkl": "PPE-FALL",
+          "label": "APD Fall Protection & Working at Height",
+          "defaultMtart": "HAWA",
+          "description": "Full body harness, double lanyard, shock absorber, dan SRL kerja ketinggian.",
+          "characteristics": [
+            {
+              "id": "ch-tl-ld",
+              "charName": "CHR_MAX_LOAD_KG",
+              "label": "Beban Kerja Maksimum",
+              "dataType": "number",
+              "unit": "kg",
+              "required": true,
+              "helpText": "Batas berat pengguna + peralatan sesuai EN 361"
+            },
+            {
+              "id": "ch-tl-dr",
+              "charName": "CHR_D_RING_COUNT",
+              "label": "Konfigurasi D-Ring",
+              "dataType": "select",
+              "options": [
+                "1 Dorsal",
+                "2 Dorsal + Sternal",
+                "5 Full Body Rescue"
+              ],
+              "required": true,
+              "helpText": "Jumlah dan posisi attachment D-Ring"
+            },
+            {
+              "id": "ch-tl-ln",
+              "charName": "CHR_LANYARD_TYPE",
+              "label": "Tipe Lanyard / Absorber",
+              "dataType": "select",
+              "options": [
+                "Double Webbing + Absorber",
+                "Double Kernmantle Rope",
+                "Self-Retracting Lifeline (SRL)"
+              ],
+              "required": true,
+              "helpText": "Jenis tali penahan jatuh"
+            }
+          ]
+        },
+        {
+          "matkl": "PPE-HEAD",
+          "label": "APD Head, Eye & Respiratory",
+          "defaultMtart": "HAWA",
+          "description": "Safety helmet, kacamata safety, face shield, ear muff, dan respirator.",
+          "characteristics": [
+            {
+              "id": "ch-tl-die",
+              "charName": "CHR_DIELECTRIC_CLS",
+              "label": "Kelas Proteksi Dielektrik",
+              "dataType": "select",
+              "options": [
+                "Class E (20,000V)",
+                "Class G (2,200V)",
+                "Class C (Conductive / Vented)"
+              ],
+              "required": true,
+              "helpText": "Klasifikasi ketahanan listrik sesuai ANSI Z89.1"
+            },
+            {
+              "id": "ch-tl-sus",
+              "charName": "CHR_SUSPENSION",
+              "label": "Tipe Suspensi Dalam",
+              "dataType": "select",
+              "options": [
+                "4-Point Ratchet",
+                "6-Point Ratchet",
+                "Pin-Lock Standard"
+              ],
+              "required": true,
+              "helpText": "Sistem pengikat kepala di dalam helm"
+            },
+            {
+              "id": "ch-tl-clr",
+              "charName": "CHR_COLOR_CODE",
+              "label": "Kode Warna APD",
+              "dataType": "select",
+              "options": [
+                "Putih",
+                "Kuning",
+                "Merah",
+                "Biru",
+                "Hijau",
+                "Oranye"
+              ],
+              "required": true,
+              "helpText": "Warna identifikasi peran di site/lapangan"
+            }
+          ]
+        },
+        {
+          "matkl": "INST-CAL",
+          "label": "Calibration Gas & Lab Consumables",
+          "defaultMtart": "ROH",
+          "description": "Tabung gas kalibrasi campuran, regulator flow, dan sensor pengganti.",
+          "characteristics": [
+            {
+              "id": "ch-tl-cvl",
+              "charName": "CHR_CYLINDER_VOL",
+              "label": "Volume Tabung Gas",
+              "dataType": "number",
+              "unit": "L",
+              "required": true,
+              "helpText": "Kapasitas liter tabung bertekanan"
+            },
+            {
+              "id": "ch-tl-cbl",
+              "charName": "CHR_GAS_BLEND",
+              "label": "Konsentrasi Campuran Gas",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Komposisi PPM / % LEL / % Vol"
+            },
+            {
+              "id": "ch-tl-shf",
+              "charName": "CHR_STABILITY_MO",
+              "label": "Stabilitas Sertifikat Gas",
+              "dataType": "number",
+              "unit": "Bulan",
+              "required": true,
+              "helpText": "Masa berlaku akurasi campuran gas"
+            }
+          ]
+        }
+      ],
       "changeDocuments": [
         {
           "changenr": "CHG-000602",
@@ -3534,7 +4575,7 @@
           "oldValue": "-",
           "newValue": "PT Safetech Perkakas Mandiri (Penjualan Tools, Gas Detector & APD)",
           "username": "BASIS_ADMIN",
-          "timestamp": "2026-11-20T07:02:36.501Z"
+          "timestamp": "2026-11-20T09:32:01.217Z"
         }
       ],
       "plants": [

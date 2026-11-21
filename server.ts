@@ -37,8 +37,71 @@ import { buildMaterialShortDescription } from './src/utils/format.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_DIR = path.join(__dirname, 'data');
+const PROD_DATA_DIR = '/app/data';
+const LOCAL_DATA_DIR = path.join(__dirname, 'data');
+
+function resolveDataDir(): string {
+  if (process.env.SAP_DATA_DIR && process.env.SAP_DATA_DIR.trim()) {
+    return process.env.SAP_DATA_DIR.trim();
+  }
+  if (fs.existsSync(PROD_DATA_DIR)) {
+    return PROD_DATA_DIR;
+  }
+  if (__dirname === '/app') {
+    return PROD_DATA_DIR;
+  }
+  try {
+    fs.accessSync('/app', fs.constants.W_OK);
+    return PROD_DATA_DIR;
+  } catch {
+    return LOCAL_DATA_DIR;
+  }
+}
+
+const DATA_DIR = resolveDataDir();
 const DB_FILE = path.join(DATA_DIR, 'sap-store.json');
+
+function createDatabaseBackup(sourceFile: string, reason: string): string {
+  const safeReason = reason.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const backupFile = path.join(DATA_DIR, `sap-store.backup-${safeReason}-${stamp}.json`);
+  const sourceStat = fs.statSync(sourceFile);
+  fs.copyFileSync(sourceFile, backupFile, fs.constants.COPYFILE_EXCL);
+  const backupStat = fs.statSync(backupFile);
+  if (!fs.existsSync(backupFile) || backupStat.size !== sourceStat.size || backupStat.size === 0) {
+    throw new Error(`Verifikasi backup gagal untuk ${backupFile}.`);
+  }
+  return backupFile;
+}
+
+function saveDatabase(db: MultiTenantDatabase): void {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+  const serialized = JSON.stringify(db, null, 2);
+  const tempFile = path.join(DATA_DIR, `sap-store.tmp-${process.pid}-${Date.now()}.json`);
+  fs.writeFileSync(tempFile, serialized, 'utf-8');
+  try {
+    fs.renameSync(tempFile, DB_FILE);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException)?.code;
+    if (code === 'EBUSY' || code === 'EXDEV') {
+      fs.writeFileSync(DB_FILE, serialized, 'utf-8');
+      try {
+        fs.unlinkSync(tempFile);
+      } catch {
+        // ignore cleanup error
+      }
+      return;
+    }
+    try {
+      fs.unlinkSync(tempFile);
+    } catch {
+      // ignore cleanup error
+    }
+    throw err;
+  }
+}
 
 function loadDatabase(): MultiTenantDatabase {
   if (!fs.existsSync(DATA_DIR)) {
@@ -46,17 +109,46 @@ function loadDatabase(): MultiTenantDatabase {
   }
   if (!fs.existsSync(DB_FILE)) {
     const initial = createInitialMultiTenantDatabase();
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
+    saveDatabase(initial);
     return initial;
   }
+
+  let parsed: Partial<MultiTenantDatabase>;
   try {
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    const parsed = JSON.parse(raw) as Partial<MultiTenantDatabase>;
-    if (!parsed.schemaVersion || parsed.schemaVersion < 2 || !parsed.workspaces || !parsed.tenantCompanies) {
-      const migrated = createInitialMultiTenantDatabase();
-      fs.writeFileSync(DB_FILE, JSON.stringify(migrated, null, 2), 'utf-8');
-      return migrated;
+    parsed = JSON.parse(raw) as Partial<MultiTenantDatabase>;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      `Database ${DB_FILE} rusak atau bukan JSON valid (${msg}). File database lama dipertahankan dan TIDAK ditimpa.`
+    );
+  }
+
+  if (
+    typeof parsed !== 'object' ||
+    parsed === null ||
+    typeof parsed.schemaVersion !== 'number' ||
+    parsed.schemaVersion < 2 ||
+    !Array.isArray(parsed.tenantCompanies) ||
+    typeof parsed.workspaces !== 'object' ||
+    parsed.workspaces === null
+  ) {
+    throw new Error(
+      `Format database ${DB_FILE} tidak dikenal atau tidak kompatibel. File database lama dipertahankan dan TIDAK ditimpa.`
+    );
+  }
+
+  const currentVersion = parsed.schemaVersion;
+  if (currentVersion < 5) {
+    try {
+      createDatabaseBackup(DB_FILE, `pre-v${currentVersion}`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Backup sebelum migrasi database gagal dibuat (${msg}). Migrasi dihentikan tanpa mengubah ${DB_FILE}.`
+      );
     }
+
     if (parsed.schemaVersion < 3) {
       const freshSeed = createInitialMultiTenantDatabase();
       for (const company of parsed.tenantCompanies) {
@@ -82,8 +174,8 @@ function loadDatabase(): MultiTenantDatabase {
         }
       }
       parsed.schemaVersion = 3;
-      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
     }
+
     if (parsed.schemaVersion < 4) {
       const freshSeed = createInitialMultiTenantDatabase();
       for (const company of parsed.tenantCompanies) {
@@ -104,8 +196,8 @@ function loadDatabase(): MultiTenantDatabase {
         }
       }
       parsed.schemaVersion = 4;
-      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
     }
+
     if (parsed.schemaVersion < 5) {
       for (const company of parsed.tenantCompanies) {
         const ws = parsed.workspaces[company.tenantId];
@@ -117,21 +209,12 @@ function loadDatabase(): MultiTenantDatabase {
         }
       }
       parsed.schemaVersion = 5;
-      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), 'utf-8');
     }
-    return parsed as MultiTenantDatabase;
-  } catch {
-    const initial = createInitialMultiTenantDatabase();
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf-8');
-    return initial;
-  }
-}
 
-function saveDatabase(db: MultiTenantDatabase): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+    saveDatabase(parsed as MultiTenantDatabase);
   }
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+
+  return parsed as MultiTenantDatabase;
 }
 
 function resolveTenantContext(
@@ -407,16 +490,11 @@ async function startServer() {
     return res.json(buildBootstrapPayload(db, db.activeTenantId));
   });
 
-  // Reset seed data (all tenants or active tenant)
-  app.post('/api/reset', (req, res) => {
-    const db = loadDatabase();
-    const { tenantId } = resolveTenantContext(db, req);
-    const fresh = createInitialMultiTenantDatabase();
-    fresh.activeTenantId = fresh.tenantCompanies.some((t) => t.tenantId === tenantId)
-      ? tenantId
-      : fresh.tenantCompanies[0].tenantId;
-    saveDatabase(fresh);
-    res.json(buildBootstrapPayload(fresh, fresh.activeTenantId));
+  // Public reset endpoint permanently disabled to protect production database
+  app.post('/api/reset', (_req, res) => {
+    return res.status(403).json({
+      error: 'Endpoint POST /api/reset dinonaktifkan demi keamanan data production.',
+    });
   });
 
   // MM01 - Create Material Master (Internal Number Assignment MMNR)
@@ -1488,6 +1566,13 @@ async function startServer() {
 
     saveDatabase(db);
     return res.json({ db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  app.use('/api', (err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    const message = err instanceof Error ? err.message : 'Terjadi kesalahan internal pada server.';
+    console.error('[SAP SERVER ERROR]', err);
+    if (res.headersSent) return;
+    res.status(500).json({ error: message });
   });
 
   if (process.env.NODE_ENV !== 'production') {
