@@ -347,6 +347,7 @@ async function startServer() {
       defaultIndustry: coreMeta.defaultIndustry, description: coreMeta.summary };
     database.tenantCompanies.push(company);
     database.workspaces[tenantId] = createTenantTemplateWorkspace(company, coreMeta.value);
+    ensureCharacteristicMasters(database);
     database.activeTenantId = tenantId; saveMultiTenantDatabase(database);
     return res.status(201).json(buildBootstrapPayload(database, tenantId));
   });
