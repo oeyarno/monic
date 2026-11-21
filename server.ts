@@ -2205,4 +2205,6 @@ async function startServer() {
 }
 
 importBundledSeedOnce();
+const bootDatabase = loadDatabase();
+console.log(`MONIC database ready: schema v${bootDatabase.schemaVersion}, ${bootDatabase.tenantCompanies.length} companies, ${Object.keys(bootDatabase.workspaces).length} workspaces.`);
 startServer();
