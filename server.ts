@@ -139,7 +139,7 @@ function loadDatabase(): MultiTenantDatabase {
   }
 
   const currentVersion = parsed.schemaVersion;
-  if (currentVersion < 5) {
+  if (currentVersion < 6) {
     try {
       createDatabaseBackup(DB_FILE, `pre-v${currentVersion}`);
     } catch (err) {
@@ -209,6 +209,24 @@ function loadDatabase(): MultiTenantDatabase {
         }
       }
       parsed.schemaVersion = 5;
+    }
+
+    if (parsed.schemaVersion < 6) {
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+        if (!ws.materialGroups) ws.materialGroups = [];
+        const templateGroups = createTemplateMaterialGroups(company.coreBusinessType);
+        for (const tg of templateGroups) {
+          if (
+            (tg.matkl === 'HEAVY-EQ' || tg.matkl === 'LUBRICANT') &&
+            !ws.materialGroups.some((mg) => mg.matkl === tg.matkl)
+          ) {
+            ws.materialGroups.push(tg);
+          }
+        }
+      }
+      parsed.schemaVersion = 6;
     }
 
     saveDatabase(parsed as MultiTenantDatabase);

@@ -620,9 +620,41 @@ function createTemplateCustomFields(coreType: TenantCoreBusinessType): CustomInd
   ];
 }
 
+function createSharedEquipmentLubricantGroups(): MaterialGroupDefinition[] {
+  return [
+    {
+      matkl: 'HEAVY-EQ',
+      label: 'Heavy Equipment',
+      defaultMtart: 'HAWA',
+      description: 'Unit alat berat & mesin konstruksi/pertambangan (Excavator, Bulldozer, Wheel Loader, Dump Truck, Crane).',
+      characteristics: [
+        { id: 'ch-he-jns', charName: 'CHR_HE_JENIS', label: 'Jenis Unit', dataType: 'select', options: ['Excavator', 'Bulldozer', 'Wheel Loader', 'Motor Grader', 'Dump Truck', 'Crane', 'Compactor', 'Forklift'], required: true, helpText: 'Kategori utama unit alat berat' },
+        { id: 'ch-he-mdl', charName: 'CHR_HE_MODEL', label: 'Model / Seri', dataType: 'text', required: true, helpText: 'Model atau seri unit (mis. PC200-8, D85ESS-2, CLG856H)' },
+        { id: 'ch-he-kap', charName: 'CHR_HE_KAPASITAS', label: 'Kapasitas / Tonase', dataType: 'text', required: true, helpText: 'Kelas tonase atau kapasitas bucket (mis. 20 Ton, 3 m3, 40 Ton)' },
+        { id: 'ch-he-eng', charName: 'CHR_HE_ENGINE', label: 'Tipe Engine', dataType: 'select', options: ['Diesel', 'Diesel Turbo', 'Hybrid', 'Electric'], required: true, helpText: 'Konfigurasi tenaga mesin penggerak' },
+        { id: 'ch-he-brd', charName: 'CHR_HE_BRAND', label: 'Brand', dataType: 'select', options: ['Komatsu', 'Caterpillar', 'Hitachi', 'Kobelco', 'LiuGong', 'Volvo', 'SANY', 'Scania'], required: true, helpText: 'Merek pabrikan alat berat' },
+      ],
+    },
+    {
+      matkl: 'LUBRICANT',
+      label: 'Lubricant',
+      defaultMtart: 'ROH',
+      description: 'Pelumas industri & alat berat (Engine Oil, Hydraulic Oil, Transmission Oil, Gear Oil, Grease, Coolant).',
+      characteristics: [
+        { id: 'ch-lub-app', charName: 'CHR_LUB_APLIKASI', label: 'Jenis Pelumas', dataType: 'select', options: ['Engine Oil', 'Hydraulic Oil', 'Transmission Oil', 'Gear Oil', 'Grease', 'Coolant'], required: true, helpText: 'Aplikasi atau fungsi pelumas' },
+        { id: 'ch-lub-vis', charName: 'CHR_LUB_VISKOSITAS', label: 'Viskositas SAE / ISO', dataType: 'select', options: ['SAE 15W-40', 'SAE 10W-30', 'SAE 5W-30', 'SAE 80W-90', 'SAE 85W-140', 'ISO VG 46', 'ISO VG 68', 'NLGI 2'], required: true, helpText: 'Tingkat kekentalan SAE, ISO VG, atau NLGI' },
+        { id: 'ch-lub-spc', charName: 'CHR_LUB_SPEC', label: 'Standar API / OEM', dataType: 'select', options: ['API CI-4', 'API CK-4', 'API SP', 'API GL-5', 'Caterpillar TO-4', 'DIN 51524 HLP', 'Lithium Complex'], required: true, helpText: 'Spesifikasi performa standar API / OEM' },
+        { id: 'ch-lub-pck', charName: 'CHR_LUB_KEMASAN', label: 'Kemasan', dataType: 'select', options: ['Drum 209L', 'Drum 200L', 'Pail 20L', 'Pail 18L', 'Galon 4L', 'Botol 1L', 'Cartridge 400g'], required: true, helpText: 'Ukuran kemasan drum, pail, atau botol' },
+        { id: 'ch-lub-brd', charName: 'CHR_LUB_BRAND', label: 'Brand', dataType: 'select', options: ['Pertamina', 'Shell', 'Mobil', 'Castrol', 'TotalEnergies', 'CAT Oil', 'Komatsu Genuine'], required: true, helpText: 'Merek pabrikan pelumas' },
+      ],
+    },
+  ];
+}
+
 export function createTemplateMaterialGroups(
   coreType: TenantCoreBusinessType
 ): MaterialGroupDefinition[] {
+  const sharedGroups = createSharedEquipmentLubricantGroups();
   if (coreType === 'oil_gas_contractor') {
     return [
       {
@@ -660,6 +692,7 @@ export function createTemplateMaterialGroups(
           { id: 'ch-og-pck', charName: 'CHR_PACK_TYPE', label: 'Jenis Kemasan', dataType: 'select', options: ['Sak 25 KG', 'Big Bag 1.000 KG', 'Drum 200 L', 'IBC Tank 1.000 L'], required: true, helpText: 'Format kemasan pengiriman ke rig' },
         ],
       },
+      ...sharedGroups,
     ];
   }
 
@@ -712,6 +745,7 @@ export function createTemplateMaterialGroups(
           { id: 'ch-lv-br', charName: 'CHR_BRAND', label: 'Brand', dataType: 'select', options: ['Toyota', 'Nissan', 'Honda', 'Mitsubishi'], required: true, helpText: 'Merek / pabrikan kendaraan' },
         ],
       },
+      ...sharedGroups,
     ];
   }
 
@@ -764,6 +798,7 @@ export function createTemplateMaterialGroups(
           { id: 'ch-us-shw', charName: 'CHR_SHOE_WIDTH', label: 'Lebar Track Shoe', dataType: 'number', unit: 'mm', required: true, helpText: 'Lebar pelat shoe track' },
         ],
       },
+      ...sharedGroups,
     ];
   }
 
@@ -835,6 +870,7 @@ export function createTemplateMaterialGroups(
           { id: 'ch-tl-shf', charName: 'CHR_STABILITY_MO', label: 'Stabilitas Sertifikat Gas', dataType: 'number', unit: 'Bulan', required: true, helpText: 'Masa berlaku akurasi campuran gas' },
         ],
       },
+      ...sharedGroups,
     ];
   }
 
@@ -848,6 +884,7 @@ export function createTemplateMaterialGroups(
         { id: 'ch-gen-spec', charName: 'CHR_STD_SPEC', label: 'Spesifikasi Utama', dataType: 'text', required: true, helpText: 'Spesifikasi ringkas material sesuai standar grup ini' },
       ],
     },
+    ...sharedGroups,
   ];
 }
 
@@ -3093,7 +3130,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
 
 export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
   return {
-    schemaVersion: 5,
+    schemaVersion: 6,
     activeTenantId: TENANT_COMPANIES[0].tenantId,
     tenantCompanies: structuredClone(TENANT_COMPANIES),
     workspaces: {
