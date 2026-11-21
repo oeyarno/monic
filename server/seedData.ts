@@ -784,6 +784,7 @@ export function createTenantTemplateWorkspace(
     ],
     plants,
     vendors,
+    materialGroups: [],
   };
 }
 
