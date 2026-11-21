@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import {
-  CORE_BUSINESS_OPTIONS, createInitialMultiTenantDatabase, createTenantTemplateWorkspace,
+  CORE_BUSINESS_OPTIONS, createInitialMultiTenantDatabase, createTenantTemplateWorkspace, createTemplateMaterialGroups,
   INDUSTRY_SECTORS, MATERIAL_TYPES, VALUATION_TYPES,
 } from './server/seedData.ts';
 import type {
@@ -42,27 +42,28 @@ const REQUIRED_WORKSPACE_ARRAYS: (keyof TenantWorkspaceData)[] = [
 ];
 
 
-const DEFAULT_LIGHT_VEH_GROUP: MaterialGroupDefinition = {
-  matkl: 'LIGHT-VEH',
-  label: 'Light Vehicle & Fleet Unit',
-  defaultMtart: 'HAWA',
-  description: 'Kendaraan operasional ringan — format Short Name: Nama-Type-Transmisi-Gardan-Brand.',
-  characteristics: [
-    { id: 'ch-lv-nm', charName: 'CHR_NAMA', label: 'Nama', dataType: 'select', options: ['Avanza', 'Hilux', 'Innova', 'Fortuner', 'Triton', 'Pajero', 'X-Trail', 'Navara', 'CR-V'], required: true, helpText: 'Model / nama unit kendaraan ringan' },
-    { id: 'ch-lv-tp', charName: 'CHR_TYPE', label: 'Type', dataType: 'select', options: ['SUV', 'DC', 'MPV', 'Pickup', 'Sedan'], required: true, helpText: 'Tipe bodi kendaraan (SUV / Double Cabin / MPV)' },
-    { id: 'ch-lv-tr', charName: 'CHR_TRANSMISI', label: 'Transmisi', dataType: 'select', options: ['Manual', 'Matic', 'Hybrid', 'Electric'], required: true, helpText: 'Sistem transmisi kendaraan' },
-    { id: 'ch-lv-gd', charName: 'CHR_GARDAN', label: 'Gardan', dataType: 'select', options: ['2x4', '4x4'], required: true, helpText: 'Konfigurasi penggerak gardan' },
-    { id: 'ch-lv-br', charName: 'CHR_BRAND', label: 'Brand', dataType: 'select', options: ['Toyota', 'Nissan', 'Honda', 'Mitsubishi'], required: true, helpText: 'Merek / pabrikan kendaraan' },
-  ],
-};
-
-function ensureCharacteristicMasters(db: MultiTenantDatabase): void {
+function ensureCharacteristicMasters(db: MultiTenantDatabase): boolean {
+  let changed = false;
   for (const company of db.tenantCompanies) {
     const workspace = db.workspaces[company.tenantId] as TenantWorkspaceData & { materialGroups?: MaterialGroupDefinition[] };
-    if (!Array.isArray(workspace.materialGroups) || workspace.materialGroups.length === 0) {
-      workspace.materialGroups = [structuredClone(DEFAULT_LIGHT_VEH_GROUP)];
+    if (!Array.isArray(workspace.materialGroups)) workspace.materialGroups = [];
+    const templates = createTemplateMaterialGroups(company.coreBusinessType);
+    for (const template of templates) {
+      const existingIndex = workspace.materialGroups.findIndex((group) => group.matkl === template.matkl);
+      if (existingIndex < 0) {
+        workspace.materialGroups.unshift(structuredClone(template));
+        changed = true;
+      } else if (!workspace.materialGroups[existingIndex].characteristics?.length) {
+        workspace.materialGroups[existingIndex] = {
+          ...structuredClone(template),
+          ...workspace.materialGroups[existingIndex],
+          characteristics: structuredClone(template.characteristics),
+        };
+        changed = true;
+      }
     }
   }
+  return changed;
 }
 
 function buildMaterialShortName(group: MaterialGroupDefinition, values: Record<string, string | number | boolean> = {}): string {
@@ -132,8 +133,9 @@ function loadMultiTenantDatabase(): MultiTenantDatabase {
     throw new Error(`Database MONIC menggunakan schema versi ${parsed.schemaVersion}, lebih baru dari aplikasi. Data tidak diubah.`);
   }
   if (parsed && parsed.schemaVersion === 2) {
-    ensureCharacteristicMasters(parsed as MultiTenantDatabase);
+    const mastersChanged = ensureCharacteristicMasters(parsed as MultiTenantDatabase);
     validateMultiTenantDatabase(parsed);
+    if (mastersChanged) saveMultiTenantDatabase(parsed);
     return parsed;
   }
 
@@ -245,7 +247,8 @@ function nextChangeNumber(logs: ChangeDocument[]): string {
 function validateMaterialAgainstOms9(
   material: MaterialMasterRecord,
   db: SapBootstrapPayload,
-  activeWerks: string
+  activeWerks: string,
+  isCreate = false
 ): string[] {
   const errors: string[] = [];
   const mbrsh = material.mara.mbrsh;
@@ -255,7 +258,10 @@ function validateMaterialAgainstOms9(
   if (!material.mara.meins.trim()) errors.push('Base Unit of Measure (MARA-MEINS) wajib diisi.');
 
   const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
-  if (materialGroup) {
+  const hasAnyCharacteristicValue = Object.values(material.characteristics || {}).some(
+    (value) => value !== undefined && value !== null && String(value).trim() !== ''
+  );
+  if (materialGroup && (isCreate || hasAnyCharacteristicValue)) {
     for (const characteristic of materialGroup.characteristics) {
       if (!characteristic.required) continue;
       const value = material.characteristics?.[characteristic.charName];
@@ -387,7 +393,7 @@ async function startServer() {
       const generated = buildMaterialShortName(materialGroup, material.characteristics || {});
       if (generated) material.mara.maktx = generated;
     }
-    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks);
+    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks, true);
     if (validationErrors.length > 0) {
       return res.status(400).json({ error: validationErrors[0], details: validationErrors });
     }
