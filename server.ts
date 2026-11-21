@@ -69,14 +69,14 @@ function resolveDataDir(): string {
 const DATA_DIR = resolveDataDir();
 
 const DB_FILE = path.join(DATA_DIR, 'sap-store.json');
-const SEED_IMPORT_MARKER = path.join(DATA_DIR, '.monic-seed-imported');
+const SEED_IMPORT_MARKER = path.join(DATA_DIR, '.monic-seed-imported-zip-v5');
 
 function importBundledSeedOnce(): void {
   if (process.env.MONIC_REPLACE_DB_FROM_SEED !== 'true' || fs.existsSync(SEED_IMPORT_MARKER)) {
     return;
   }
 
-  const seedFile = path.join(LOCAL_DATA_DIR, 'sap-store.json');
+  const seedFile = path.join(__dirname, 'seed-data', 'sap-store.json');
   if (!fs.existsSync(seedFile)) {
     throw new Error(`Seed database tidak ditemukan: ${seedFile}. Database produksi tidak diubah.`);
   }
@@ -2198,7 +2198,7 @@ async function startServer() {
     });
   }
 
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT || 8080);
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`SAP S/4HANA Multi-Tenant Material Master & MM server running on http://0.0.0.0:${PORT}`);
   });
