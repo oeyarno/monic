@@ -5,6 +5,7 @@ import type {
   IndustrySectorDefinition,
   MaterialDocument,
   MaterialMasterRecord,
+  MaterialGroupDefinition,
   MaterialTypeDefinition,
   MultiTenantDatabase,
   PlantDefinition,
@@ -646,20 +647,20 @@ export function createTemplateMaterialGroups(coreType: TenantCoreBusinessType): 
       ch('ch-og-vtrm','CHR_TRIM_SPEC','API Trim Specification','text',false,'Spesifikasi trim valve'),
     ]),
     group('DRILL-MUD','Drilling Mud & Chemical Additive','ROH','Material lumpur pengeboran dan aditif kimia sumur.',[
-      ch('ch-og-sg','CHR_SG_MIN','Specific Gravity (Min)','number',true,'Berat jenis minimal','undefined'.split(';'),'g/cm³'),
+      ch('ch-og-sg','CHR_SG_MIN','Specific Gravity (Min)','number',true,'Berat jenis minimal',undefined,'g/cm³'),
       ch('ch-og-pur','CHR_PURITY_PCT','Kadar Kemurnian / Aktif','number',true,'Persentase kemurnian zat aktif',undefined,'%'),
       ch('ch-og-pck','CHR_PACK_TYPE','Jenis Kemasan','select',true,'Format kemasan pengiriman',['Sak 25 KG','Big Bag 1.000 KG','Drum 200 L','IBC Tank 1.000 L']),
     ]),
   ];
   if (coreType === 'heavy_workshop') return [
     group('HYD-PUMP','Hydraulic Pump, Motor & Cylinder','ERSA','Komponen utama sistem hidrolik alat berat untuk overhaul maupun rekondisi.',[
-      ch('ch-ws-disp','CHR_DISP_CC','Displacement','number',true,'Kapasitas volume per putaran pompa','undefined'.split(';'),'cc/rev'),
-      ch('ch-ws-prs','CHR_MAX_PRESS','Max Operating Pressure','number',true,'Tekanan kerja maksimum sistem','undefined'.split(';'),'bar'),
+      ch('ch-ws-disp','CHR_DISP_CC','Displacement','number',true,'Kapasitas volume per putaran pompa',undefined,'cc/rev'),
+      ch('ch-ws-prs','CHR_MAX_PRESS','Max Operating Pressure','number',true,'Tekanan kerja maksimum sistem',undefined,'bar'),
       ch('ch-ws-rot','CHR_ROTATION','Arah Putaran Shaft','select',true,'Arah rotasi input shaft',['Clockwise (CW)','Counter-Clockwise (CCW)','Bi-Directional']),
       ch('ch-ws-cnd','CHR_PART_GRADE','Klasifikasi Komponen','select',false,'Grade komponen workshop',['Genuine OEM','OEM Equivalent','Reconditioned / Core']),
     ]),
     group('FLT-KIT','PM Service Filter & Seal Kit','ERSA','Paket filter bahan bakar, oli, udara, dan seal preventive maintenance.',[
-      ch('ch-ws-mic','CHR_MICRON_RATING','Filtration Rating','number',true,'Ukuran partikel penyaringan','undefined'.split(';'),'µm'),
+      ch('ch-ws-mic','CHR_MICRON_RATING','Filtration Rating','number',true,'Ukuran partikel penyaringan',undefined,'µm'),
       ch('ch-ws-int','CHR_PM_INTERVAL','Interval Preventive Maintenance','select',true,'Jadwal PM alat berat',['250 HM','500 HM','1000 HM','2000 HM']),
       ch('ch-ws-cnt','CHR_KIT_CONTENTS','Rincian Isi Kit','text',true,'Daftar filter/seal yang termasuk dalam satu set'),
     ]),
@@ -673,9 +674,9 @@ export function createTemplateMaterialGroups(coreType: TenantCoreBusinessType): 
   if (coreType === 'unit_spareparts') return [
     vehicle(),
     group('UNIT-WL','Heavy Unit & Commercial Vehicle','HAWA','Unit alat berat & kendaraan niaga lengkap siap jual.',[
-      ch('ch-us-hp','CHR_ENGINE_POWER','Engine Net Power','number',true,'Daya mesin terukur','undefined'.split(';'),'HP'),
-      ch('ch-us-wt','CHR_OP_WEIGHT','Operating Weight','number',true,'Bobot operasi standar unit','undefined'.split(';'),'kg'),
-      ch('ch-us-bkt','CHR_BUCKET_CAP','Bucket / Payload Capacity','number',true,'Kapasitas bucket atau bak standar','undefined'.split(';'),'m³'),
+      ch('ch-us-hp','CHR_ENGINE_POWER','Engine Net Power','number',true,'Daya mesin terukur',undefined,'HP'),
+      ch('ch-us-wt','CHR_OP_WEIGHT','Operating Weight','number',true,'Bobot operasi standar unit',undefined,'kg'),
+      ch('ch-us-bkt','CHR_BUCKET_CAP','Bucket / Payload Capacity','number',true,'Kapasitas bucket atau bak standar',undefined,'m³'),
       ch('ch-us-drv','CHR_DRIVE_TYPE','Konfigurasi Penggerak','select',true,'Tipe sistem penggerak',['4WD Articulated','Crawler Track','6x4 Heavy Duty','8x4 Mining']),
     ]),
     group('PART-ELEC','Electrical & Sensor Spare Parts','HAWA','Alternator, starter motor, ECU, solenoid, dan sensor kelistrikan unit.',[
