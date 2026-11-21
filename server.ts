@@ -67,7 +67,48 @@ function resolveDataDir(): string {
 }
 
 const DATA_DIR = resolveDataDir();
+
 const DB_FILE = path.join(DATA_DIR, 'sap-store.json');
+const SEED_IMPORT_MARKER = path.join(DATA_DIR, '.monic-seed-imported');
+
+function importBundledSeedOnce(): void {
+  if (process.env.MONIC_REPLACE_DB_FROM_SEED !== 'true' || fs.existsSync(SEED_IMPORT_MARKER)) {
+    return;
+  }
+
+  const seedFile = path.join(LOCAL_DATA_DIR, 'sap-store.json');
+  if (!fs.existsSync(seedFile)) {
+    throw new Error(`Seed database tidak ditemukan: ${seedFile}. Database produksi tidak diubah.`);
+  }
+
+  const seed = JSON.parse(fs.readFileSync(seedFile, 'utf-8')) as Partial<MultiTenantDatabase>;
+  if (
+    typeof seed.schemaVersion !== 'number' ||
+    seed.schemaVersion < 2 ||
+    !Array.isArray(seed.tenantCompanies) ||
+    seed.tenantCompanies.length === 0 ||
+    typeof seed.workspaces !== 'object' ||
+    seed.workspaces === null
+  ) {
+    throw new Error('Seed database tidak valid. Database produksi tidak diubah.');
+  }
+
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (fs.existsSync(DB_FILE)) {
+    createDatabaseBackup(DB_FILE, 'before-seed-replacement');
+  }
+
+  const tempFile = path.join(DATA_DIR, `sap-store.seed-import-${process.pid}-${Date.now()}.json`);
+  fs.copyFileSync(seedFile, tempFile, fs.constants.COPYFILE_EXCL);
+  const copied = JSON.parse(fs.readFileSync(tempFile, 'utf-8')) as Partial<MultiTenantDatabase>;
+  if (copied.schemaVersion !== seed.schemaVersion || !Array.isArray(copied.tenantCompanies)) {
+    fs.unlinkSync(tempFile);
+    throw new Error('Verifikasi salinan seed gagal. Database produksi tidak diubah.');
+  }
+  fs.renameSync(tempFile, DB_FILE);
+  fs.writeFileSync(SEED_IMPORT_MARKER, new Date().toISOString(), { flag: 'wx' });
+  console.log(`MONIC: database seed schema v${seed.schemaVersion} berhasil dipasang; backup database lama dibuat bila sebelumnya tersedia.`);
+}
 
 function createDatabaseBackup(sourceFile: string, reason: string): string {
   const safeReason = reason.replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -2163,4 +2204,5 @@ async function startServer() {
   });
 }
 
+importBundledSeedOnce();
 startServer();
