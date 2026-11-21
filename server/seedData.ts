@@ -619,6 +619,113 @@ function createTemplateCustomFields(coreType: TenantCoreBusinessType): CustomInd
   ];
 }
 
+
+export function createTemplateMaterialGroups(coreType: TenantCoreBusinessType): MaterialGroupDefinition[] {
+  const ch = (id: string, charName: string, label: string, dataType: 'text' | 'number' | 'select' | 'boolean', required: boolean, helpText: string, options?: string[], unit?: string) => ({
+    id, charName, label, dataType, required, helpText, ...(options ? { options } : {}), ...(unit ? { unit } : {}),
+  });
+  const group = (matkl: string, label: string, defaultMtart: MaterialGroupDefinition['defaultMtart'], description: string, characteristics: MaterialGroupDefinition['characteristics']): MaterialGroupDefinition => ({ matkl, label, defaultMtart, description, characteristics });
+  const vehicle = () => group('LIGHT-VEH', 'Light Vehicle & Fleet Unit', 'HAWA', 'Unit kendaraan operasional ringan — format Short Name: Nama-Type-Transmisi-Gardan-Brand.', [
+    ch('ch-lv-nm','CHR_NAMA','Nama','select',true,'Model / nama unit kendaraan ringan',['Avanza','Hilux','Innova','Fortuner','Triton','Pajero','X-Trail','Navara','CR-V']),
+    ch('ch-lv-tp','CHR_TYPE','Type','select',true,'Tipe bodi kendaraan',['SUV','DC','MPV','Pickup','Sedan']),
+    ch('ch-lv-tr','CHR_TRANSMISI','Transmisi','select',true,'Sistem transmisi kendaraan',['Manual','Matic','Hybrid','Electric']),
+    ch('ch-lv-gd','CHR_GARDAN','Gardan','select',true,'Konfigurasi penggerak gardan',['2x4','4x4']),
+    ch('ch-lv-br','CHR_BRAND','Brand','select',true,'Merek / pabrikan kendaraan',['Toyota','Nissan','Honda','Mitsubishi']),
+  ]);
+  if (coreType === 'oil_gas_contractor') return [
+    group('OCTG-PIPE','Seamless Line Pipe & OCTG','ROH','Pipa saluran migas seamless, casing, dan tubing berstandar API 5L / 5CT.',[
+      ch('ch-og-od','CHR_PIPE_OD','Nominal Pipe Size (OD)','select',true,'Diameter nominal pipa dalam inci',['4"','6"','8"','10"','12"','16"']),
+      ch('ch-og-sch','CHR_PIPE_SCH','Wall Schedule','select',true,'Ketebalan dinding pipa',['Sch.40','Sch.80','Sch.160','STD','XS','XXS']),
+      ch('ch-og-grd','CHR_STEEL_GRADE','Material Steel Grade','select',true,'Grade baja pipa',['API 5L Gr.B','API 5L X52 PSL2','API 5L X65 PSL2','ASTM A312 TP316L']),
+      ch('ch-og-end','CHR_END_CONN','End Connection','select',false,'Bentuk ujung pipa',['Beveled End (BE)','Plain End (PE)','Threaded & Coupled (T&C)']),
+    ]),
+    group('VALVE-HP','High-Pressure Valve & Fitting','ERSA','Gate, Ball, Globe, Check Valve serta flange bertekanan tinggi untuk fasilitas EPC.',[
+      ch('ch-og-vsz','CHR_VALVE_SIZE','Nominal Valve Size','select',true,'Ukuran nominal bore valve',['2"','3"','4"','6"','8"','12"']),
+      ch('ch-og-vcls','CHR_VALVE_CLASS','ASME Pressure Class','select',true,'Rating tekanan flange',['Class 150','Class 300','Class 600','Class 900','Class 1500']),
+      ch('ch-og-vbod','CHR_BODY_MAT','Body Material','select',true,'Material utama bodi valve',['ASTM A216 WCB','ASTM A105N','ASTM A351 CF8M','Duplex F51']),
+      ch('ch-og-vtrm','CHR_TRIM_SPEC','API Trim Specification','text',false,'Spesifikasi trim valve'),
+    ]),
+    group('DRILL-MUD','Drilling Mud & Chemical Additive','ROH','Material lumpur pengeboran dan aditif kimia sumur.',[
+      ch('ch-og-sg','CHR_SG_MIN','Specific Gravity (Min)','number',true,'Berat jenis minimal','undefined'.split(';'),'g/cm³'),
+      ch('ch-og-pur','CHR_PURITY_PCT','Kadar Kemurnian / Aktif','number',true,'Persentase kemurnian zat aktif',undefined,'%'),
+      ch('ch-og-pck','CHR_PACK_TYPE','Jenis Kemasan','select',true,'Format kemasan pengiriman',['Sak 25 KG','Big Bag 1.000 KG','Drum 200 L','IBC Tank 1.000 L']),
+    ]),
+  ];
+  if (coreType === 'heavy_workshop') return [
+    group('HYD-PUMP','Hydraulic Pump, Motor & Cylinder','ERSA','Komponen utama sistem hidrolik alat berat untuk overhaul maupun rekondisi.',[
+      ch('ch-ws-disp','CHR_DISP_CC','Displacement','number',true,'Kapasitas volume per putaran pompa','undefined'.split(';'),'cc/rev'),
+      ch('ch-ws-prs','CHR_MAX_PRESS','Max Operating Pressure','number',true,'Tekanan kerja maksimum sistem','undefined'.split(';'),'bar'),
+      ch('ch-ws-rot','CHR_ROTATION','Arah Putaran Shaft','select',true,'Arah rotasi input shaft',['Clockwise (CW)','Counter-Clockwise (CCW)','Bi-Directional']),
+      ch('ch-ws-cnd','CHR_PART_GRADE','Klasifikasi Komponen','select',false,'Grade komponen workshop',['Genuine OEM','OEM Equivalent','Reconditioned / Core']),
+    ]),
+    group('FLT-KIT','PM Service Filter & Seal Kit','ERSA','Paket filter bahan bakar, oli, udara, dan seal preventive maintenance.',[
+      ch('ch-ws-mic','CHR_MICRON_RATING','Filtration Rating','number',true,'Ukuran partikel penyaringan','undefined'.split(';'),'µm'),
+      ch('ch-ws-int','CHR_PM_INTERVAL','Interval Preventive Maintenance','select',true,'Jadwal PM alat berat',['250 HM','500 HM','1000 HM','2000 HM']),
+      ch('ch-ws-cnt','CHR_KIT_CONTENTS','Rincian Isi Kit','text',true,'Daftar filter/seal yang termasuk dalam satu set'),
+    ]),
+    group('LUBE-HD','Heavy Duty Lubricants & Coolant','ROH','Pelumas mesin diesel berat, oli hidrolik, transmisi, dan grease.',[
+      ch('ch-ws-vis','CHR_SAE_VISC','Viskositas SAE / ISO','select',true,'Standar kekentalan pelumas',['SAE 15W-40','SAE 10W-30','SAE 85W-140','ISO VG 46','ISO VG 68']),
+      ch('ch-ws-api','CHR_API_CLASS','API / JASO Performance','select',true,'Standar performa pelumas',['API CI-4','API CK-4','API GL-5','Caterpillar TO-4','DIN 51524 HLP']),
+      ch('ch-ws-vol','CHR_PACK_VOL','Volume Kemasan','number',true,'Isi bersih per drum / pail',undefined,'L'),
+    ]),
+    vehicle(),
+  ];
+  if (coreType === 'unit_spareparts') return [
+    vehicle(),
+    group('UNIT-WL','Heavy Unit & Commercial Vehicle','HAWA','Unit alat berat & kendaraan niaga lengkap siap jual.',[
+      ch('ch-us-hp','CHR_ENGINE_POWER','Engine Net Power','number',true,'Daya mesin terukur','undefined'.split(';'),'HP'),
+      ch('ch-us-wt','CHR_OP_WEIGHT','Operating Weight','number',true,'Bobot operasi standar unit','undefined'.split(';'),'kg'),
+      ch('ch-us-bkt','CHR_BUCKET_CAP','Bucket / Payload Capacity','number',true,'Kapasitas bucket atau bak standar','undefined'.split(';'),'m³'),
+      ch('ch-us-drv','CHR_DRIVE_TYPE','Konfigurasi Penggerak','select',true,'Tipe sistem penggerak',['4WD Articulated','Crawler Track','6x4 Heavy Duty','8x4 Mining']),
+    ]),
+    group('PART-ELEC','Electrical & Sensor Spare Parts','HAWA','Alternator, starter motor, ECU, solenoid, dan sensor kelistrikan unit.',[
+      ch('ch-us-vlt','CHR_VOLTAGE','Nominal Voltage','select',true,'Tegangan sistem kelistrikan',['12V DC','24V DC']),
+      ch('ch-us-amp','CHR_AMPERAGE','Output / Arus Nominal','number',true,'Kapasitas arus listrik',undefined,'A'),
+      ch('ch-us-plg','CHR_CONNECTOR_TYPE','Tipe Pulley / Konektor','text',true,'Spesifikasi konektor pin atau groove pulley'),
+    ]),
+    group('PART-UC','Undercarriage & Ground Engaging','ERSA','Track link, track shoe, roller, idler, sprocket, dan bucket teeth.',[
+      ch('ch-us-ptc','CHR_TRACK_PITCH','Link Pitch','number',true,'Jarak antar pin track link',undefined,'mm'),
+      ch('ch-us-lnk','CHR_LINK_COUNT','Jumlah Link','number',true,'Total mata rantai per sisi track',undefined,'Links'),
+      ch('ch-us-shw','CHR_SHOE_WIDTH','Lebar Track Shoe','number',true,'Lebar pelat shoe track',undefined,'mm'),
+    ]),
+  ];
+  if (coreType === 'tools_ppe') return [
+    group('INST-GAS','Gas Detector & Calibration Instrument','HAWA','Detektor gas portabel maupun fixed bersertifikat ATEX/IECEx.',[
+      ch('ch-tl-gas','CHR_SENSOR_GASES','Target Gas Sensor','text',true,'Daftar gas yang dideteksi'),
+      ch('ch-tl-atx','CHR_ATEX_CERT','Klasifikasi Area Berbahaya','select',true,'Sertifikasi keselamatan area gas',['ATEX Zone 0 / Ex ia','ATEX Zone 1 / Ex ib','IECEx','Non-Ex Safe Area']),
+      ch('ch-tl-bat','CHR_BATTERY_LIFE','Daya Tahan Baterai','number',true,'Durasi operasi kontinu',undefined,'Jam'),
+    ]),
+    group('TOOL-HAND','Hand Tools & Kunci-kunci Industri','HAWA','Kunci pas ring, kunci sok, kunci L, obeng insulated, dan tool set bengkel.',[
+      ch('ch-tl-rng','CHR_SIZE_RANGE','Rentang Ukuran Kunci','text',true,'Rentang ukuran perkakas'),
+      ch('ch-tl-pcs','CHR_PCS_COUNT','Jumlah Isi / Pieces','number',true,'Total item di dalam set',undefined,'Pcs'),
+      ch('ch-tl-aly','CHR_TOOL_ALLOY','Material Baja Perkakas','select',true,'Jenis baja / standar isolasi',['Chrome Vanadium (Cr-V)','Chrome Molybdenum (Cr-Mo)','Non-Sparking Cu-Be','VDE Insulated 1000V']),
+    ]),
+    group('TOOL-TORQ','Torque Wrench & Precision Tools','HAWA','Kunci momen dan alat ukur presisi.',[
+      ch('ch-tl-drv','CHR_DRIVE_SIZE','Square Drive Size','select',true,'Ukuran kepala square drive',['1/4"','3/8"','1/2"','3/4"','1"']),
+      ch('ch-tl-trq','CHR_TORQUE_RANGE','Rentang Torsi Kerja','text',true,'Kapasitas torsi minimum–maksimum'),
+      ch('ch-tl-acc','CHR_ACCURACY','Toleransi Akurasi','select',true,'Akurasi kalibrasi pabrikan',['±2% Digital','±3% ISO 6789','±4% Standard']),
+    ]),
+    group('PPE-FALL','APD Fall Protection & Working at Height','HAWA','Full body harness, double lanyard, shock absorber, dan SRL.',[
+      ch('ch-tl-ld','CHR_MAX_LOAD_KG','Beban Kerja Maksimum','number',true,'Batas berat pengguna + peralatan',undefined,'kg'),
+      ch('ch-tl-dr','CHR_D_RING_COUNT','Konfigurasi D-Ring','select',true,'Jumlah dan posisi attachment',['1 Dorsal','2 Dorsal + Sternal','5 Full Body Rescue']),
+      ch('ch-tl-ln','CHR_LANYARD_TYPE','Tipe Lanyard / Absorber','select',true,'Jenis tali penahan jatuh',['Double Webbing + Absorber','Double Kernmantle Rope','Self-Retracting Lifeline (SRL)']),
+    ]),
+    group('PPE-HEAD','APD Head, Eye & Respiratory','HAWA','Safety helmet, kacamata safety, face shield, ear muff, dan respirator.',[
+      ch('ch-tl-die','CHR_DIELECTRIC_CLS','Kelas Proteksi Dielektrik','select',true,'Klasifikasi ketahanan listrik',['Class E (20,000V)','Class G (2,200V)','Class C (Conductive / Vented)']),
+      ch('ch-tl-sus','CHR_SUSPENSION','Tipe Suspensi Dalam','select',true,'Sistem pengikat kepala',['4-Point Ratchet','6-Point Ratchet','Pin-Lock Standard']),
+      ch('ch-tl-clr','CHR_COLOR_CODE','Kode Warna APD','select',true,'Warna identifikasi peran',['Putih','Kuning','Merah','Biru','Hijau','Oranye']),
+    ]),
+    group('INST-CAL','Calibration Gas & Lab Consumables','ROH','Tabung gas kalibrasi campuran, regulator flow, dan sensor pengganti.',[
+      ch('ch-tl-cvl','CHR_CYLINDER_VOL','Volume Tabung Gas','number',true,'Kapasitas liter tabung',undefined,'L'),
+      ch('ch-tl-cbl','CHR_GAS_BLEND','Konsentrasi Campuran Gas','text',true,'Komposisi PPM / % LEL / % Vol'),
+      ch('ch-tl-shf','CHR_STABILITY_MO','Stabilitas Sertifikat Gas','number',true,'Masa berlaku akurasi campuran gas',undefined,'Bulan'),
+    ]),
+  ];
+  return [group('GEN-001','General Industrial Material','ROH','Kelompok material industri umum.',[
+    ch('ch-gen-spec','CHR_STD_SPEC','Spesifikasi Utama','text',true,'Spesifikasi ringkas material sesuai standar grup ini'),
+  ])];
+}
+
 export function createTenantTemplateWorkspace(
   company: TenantCompany,
   coreType: TenantCoreBusinessType
@@ -784,7 +891,7 @@ export function createTenantTemplateWorkspace(
     ],
     plants,
     vendors,
-    materialGroups: [],
+    materialGroups: createTemplateMaterialGroups(coreType),
   };
 }
 
