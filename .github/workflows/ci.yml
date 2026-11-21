@@ -1,0 +1,22 @@
+name: MONIC build check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [monic-rev1]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Build application and server
+        run: npm run build
