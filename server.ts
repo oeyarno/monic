@@ -382,16 +382,16 @@ async function startServer() {
       });
     }
 
-    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks);
-    if (validationErrors.length > 0) {
-      return res.status(400).json({ error: validationErrors[0], details: validationErrors });
-    }
-
     const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
     if (materialGroup) {
       const generated = buildMaterialShortName(materialGroup, material.characteristics || {});
       if (generated) material.mara.maktx = generated;
     }
+    const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks);
+    if (validationErrors.length > 0) {
+      return res.status(400).json({ error: validationErrors[0], details: validationErrors });
+    }
+
     const now = new Date().toISOString();
     material.mara.createdAt = now;
     material.mara.updatedAt = now;
@@ -429,17 +429,17 @@ async function startServer() {
       return res.status(404).json({ error: `Material ${matnr} tidak ditemukan di tabel MARA.` });
     }
 
+    const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
+    if (materialGroup) {
+      const generated = buildMaterialShortName(materialGroup, material.characteristics || {});
+      if (generated) material.mara.maktx = generated;
+    }
     const validationErrors = validateMaterialAgainstOms9(material, db, activeWerks);
     if (validationErrors.length > 0) {
       return res.status(400).json({ error: validationErrors[0], details: validationErrors });
     }
 
     const prev = db.materials[idx];
-    const materialGroup = db.materialGroups.find((group) => group.matkl === material.mara.matkl);
-    if (materialGroup) {
-      const generated = buildMaterialShortName(materialGroup, material.characteristics || {});
-      if (generated) material.mara.maktx = generated;
-    }
     const now = new Date().toISOString();
     material.mara.updatedAt = now;
 
