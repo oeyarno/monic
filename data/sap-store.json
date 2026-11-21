@@ -1,1470 +1,4649 @@
 {
-  "materials": [
+  "schemaVersion": 5,
+  "activeTenantId": "tenant-unitparts",
+  "tenantCompanies": [
     {
-      "mara": {
-        "matnr": "100000101",
-        "maktx": "Caustic Soda Flakes 98% Industrial Grade (NaOH)",
-        "mtart": "ROH",
-        "mbrsh": "C",
-        "meins": "KG",
-        "matkl": "CHEM-ALK",
-        "bismt": "OLD-CS-98",
-        "spart": "01",
-        "brgew": 25.5,
-        "ntgew": 25,
-        "gewei": "KG",
-        "volum": 0.032,
-        "voleh": "M3",
-        "groes": "Bag 25 KG",
-        "ean11": "",
-        "mstae": "",
-        "xchpf": true,
-        "createdAt": "2026-01-12T08:30:00Z",
-        "createdBy": "S.PRATAMA",
-        "updatedAt": "2026-10-18T14:22:00Z"
-      },
-      "marc": {
-        "1000": {
-          "werks": "1000",
-          "ekgrp": "P02",
-          "bstme": "KG",
-          "ekwsl": "Z001",
-          "kautb": true,
-          "webaz": 2,
-          "kordp": true,
-          "dismm": "VB",
-          "dispo": "M01",
-          "minbe": 1500,
-          "disls": "FX",
-          "bstmi": 500,
-          "bstma": 5000,
-          "bstfe": 2000,
-          "eisbe": 600,
-          "beskz": "F",
-          "plifz": 7,
-          "mtvfp": "02",
-          "prctr": "PC-1000-CHEM",
-          "sernp": ""
-        },
-        "2000": {
-          "werks": "2000",
-          "ekgrp": "P02",
-          "bstme": "KG",
-          "ekwsl": "Z001",
-          "kautb": false,
-          "webaz": 2,
-          "kordp": false,
-          "dismm": "PD",
-          "dispo": "M02",
-          "minbe": 1000,
-          "disls": "EX",
-          "bstmi": 250,
-          "bstma": 3000,
-          "bstfe": 1000,
-          "eisbe": 400,
-          "beskz": "F",
-          "plifz": 5,
-          "mtvfp": "02",
-          "prctr": "PC-2000-CHEM",
-          "sernp": ""
-        }
-      },
-      "mard": {
-        "1000-0001": {
-          "werks": "1000",
-          "lgort": "0001",
-          "lgobe": "Gudang Utama Bahan Baku",
-          "lgpbe": "BIN-C04-A",
-          "labst": 3200,
-          "insme": 250,
-          "speme": 0,
-          "raube": "04 - Dry & Ventilated",
-          "tempb": "15°C - 30°C Ambient",
-          "maxlz": 730,
-          "mhdrz": 90,
-          "mhdhb": 730
-        },
-        "2000-0002": {
-          "werks": "2000",
-          "lgort": "0002",
-          "lgobe": "Gudang Bahan Kimia & B3",
-          "lgpbe": "HAZ-B01-02",
-          "labst": 1250,
-          "insme": 0,
-          "speme": 0,
-          "raube": "05 - Corrosive Containment",
-          "tempb": "15°C - 28°C",
-          "maxlz": 730,
-          "mhdrz": 90,
-          "mhdhb": 730
-        }
-      },
-      "mbew": {
-        "1000": {
-          "bwkey": "1000",
-          "bklas": "3000",
-          "vprsv": "V",
-          "verpr": 14500,
-          "stprs": 14500,
-          "peinh": 1,
-          "waers": "IDR",
-          "lbkum": 3450,
-          "salk3": 50025000,
-          "bwtty": "Z",
-          "splitValuations": {
-            "LOCAL": {
-              "bwtar": "LOCAL",
-              "bklas": "3000",
-              "vprsv": "V",
-              "verpr": 13800,
-              "stprs": 13800,
-              "peinh": 1,
-              "lbkum": 2200,
-              "salk3": 30360000
+      "tenantId": "tenant-oilgas",
+      "bukrs": "OG10",
+      "clientNumber": "100",
+      "name": "PT Energi Epik Offshore",
+      "shortName": "Energi Epik (Oil & Gas)",
+      "coreBusiness": "Kontraktor Oil & Gas / EPC",
+      "coreBusinessType": "oil_gas_contractor",
+      "city": "Balikpapan",
+      "defaultIndustry": "O",
+      "description": "Kontraktor EPC & suplai material migas lepas pantai (pipa OCTG, valve, drilling fluids)."
+    },
+    {
+      "tenantId": "tenant-workshop",
+      "bukrs": "WS20",
+      "clientNumber": "200",
+      "name": "PT Traktor Prima Service",
+      "shortName": "Traktor Prima (Workshop)",
+      "coreBusiness": "Workshop Alat Berat & Kendaraan",
+      "coreBusinessType": "heavy_workshop",
+      "city": "Jakarta Timur",
+      "defaultIndustry": "M",
+      "description": "Workshop overhaul alat berat pertambangan, truk niaga, pompa hidrolik, dan komponen rekondisi."
+    },
+    {
+      "tenantId": "tenant-unitparts",
+      "bukrs": "US30",
+      "clientNumber": "300",
+      "name": "PT Mitra Armada Niaga",
+      "shortName": "Mitra Armada (Unit & Parts)",
+      "coreBusiness": "Penjualan Unit & Spare Parts",
+      "coreBusinessType": "unit_spareparts",
+      "city": "Cikarang",
+      "defaultIndustry": "R",
+      "description": "Distributor penjualan unit alat berat/kendaraan niaga, genuine spare parts, dan ban OTR."
+    },
+    {
+      "tenantId": "tenant-tools-ppe",
+      "bukrs": "TL40",
+      "clientNumber": "400",
+      "name": "PT Safetech Perkakas Mandiri",
+      "shortName": "Safetech (Tools & APD)",
+      "coreBusiness": "Penjualan Tools, Gas Detector & APD",
+      "coreBusinessType": "tools_ppe",
+      "city": "Tangerang",
+      "defaultIndustry": "R",
+      "description": "Distributor perkakas industri (kunci-kunci, torque wrench), gas detector ATEX, dan Alat Pelindung Diri."
+    }
+  ],
+  "workspaces": {
+    "tenant-oilgas": {
+      "materials": [
+        {
+          "mara": {
+            "matnr": "100000801",
+            "maktx": "Seamless Line Pipe 8\" Sch.80 API 5L X52 PSL2 (6M)",
+            "mtart": "ROH",
+            "mbrsh": "O",
+            "meins": "BTG",
+            "matkl": "OCTG-PIPE",
+            "bismt": "API5L-8-S80",
+            "spart": "01",
+            "brgew": 390,
+            "ntgew": 386,
+            "gewei": "KG",
+            "volum": 0.21,
+            "voleh": "M3",
+            "groes": "OD 219.1mm x 12.7mm x 6000mm",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": true,
+            "createdAt": "2026-08-10T08:00:00Z",
+            "createdBy": "A.WIJAYA",
+            "updatedAt": "2026-11-12T09:30:00Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P10",
+              "bstme": "BTG",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 3,
+              "kordp": true,
+              "dismm": "VB",
+              "dispo": "OG1",
+              "minbe": 40,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 500,
+              "bstfe": 20,
+              "eisbe": 15,
+              "beskz": "F",
+              "plifz": 21,
+              "mtvfp": "02",
+              "prctr": "PC-OG01-EPC",
+              "sernp": ""
             },
-            "IMPORT": {
-              "bwtar": "IMPORT",
-              "bklas": "3000",
-              "vprsv": "V",
-              "verpr": 16200,
-              "stprs": 16200,
-              "peinh": 1,
-              "lbkum": 1000,
-              "salk3": 16200000
-            },
-            "FREE": {
-              "bwtar": "FREE",
-              "bklas": "3000",
-              "vprsv": "V",
-              "verpr": 0,
-              "stprs": 0,
-              "peinh": 1,
-              "lbkum": 250,
-              "salk3": 0
-            },
-            "OLD": {
-              "bwtar": "OLD",
-              "bklas": "3000",
-              "vprsv": "V",
-              "verpr": 11000,
-              "stprs": 11000,
-              "peinh": 1,
-              "lbkum": 0,
-              "salk3": 0
+            "OG02": {
+              "werks": "OG02",
+              "ekgrp": "P10",
+              "bstme": "BTG",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 3,
+              "kordp": true,
+              "dismm": "PD",
+              "dispo": "OG2",
+              "minbe": 20,
+              "disls": "EX",
+              "bstmi": 5,
+              "bstma": 200,
+              "bstfe": 10,
+              "eisbe": 10,
+              "beskz": "F",
+              "plifz": 14,
+              "mtvfp": "02",
+              "prctr": "PC-OG02-FAB",
+              "sernp": ""
             }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Pipe & OCTG Open Yard",
+              "lgpbe": "YARD-A04",
+              "labst": 95,
+              "insme": 5,
+              "speme": 0,
+              "raube": "03 - Open Yard Rack w/ End Caps",
+              "tempb": "Ambient Outdoor",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            },
+            "OG02-0001": {
+              "werks": "OG02",
+              "lgort": "0001",
+              "lgobe": "Valve & Flange Warehouse",
+              "lgpbe": "FAB-R02",
+              "labst": 25,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Covered Steel Rack",
+              "tempb": "Ambient",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "Z",
+              "bklas": "3000",
+              "vprsv": "V",
+              "verpr": 11220000,
+              "stprs": 11500000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 100,
+              "salk3": 1122000000,
+              "splitValuations": {
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3000",
+                  "vprsv": "V",
+                  "verpr": 10400000,
+                  "stprs": 10400000,
+                  "peinh": 1,
+                  "lbkum": 40,
+                  "salk3": 416000000
+                },
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3000",
+                  "vprsv": "V",
+                  "verpr": 12800000,
+                  "stprs": 12800000,
+                  "peinh": 1,
+                  "lbkum": 45,
+                  "salk3": 576000000
+                },
+                "OLD": {
+                  "bwtar": "OLD",
+                  "bklas": "3000",
+                  "vprsv": "V",
+                  "verpr": 8666667,
+                  "stprs": 8666667,
+                  "peinh": 1,
+                  "lbkum": 15,
+                  "salk3": 130000000
+                }
+              }
+            },
+            "OG02": {
+              "bwkey": "OG02",
+              "bwtty": "Z",
+              "bklas": "3000",
+              "vprsv": "V",
+              "verpr": 12800000,
+              "stprs": 12800000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 25,
+              "salk3": 320000000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3000",
+                  "vprsv": "V",
+                  "verpr": 12800000,
+                  "stprs": 12800000,
+                  "peinh": 1,
+                  "lbkum": 25,
+                  "salk3": 320000000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "OG10",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_PIPE_OD": "8\"",
+            "CHR_PIPE_SCH": "Sch.80",
+            "CHR_STEEL_GRADE": "API 5L X52 PSL2",
+            "CHR_END_CONN": "Beveled End (BE)"
+          },
+          "industryExtensions": {
+            "ZZ_API_SPEC": "API 5L X52 PSL2",
+            "ZZ_PRESSURE_CLASS": "Class 600",
+            "ZZ_NACE_SOUR": true,
+            "ZZ_MTC_EN10204": true
           }
         },
-        "2000": {
-          "bwkey": "2000",
-          "bklas": "3000",
-          "vprsv": "V",
-          "verpr": 14800,
-          "stprs": 14800,
-          "peinh": 1,
-          "waers": "IDR",
-          "lbkum": 1250,
-          "salk3": 18500000
-        }
-      },
-      "mvke": {
-        "vkorg": "1000",
-        "vtweg": "10",
-        "dwerk": "1000",
-        "taxkm": "1",
-        "mtpos": "NORM",
-        "kondm": "01",
-        "tragr": "0001",
-        "ladgr": "0001"
-      },
-      "industryExtensions": {
-        "ZZ_CAS_NUMBER": "1310-73-2",
-        "ZZ_HAZARD_CLASS": "Class 8 - Corrosive",
-        "ZZ_FLASH_POINT": 0
-      }
-    },
-    {
-      "mara": {
-        "matnr": "100000205",
-        "maktx": "Paracetamol Micronized API BP/USP Grade",
-        "mtart": "ROH",
-        "mbrsh": "P",
-        "meins": "KG",
-        "matkl": "PHARM-API",
-        "bismt": "API-PCM-01",
-        "spart": "02",
-        "brgew": 26.2,
-        "ntgew": 25,
-        "gewei": "KG",
-        "volum": 0.045,
-        "voleh": "M3",
-        "groes": "Fiber Drum 25 KG",
-        "ean11": "8997012340012",
-        "mstae": "",
-        "xchpf": true,
-        "createdAt": "2026-02-04T09:15:00Z",
-        "createdBy": "R.KUSUMA",
-        "updatedAt": "2026-11-01T11:10:00Z"
-      },
-      "marc": {
-        "1000": {
-          "werks": "1000",
-          "ekgrp": "P01",
-          "bstme": "KG",
-          "ekwsl": "Z002",
-          "kautb": false,
-          "webaz": 3,
-          "kordp": true,
-          "dismm": "PD",
-          "dispo": "P01",
-          "minbe": 400,
-          "disls": "EX",
-          "bstmi": 100,
-          "bstma": 1000,
-          "bstfe": 250,
-          "eisbe": 150,
-          "beskz": "F",
-          "plifz": 14,
-          "mtvfp": "01",
-          "prctr": "PC-1000-PHARM",
-          "sernp": ""
-        }
-      },
-      "mard": {
-        "1000-0002": {
-          "werks": "1000",
-          "lgort": "0002",
-          "lgobe": "Gudang Suhu Terkendali / Cold Room",
-          "lgpbe": "CLD-A02-04",
-          "labst": 120,
-          "insme": 50,
-          "speme": 0,
-          "raube": "02 - Controlled Humidity <45%",
-          "tempb": "15°C - 25°C Controlled",
-          "maxlz": 1095,
-          "mhdrz": 365,
-          "mhdhb": 1095
-        },
-        "1000-0004": {
-          "werks": "1000",
-          "lgort": "0004",
-          "lgobe": "Area Karantina & QC Inspection",
-          "lgpbe": "QA-Z01-01",
-          "labst": 0,
-          "insme": 75,
-          "speme": 0,
-          "raube": "02 - Controlled Humidity <45%",
-          "tempb": "15°C - 25°C Controlled",
-          "maxlz": 1095,
-          "mhdrz": 365,
-          "mhdhb": 1095
-        }
-      },
-      "mbew": {
-        "1000": {
-          "bwkey": "1000",
-          "bklas": "3000",
-          "vprsv": "V",
-          "verpr": 185000,
-          "stprs": 180000,
-          "peinh": 1,
-          "waers": "IDR",
-          "lbkum": 245,
-          "salk3": 45325000
-        }
-      },
-      "mvke": {
-        "vkorg": "1000",
-        "vtweg": "10",
-        "dwerk": "1000",
-        "taxkm": "1",
-        "mtpos": "NORM",
-        "kondm": "02",
-        "tragr": "0002",
-        "ladgr": "0001"
-      },
-      "industryExtensions": {
-        "ZZ_BPOM_REG": "BPOM-DKL241098221A1",
-        "ZZ_GMP_GRADE": "BP / USP Grade",
-        "ZZ_COLD_CHAIN": false
-      }
-    },
-    {
-      "mara": {
-        "matnr": "200000310",
-        "maktx": "Precision CNC Drive Shaft Ø42mm SS304",
-        "mtart": "HALB",
-        "mbrsh": "M",
-        "meins": "PC",
-        "matkl": "MECH-SHF",
-        "bismt": "SHF-42-304",
-        "spart": "03",
-        "brgew": 4.85,
-        "ntgew": 4.6,
-        "gewei": "KG",
-        "volum": 0.002,
-        "voleh": "M3",
-        "groes": "Ø42 x 420 mm",
-        "ean11": "",
-        "mstae": "",
-        "xchpf": false,
-        "createdAt": "2026-03-15T10:00:00Z",
-        "createdBy": "A.WIJAYA",
-        "updatedAt": "2026-10-29T16:40:00Z"
-      },
-      "marc": {
-        "2000": {
-          "werks": "2000",
-          "ekgrp": "P03",
-          "bstme": "PC",
-          "ekwsl": "Z001",
-          "kautb": false,
-          "webaz": 1,
-          "kordp": false,
-          "dismm": "PD",
-          "dispo": "M03",
-          "minbe": 80,
-          "disls": "HB",
-          "bstmi": 20,
-          "bstma": 200,
-          "bstfe": 50,
-          "eisbe": 40,
-          "beskz": "X",
-          "plifz": 4,
-          "mtvfp": "01",
-          "prctr": "PC-2000-MFG",
-          "sernp": "ZSER"
-        }
-      },
-      "mard": {
-        "2000-0001": {
-          "werks": "2000",
-          "lgort": "0001",
-          "lgobe": "Gudang Utama Manufaktur",
-          "lgpbe": "RCK-M12-03",
-          "labst": 145,
-          "insme": 0,
-          "speme": 5,
-          "raube": "01 - Normal Indoor",
-          "tempb": "Ambient",
-          "maxlz": 0,
-          "mhdrz": 0,
-          "mhdhb": 0
-        }
-      },
-      "mbew": {
-        "2000": {
-          "bwkey": "2000",
-          "bklas": "7900",
-          "vprsv": "S",
-          "verpr": 428000,
-          "stprs": 425000,
-          "peinh": 1,
-          "waers": "IDR",
-          "lbkum": 150,
-          "salk3": 63750000,
-          "bwtty": "Z",
-          "splitValuations": {
-            "LOCAL": {
-              "bwtar": "LOCAL",
-              "bklas": "7900",
-              "vprsv": "S",
-              "verpr": 425000,
-              "stprs": 425000,
+        {
+          "mara": {
+            "matnr": "500000802",
+            "maktx": "Gate Valve 4\" Class 600 RF Flanged A216 WCB Trim 8",
+            "mtart": "ERSA",
+            "mbrsh": "O",
+            "meins": "EA",
+            "matkl": "VALVE-HP",
+            "bismt": "GV-4-600-WCB",
+            "spart": "01",
+            "brgew": 118,
+            "ntgew": 112,
+            "gewei": "KG",
+            "volum": 0.14,
+            "voleh": "M3",
+            "groes": "4 Inch · Class 600 RF",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-09-02T10:15:00Z",
+            "createdBy": "A.WIJAYA",
+            "updatedAt": "2026-11-15T11:20:00Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P11",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 3,
+              "kordp": true,
+              "dismm": "VB",
+              "dispo": "OG1",
+              "minbe": 12,
+              "disls": "EX",
+              "bstmi": 2,
+              "bstma": 50,
+              "bstfe": 4,
+              "eisbe": 6,
+              "beskz": "F",
+              "plifz": 28,
+              "mtvfp": "02",
+              "prctr": "PC-OG01-EPC",
+              "sernp": "SER1"
+            }
+          },
+          "mard": {
+            "OG01-0003": {
+              "werks": "OG01",
+              "lgort": "0003",
+              "lgobe": "Offshore Rig Staging Area",
+              "lgpbe": "RIG-V08",
+              "labst": 18,
+              "insme": 2,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "Z",
+              "bklas": "3040",
+              "vprsv": "V",
+              "verpr": 17150000,
+              "stprs": 18000000,
               "peinh": 1,
-              "lbkum": 120,
+              "waers": "IDR",
+              "lbkum": 20,
+              "salk3": 343000000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 21500000,
+                  "stprs": 21500000,
+                  "peinh": 1,
+                  "lbkum": 10,
+                  "salk3": 215000000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 16000000,
+                  "stprs": 16000000,
+                  "peinh": 1,
+                  "lbkum": 8,
+                  "salk3": 128000000
+                },
+                "FREE": {
+                  "bwtar": "FREE",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 0,
+                  "stprs": 0,
+                  "peinh": 1,
+                  "lbkum": 2,
+                  "salk3": 0
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "OG10",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_VALVE_SIZE": "4\"",
+            "CHR_VALVE_CLASS": "Class 600",
+            "CHR_BODY_MAT": "ASTM A216 WCB",
+            "CHR_TRIM_SPEC": "Trim 8 (13Cr / Stellite 6)"
+          },
+          "industryExtensions": {
+            "ZZ_API_SPEC": "API 600 / ASME B16.34",
+            "ZZ_PRESSURE_CLASS": "Class 600",
+            "ZZ_NACE_SOUR": true,
+            "ZZ_MTC_EN10204": true
+          }
+        },
+        {
+          "mara": {
+            "matnr": "100000803",
+            "maktx": "Barite Drilling Grade API 13A SG 4.20 (Sak 25 KG)",
+            "mtart": "ROH",
+            "mbrsh": "C",
+            "meins": "KG",
+            "matkl": "DRILL-MUD",
+            "bismt": "BAR-420-OG",
+            "spart": "01",
+            "brgew": 25.3,
+            "ntgew": 25,
+            "gewei": "KG",
+            "volum": 0.015,
+            "voleh": "M3",
+            "groes": "Bag 25 KG",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": true,
+            "createdAt": "2026-10-05T07:45:00Z",
+            "createdBy": "R.FADLI",
+            "updatedAt": "2026-11-14T16:10:00Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P12",
+              "bstme": "KG",
+              "ekwsl": "Z001",
+              "kautb": true,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "OG3",
+              "minbe": 5000,
+              "disls": "FX",
+              "bstmi": 1000,
+              "bstma": 25000,
+              "bstfe": 5000,
+              "eisbe": 2000,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01-MUD",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0002": {
+              "werks": "OG01",
+              "lgort": "0002",
+              "lgobe": "Drilling Mud & Chemical Store",
+              "lgpbe": "MUD-S12",
+              "labst": 4200,
+              "insme": 0,
+              "speme": 0,
+              "raube": "04 - Dry Covered Pallet",
+              "tempb": "Ambient < 35°C",
+              "maxlz": 730,
+              "mhdrz": 60,
+              "mhdhb": 730
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3000",
+              "vprsv": "V",
+              "verpr": 5200,
+              "stprs": 5200,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 4200,
+              "salk3": 21840000
+            }
+          },
+          "mvke": {
+            "vkorg": "OG10",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_SG_MIN": 4.2,
+            "CHR_PURITY_PCT": 96.5,
+            "CHR_PACK_TYPE": "Sak 25 KG"
+          },
+          "industryExtensions": {
+            "ZZ_CAS_NUMBER": "7727-43-7",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        }
+      ],
+      "purchaseRequisitions": [
+        {
+          "banfn": "0010008101",
+          "matnr": "100000803",
+          "maktx": "Barite Drilling Grade API 13A SG 4.20 (Sak 25 KG)",
+          "werks": "OG01",
+          "lgort": "0002",
+          "menge": 5000,
+          "meins": "KG",
+          "lfdat": "2026-11-28",
+          "ekgrp": "P12",
+          "dispo": "OG3",
+          "preis": 5200,
+          "waers": "IDR",
+          "status": "Approved",
+          "createdAt": "2026-11-17T09:00:00Z",
+          "createdBy": "MRP_AUTO"
+        }
+      ],
+      "purchaseOrders": [
+        {
+          "ebeln": "4500008101",
+          "lifnr": "V-OG01",
+          "vendorName": "PT Vallourec Seamless Indonesia",
+          "matnr": "100000801",
+          "maktx": "Seamless Line Pipe 8\" Sch.80 API 5L X52 PSL2 (6M)",
+          "werks": "OG01",
+          "lgort": "0001",
+          "menge": 30,
+          "receivedQty": 10,
+          "meins": "BTG",
+          "netpr": 12900000,
+          "peinh": 1,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "ekgrp": "P10",
+          "eindt": "2026-11-26",
+          "status": "Partially Received",
+          "createdAt": "2026-11-10T10:15:00Z",
+          "createdBy": "A.WIJAYA"
+        }
+      ],
+      "materialDocuments": [
+        {
+          "mblnr": "5000018101",
+          "mjahr": "2026",
+          "bwart": "101",
+          "bwartDesc": "Goods Receipt for Purchase Order",
+          "matnr": "100000801",
+          "maktx": "Seamless Line Pipe 8\" Sch.80 API 5L X52 PSL2 (6M)",
+          "werks": "OG01",
+          "lgort": "0001",
+          "ebeln": "4500008101",
+          "menge": 10,
+          "meins": "BTG",
+          "dmbtr": 129000000,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "belnr": "4900081101",
+          "budat": "2026-11-15",
+          "usnam": "A.WIJAYA",
+          "bktxt": "GR Batch Offshore Rig-2 + MTC EN 10204 3.1 Verified"
+        }
+      ],
+      "customIndustryFields": [
+        {
+          "id": "cf-og-api",
+          "fieldName": "ZZ_API_SPEC",
+          "label": "Standar API / ASME",
+          "industrySector": "O",
+          "targetView": "industry",
+          "dataType": "text",
+          "defaultValue": "API 5L PSL2",
+          "helpText": "Referensi standar engineering migas (mis. API 5L, API 6A, ASME B16.5)",
+          "status": "required"
+        },
+        {
+          "id": "cf-og-pressure",
+          "fieldName": "ZZ_PRESSURE_CLASS",
+          "label": "Pressure Rating / Flange Class",
+          "industrySector": "O",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "Class 150",
+            "Class 300",
+            "Class 600",
+            "Class 900",
+            "Class 1500",
+            "API 5000 PSI"
+          ],
+          "defaultValue": "Class 600",
+          "helpText": "Kelas tekanan kerja untuk pipa, valve, dan fitting proyek",
+          "status": "required"
+        },
+        {
+          "id": "cf-og-nace",
+          "fieldName": "ZZ_NACE_SOUR",
+          "label": "NACE MR0175 Sour Service",
+          "industrySector": "O",
+          "targetView": "industry",
+          "dataType": "boolean",
+          "defaultValue": true,
+          "helpText": "Kepatuhan material terhadap lingkungan gas asam (H2S)",
+          "status": "required"
+        },
+        {
+          "id": "cf-og-mtc",
+          "fieldName": "ZZ_MTC_EN10204",
+          "label": "Wajib Mill Test Cert EN 10204 3.1",
+          "industrySector": "O",
+          "targetView": "industry",
+          "dataType": "boolean",
+          "defaultValue": true,
+          "helpText": "Wajib melampirkan sertifikat uji material (MTC) saat MIGO 101",
+          "status": "required"
+        },
+        {
+          "id": "cf-og-cas",
+          "fieldName": "ZZ_CAS_NUMBER",
+          "label": "CAS Registry Number (Drilling Chem)",
+          "industrySector": "C",
+          "targetView": "industry",
+          "dataType": "text",
+          "helpText": "Nomor identifikasi zat kimia fluida pengeboran sesuai CAS",
+          "status": "required"
+        },
+        {
+          "id": "cf-og-haz",
+          "fieldName": "ZZ_HAZARD_CLASS",
+          "label": "Kelas Bahaya GHS / IMDG",
+          "industrySector": "C",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "Non-Hazardous",
+            "Class 3 - Flammable",
+            "Class 8 - Corrosive",
+            "Class 9 - Marine Pollutant"
+          ],
+          "defaultValue": "Non-Hazardous",
+          "helpText": "Klasifikasi pengiriman kargo lepas pantai (offshore manifest)",
+          "status": "required"
+        }
+      ],
+      "standardFieldRules": [
+        {
+          "fieldKey": "bismt",
+          "technicalName": "MARA-BISMT",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Old Material Number / OEM Cross-Ref",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "brgew",
+          "technicalName": "MARA-BRGEW",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Gross Weight",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "optional",
+            "F": "required",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "groes",
+          "technicalName": "MARA-GROES",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Size / Dimensions",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "optional",
+            "P": "hide",
+            "F": "optional",
+            "R": "required",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "ean11",
+          "technicalName": "MARA-EAN11",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "EAN / UPC Barcode",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "xchpf",
+          "technicalName": "MARA-XCHPF",
+          "tableName": "MARA",
+          "viewKey": "purchasing",
+          "label": "Batch Management Requirement",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "kautb",
+          "technicalName": "MARC-KAUTB",
+          "tableName": "MARC",
+          "viewKey": "purchasing",
+          "label": "Automatic PO Allowed",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "display",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "eisbe",
+          "technicalName": "MARC-EISBE",
+          "tableName": "MARC",
+          "viewKey": "mrp",
+          "label": "Safety Stock",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "required",
+            "F": "optional",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "tempb",
+          "technicalName": "MARD-TEMPB",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Temperature Conditions",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "mhdrz",
+          "technicalName": "MARD-MHDRZ",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Minimum Remaining Shelf Life (Days)",
+          "rulesByIndustry": {
+            "M": "hide",
+            "C": "optional",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "sernp",
+          "technicalName": "MARC-SERNP",
+          "tableName": "MARC",
+          "viewKey": "storage",
+          "label": "Serial Number Profile",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "optional",
+            "F": "hide",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "bwtty",
+          "technicalName": "MBEW-BWTTY",
+          "tableName": "MBEW",
+          "viewKey": "accounting",
+          "label": "Valuation Category (Split Valuation)",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        }
+      ],
+      "materialGroups": [
+        {
+          "matkl": "OCTG-PIPE",
+          "label": "Seamless Line Pipe & OCTG",
+          "defaultMtart": "ROH",
+          "description": "Pipa saluran migas seamless, casing, dan tubing berstandar API 5L / 5CT.",
+          "characteristics": [
+            {
+              "id": "ch-og-od",
+              "charName": "CHR_PIPE_OD",
+              "label": "Nominal Pipe Size (OD)",
+              "dataType": "select",
+              "options": [
+                "4\"",
+                "6\"",
+                "8\"",
+                "10\"",
+                "12\"",
+                "16\""
+              ],
+              "required": true,
+              "helpText": "Diameter nominal pipa dalam inci"
+            },
+            {
+              "id": "ch-og-sch",
+              "charName": "CHR_PIPE_SCH",
+              "label": "Wall Schedule",
+              "dataType": "select",
+              "options": [
+                "Sch.40",
+                "Sch.80",
+                "Sch.160",
+                "STD",
+                "XS",
+                "XXS"
+              ],
+              "required": true,
+              "helpText": "Ketebalan dinding pipa sesuai ASME B36.10M"
+            },
+            {
+              "id": "ch-og-grd",
+              "charName": "CHR_STEEL_GRADE",
+              "label": "Material Steel Grade",
+              "dataType": "select",
+              "options": [
+                "API 5L Gr.B",
+                "API 5L X52 PSL2",
+                "API 5L X65 PSL2",
+                "ASTM A312 TP316L"
+              ],
+              "required": true,
+              "helpText": "Grade baja pipa untuk tekanan & sour service"
+            },
+            {
+              "id": "ch-og-end",
+              "charName": "CHR_END_CONN",
+              "label": "End Connection",
+              "dataType": "select",
+              "options": [
+                "Beveled End (BE)",
+                "Plain End (PE)",
+                "Threaded & Coupled (T&C)"
+              ],
+              "required": false,
+              "helpText": "Bentuk ujung pipa untuk pengelasan atau ulir"
+            }
+          ]
+        },
+        {
+          "matkl": "VALVE-HP",
+          "label": "High-Pressure Valve & Fitting",
+          "defaultMtart": "ERSA",
+          "description": "Gate, Ball, Globe, Check Valve serta flange bertekanan tinggi untuk fasilitas EPC.",
+          "characteristics": [
+            {
+              "id": "ch-og-vsz",
+              "charName": "CHR_VALVE_SIZE",
+              "label": "Nominal Valve Size",
+              "dataType": "select",
+              "options": [
+                "2\"",
+                "3\"",
+                "4\"",
+                "6\"",
+                "8\"",
+                "12\""
+              ],
+              "required": true,
+              "helpText": "Ukuran nominal bore valve"
+            },
+            {
+              "id": "ch-og-vcls",
+              "charName": "CHR_VALVE_CLASS",
+              "label": "ASME Pressure Class",
+              "dataType": "select",
+              "options": [
+                "Class 150",
+                "Class 300",
+                "Class 600",
+                "Class 900",
+                "Class 1500"
+              ],
+              "required": true,
+              "helpText": "Rating tekanan flange ASME B16.5"
+            },
+            {
+              "id": "ch-og-vbod",
+              "charName": "CHR_BODY_MAT",
+              "label": "Body Material",
+              "dataType": "select",
+              "options": [
+                "ASTM A216 WCB",
+                "ASTM A105N",
+                "ASTM A351 CF8M",
+                "Duplex F51"
+              ],
+              "required": true,
+              "helpText": "Material utama bodi valve"
+            },
+            {
+              "id": "ch-og-vtrm",
+              "charName": "CHR_TRIM_SPEC",
+              "label": "API Trim Specification",
+              "dataType": "text",
+              "required": false,
+              "helpText": "Mis. Trim 8 (13Cr / Stellite 6)"
+            }
+          ]
+        },
+        {
+          "matkl": "DRILL-MUD",
+          "label": "Drilling Mud & Chemical Additive",
+          "defaultMtart": "ROH",
+          "description": "Material lumpur pengeboran (Barite, Bentonite) dan aditif kimia sumur.",
+          "characteristics": [
+            {
+              "id": "ch-og-sg",
+              "charName": "CHR_SG_MIN",
+              "label": "Specific Gravity (Min)",
+              "dataType": "number",
+              "unit": "g/cm³",
+              "required": true,
+              "helpText": "Berat jenis minimal sesuai standar API 13A"
+            },
+            {
+              "id": "ch-og-pur",
+              "charName": "CHR_PURITY_PCT",
+              "label": "Kadar Kemurnian / Aktif",
+              "dataType": "number",
+              "unit": "%",
+              "required": true,
+              "helpText": "Persentase kemurnian zat aktif"
+            },
+            {
+              "id": "ch-og-pck",
+              "charName": "CHR_PACK_TYPE",
+              "label": "Jenis Kemasan",
+              "dataType": "select",
+              "options": [
+                "Sak 25 KG",
+                "Big Bag 1.000 KG",
+                "Drum 200 L",
+                "IBC Tank 1.000 L"
+              ],
+              "required": true,
+              "helpText": "Format kemasan pengiriman ke rig"
+            }
+          ]
+        }
+      ],
+      "changeDocuments": [
+        {
+          "changenr": "CHG-000812",
+          "objectClass": "MM_DOC",
+          "objectId": "5000018101",
+          "tableName": "MARD / MBEW",
+          "fieldName": "MIGO 101 (OG01/0001 · IMPORT)",
+          "oldValue": "85 BTG",
+          "newValue": "95 BTG · MAP 11.220.000 IDR",
+          "username": "A.WIJAYA",
+          "timestamp": "2026-11-15T14:20:00Z"
+        },
+        {
+          "changenr": "CHG-000101",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX02-OG10",
+          "tableName": "T001 / CI_MARA",
+          "fieldName": "TENANT_PROVISIONING",
+          "oldValue": "-",
+          "newValue": "PT Energi Epik Offshore (Kontraktor Oil & Gas / EPC)",
+          "username": "BASIS_ADMIN",
+          "timestamp": "2026-11-20T09:32:01.216Z"
+        }
+      ],
+      "plants": [
+        {
+          "werks": "OG01",
+          "name": "PT Energi Epik Offshore - Offshore Supply Base",
+          "city": "Balikpapan",
+          "bukrs": "OG10",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Pipe & OCTG Open Yard",
+              "type": "Pipe Yard"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "Drilling Mud & Chemical Store",
+              "type": "Hazmat Storage"
+            },
+            {
+              "lgort": "0003",
+              "lgobe": "Offshore Rig Staging Area",
+              "type": "Project Staging"
+            }
+          ]
+        },
+        {
+          "werks": "OG02",
+          "name": "PT Energi Epik Offshore - Fabrication Yard",
+          "city": "Batam",
+          "bukrs": "OG10",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Valve & Flange Warehouse",
+              "type": "Main Warehouse"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "NDT & MTC Quarantine Bay",
+              "type": "Quarantine / QA"
+            }
+          ]
+        }
+      ],
+      "vendors": [
+        {
+          "lifnr": "V-OG01",
+          "name": "PT Vallourec Seamless Indonesia",
+          "city": "Batam",
+          "ekorg": "OG10",
+          "paymentTerms": "NT45"
+        },
+        {
+          "lifnr": "V-OG02",
+          "name": "PT Cameron Flow Control Nusantara",
+          "city": "Balikpapan",
+          "ekorg": "OG10",
+          "paymentTerms": "NT30"
+        },
+        {
+          "lifnr": "V-OG03",
+          "name": "PT Halliburton Drilling Fluids",
+          "city": "Jakarta",
+          "ekorg": "OG10",
+          "paymentTerms": "NT30"
+        }
+      ]
+    },
+    "tenant-workshop": {
+      "materials": [
+        {
+          "mara": {
+            "matnr": "500000901",
+            "maktx": "Main Hydraulic Pump Assy Kawasaki K3V112DT (Exca 20T)",
+            "mtart": "ERSA",
+            "mbrsh": "M",
+            "meins": "EA",
+            "matkl": "HYD-PUMP",
+            "bismt": "708-2L-00300",
+            "spart": "02",
+            "brgew": 138,
+            "ntgew": 130,
+            "gewei": "KG",
+            "volum": 0.18,
+            "voleh": "M3",
+            "groes": "520 x 380 x 340 mm",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-07-18T09:00:00Z",
+            "createdBy": "B.SANTOSO",
+            "updatedAt": "2026-11-16T10:15:00Z"
+          },
+          "marc": {
+            "WS01": {
+              "werks": "WS01",
+              "ekgrp": "P20",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 2,
+              "kordp": true,
+              "dismm": "VB",
+              "dispo": "WS1",
+              "minbe": 4,
+              "disls": "EX",
+              "bstmi": 1,
+              "bstma": 10,
+              "bstfe": 2,
+              "eisbe": 2,
+              "beskz": "F",
+              "plifz": 14,
+              "mtvfp": "02",
+              "prctr": "PC-WS01-REBUILD",
+              "sernp": "SER1"
+            },
+            "WS02": {
+              "werks": "WS02",
+              "ekgrp": "P20",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 2,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "WS2",
+              "minbe": 2,
+              "disls": "EX",
+              "bstmi": 1,
+              "bstma": 5,
+              "bstfe": 1,
+              "eisbe": 1,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-WS02-SITE",
+              "sernp": "SER1"
+            }
+          },
+          "mard": {
+            "WS01-0001": {
+              "werks": "WS01",
+              "lgort": "0001",
+              "lgobe": "Gudang Spare Parts Overhaul",
+              "lgpbe": "BAY-H02",
+              "labst": 5,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            },
+            "WS01-0003": {
+              "werks": "WS01",
+              "lgort": "0003",
+              "lgobe": "Area Core & Komponen Rekondisi",
+              "lgpbe": "RECON-04",
+              "labst": 3,
+              "insme": 1,
+              "speme": 0,
+              "raube": "01 - Covered Rebuild Rack",
+              "tempb": "Ambient",
+              "maxlz": 730,
+              "mhdrz": 0,
+              "mhdhb": 730
+            },
+            "WS02-0001": {
+              "werks": "WS02",
+              "lgort": "0001",
+              "lgobe": "Pit Service Field Store",
+              "lgpbe": "PIT-01",
+              "labst": 1,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Site Container",
+              "tempb": "Ambient",
+              "maxlz": 730,
+              "mhdrz": 0,
+              "mhdhb": 730
+            }
+          },
+          "mbew": {
+            "WS01": {
+              "bwkey": "WS01",
+              "bwtty": "Z",
+              "bklas": "3040",
+              "vprsv": "V",
+              "verpr": 34277778,
+              "stprs": 36000000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 9,
+              "salk3": 308500000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 48500000,
+                  "stprs": 48500000,
+                  "peinh": 1,
+                  "lbkum": 3,
+                  "salk3": 145500000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 36500000,
+                  "stprs": 36500000,
+                  "peinh": 1,
+                  "lbkum": 2,
+                  "salk3": 73000000
+                },
+                "OLD": {
+                  "bwtar": "OLD",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 22500000,
+                  "stprs": 22500000,
+                  "peinh": 1,
+                  "lbkum": 4,
+                  "salk3": 90000000
+                }
+              }
+            },
+            "WS02": {
+              "bwkey": "WS02",
+              "bwtty": "Z",
+              "bklas": "3040",
+              "vprsv": "V",
+              "verpr": 48500000,
+              "stprs": 48500000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 1,
+              "salk3": 48500000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 48500000,
+                  "stprs": 48500000,
+                  "peinh": 1,
+                  "lbkum": 1,
+                  "salk3": 48500000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "WS20",
+            "vtweg": "10",
+            "dwerk": "WS01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_DISP_CC": 112,
+            "CHR_MAX_PRESS": 343,
+            "CHR_ROTATION": "Clockwise (CW)",
+            "CHR_PART_GRADE": "Genuine OEM"
+          },
+          "industryExtensions": {
+            "ZZ_EQUIP_MODEL": "PC200-8 / SK200-8 / ZX200-5G",
+            "ZZ_OEM_PART_NO": "708-2L-00300 / K3V112DT",
+            "ZZ_CORE_EXCHANGE": true,
+            "ZZ_REBUILD_HM": 8000
+          }
+        },
+        {
+          "mara": {
+            "matnr": "500000902",
+            "maktx": "PM Service Filter Kit (Fuel, Oil, Hydraulic) Dump Truck HD785",
+            "mtart": "ERSA",
+            "mbrsh": "M",
+            "meins": "SET",
+            "matkl": "FLT-KIT",
+            "bismt": "P551808-KIT",
+            "spart": "02",
+            "brgew": 8.4,
+            "ntgew": 7.8,
+            "gewei": "KG",
+            "volum": 0.045,
+            "voleh": "M3",
+            "groes": "Box 420 x 320 x 280 mm",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-08-14T11:00:00Z",
+            "createdBy": "B.SANTOSO",
+            "updatedAt": "2026-11-14T08:40:00Z"
+          },
+          "marc": {
+            "WS01": {
+              "werks": "WS01",
+              "ekgrp": "P21",
+              "bstme": "SET",
+              "ekwsl": "Z001",
+              "kautb": true,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "WS1",
+              "minbe": 30,
+              "disls": "FX",
+              "bstmi": 10,
+              "bstma": 200,
+              "bstfe": 40,
+              "eisbe": 15,
+              "beskz": "F",
+              "plifz": 5,
+              "mtvfp": "02",
+              "prctr": "PC-WS01-PM",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "WS01-0002": {
+              "werks": "WS01",
+              "lgort": "0002",
+              "lgobe": "Gudang Oli, Pelumas & Filter",
+              "lgpbe": "FLT-B03",
+              "labst": 24,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Dry Shelf",
+              "tempb": "Ambient",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            }
+          },
+          "mbew": {
+            "WS01": {
+              "bwkey": "WS01",
+              "bwtty": "Z",
+              "bklas": "3040",
+              "vprsv": "V",
+              "verpr": 1712500,
+              "stprs": 1850000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 24,
+              "salk3": 41100000,
+              "splitValuations": {
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 1650000,
+                  "stprs": 1650000,
+                  "peinh": 1,
+                  "lbkum": 14,
+                  "salk3": 23100000
+                },
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 2250000,
+                  "stprs": 2250000,
+                  "peinh": 1,
+                  "lbkum": 8,
+                  "salk3": 18000000
+                },
+                "FREE": {
+                  "bwtar": "FREE",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 0,
+                  "stprs": 0,
+                  "peinh": 1,
+                  "lbkum": 2,
+                  "salk3": 0
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "WS20",
+            "vtweg": "10",
+            "dwerk": "WS01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_MICRON_RATING": 5,
+            "CHR_PM_INTERVAL": "500 HM",
+            "CHR_KIT_CONTENTS": "2x Fuel Filter, 2x Engine Oil Filter, 1x Hydraulic Return Filter"
+          },
+          "industryExtensions": {
+            "ZZ_EQUIP_MODEL": "Komatsu HD785-7 / CAT 777D",
+            "ZZ_OEM_PART_NO": "600-211-1340-SET",
+            "ZZ_CORE_EXCHANGE": false,
+            "ZZ_REBUILD_HM": 500
+          }
+        },
+        {
+          "mara": {
+            "matnr": "100000903",
+            "maktx": "Heavy Duty Diesel Engine Oil SAE 15W-40 CI-4 (Drum 209L)",
+            "mtart": "ROH",
+            "mbrsh": "C",
+            "meins": "L",
+            "matkl": "LUBE-HD",
+            "bismt": "MEDITRAN-SX-209",
+            "spart": "02",
+            "brgew": 205,
+            "ntgew": 186,
+            "gewei": "KG",
+            "volum": 0.21,
+            "voleh": "M3",
+            "groes": "Drum 209L",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": true,
+            "createdAt": "2026-09-10T08:00:00Z",
+            "createdBy": "B.SANTOSO",
+            "updatedAt": "2026-11-11T15:00:00Z"
+          },
+          "marc": {
+            "WS01": {
+              "werks": "WS01",
+              "ekgrp": "P22",
+              "bstme": "L",
+              "ekwsl": "Z001",
+              "kautb": true,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "WS1",
+              "minbe": 1045,
+              "disls": "FX",
+              "bstmi": 209,
+              "bstma": 4180,
+              "bstfe": 1045,
+              "eisbe": 418,
+              "beskz": "F",
+              "plifz": 4,
+              "mtvfp": "02",
+              "prctr": "PC-WS01-PM",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "WS01-0002": {
+              "werks": "WS01",
+              "lgort": "0002",
+              "lgobe": "Gudang Oli, Pelumas & Filter",
+              "lgpbe": "LUBE-D01",
+              "labst": 1254,
+              "insme": 0,
+              "speme": 0,
+              "raube": "02 - Bunded Oil Containment",
+              "tempb": "15°C - 35°C",
+              "maxlz": 1095,
+              "mhdrz": 90,
+              "mhdhb": 1095
+            }
+          },
+          "mbew": {
+            "WS01": {
+              "bwkey": "WS01",
+              "bwtty": "",
+              "bklas": "3000",
+              "vprsv": "V",
+              "verpr": 46500,
+              "stprs": 46500,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 1254,
+              "salk3": 58311000
+            }
+          },
+          "mvke": {
+            "vkorg": "WS20",
+            "vtweg": "10",
+            "dwerk": "WS01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_SAE_VISC": "SAE 15W-40",
+            "CHR_API_CLASS": "API CI-4",
+            "CHR_PACK_VOL": 209
+          },
+          "industryExtensions": {
+            "ZZ_FLUID_GRADE": "SAE 15W-40 CI-4"
+          }
+        }
+      ],
+      "purchaseRequisitions": [
+        {
+          "banfn": "0010009101",
+          "matnr": "500000902",
+          "maktx": "PM Service Filter Kit (Fuel, Oil, Hydraulic) Dump Truck HD785",
+          "werks": "WS01",
+          "lgort": "0002",
+          "menge": 20,
+          "meins": "SET",
+          "lfdat": "2026-11-25",
+          "ekgrp": "P21",
+          "dispo": "WS1",
+          "preis": 1650000,
+          "waers": "IDR",
+          "bwtar": "LOCAL",
+          "status": "Approved",
+          "createdAt": "2026-11-18T08:30:00Z",
+          "createdBy": "MRP_WS"
+        }
+      ],
+      "purchaseOrders": [
+        {
+          "ebeln": "4500009101",
+          "lifnr": "V-WS01",
+          "vendorName": "PT Komatsu Undercarriage Indonesia",
+          "matnr": "500000901",
+          "maktx": "Main Hydraulic Pump Assy Kawasaki K3V112DT (Exca 20T)",
+          "werks": "WS01",
+          "lgort": "0001",
+          "menge": 2,
+          "receivedQty": 0,
+          "meins": "EA",
+          "netpr": 48500000,
+          "peinh": 1,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "ekgrp": "P20",
+          "eindt": "2026-11-29",
+          "status": "Open",
+          "createdAt": "2026-11-15T13:10:00Z",
+          "createdBy": "B.SANTOSO"
+        }
+      ],
+      "materialDocuments": [
+        {
+          "mblnr": "5000019101",
+          "mjahr": "2026",
+          "bwart": "201",
+          "bwartDesc": "Goods Issue for Cost Center",
+          "matnr": "500000901",
+          "maktx": "Main Hydraulic Pump Assy Kawasaki K3V112DT (Exca 20T)",
+          "werks": "WS01",
+          "lgort": "0003",
+          "kostl": "CC-WS-BAY02",
+          "menge": 1,
+          "meins": "EA",
+          "dmbtr": 22500000,
+          "waers": "IDR",
+          "bwtar": "OLD",
+          "belnr": "4900091101",
+          "budat": "2026-11-16",
+          "usnam": "MEKANIK_01",
+          "bktxt": "GI Pompa Rekondisi (OLD) untuk Overhaul Unit EX-204"
+        }
+      ],
+      "customIndustryFields": [
+        {
+          "id": "cf-ws-model",
+          "fieldName": "ZZ_EQUIP_MODEL",
+          "label": "Model Alat Berat / Kendaraan",
+          "industrySector": "M",
+          "targetView": "industry",
+          "dataType": "text",
+          "defaultValue": "PC200-8 / HD785-7",
+          "helpText": "Daftar unit alat berat atau truk yang kompatibel dengan komponen ini",
+          "status": "required"
+        },
+        {
+          "id": "cf-ws-oem",
+          "fieldName": "ZZ_OEM_PART_NO",
+          "label": "OEM / Cross-Reference Part Number",
+          "industrySector": "M",
+          "targetView": "industry",
+          "dataType": "text",
+          "helpText": "Nomor part pabrikan asli untuk pencarian cepat mekanik workshop",
+          "status": "required"
+        },
+        {
+          "id": "cf-ws-core",
+          "fieldName": "ZZ_CORE_EXCHANGE",
+          "label": "Wajib Core Return (Tukar Bekas)",
+          "industrySector": "M",
+          "targetView": "industry",
+          "dataType": "boolean",
+          "defaultValue": false,
+          "helpText": "Aktifkan jika komponen bekas (OLD) wajib dikembalikan untuk rekondisi",
+          "status": "required"
+        },
+        {
+          "id": "cf-ws-hm",
+          "fieldName": "ZZ_REBUILD_HM",
+          "label": "Interval Overhaul / Service Life",
+          "industrySector": "M",
+          "targetView": "industry",
+          "dataType": "number",
+          "unit": "HM",
+          "helpText": "Estimasi jam kerja (Hours Meter) sebelum penggantian/rekondisi berikutnya",
+          "status": "optional"
+        },
+        {
+          "id": "cf-ws-fluid",
+          "fieldName": "ZZ_FLUID_GRADE",
+          "label": "Spesifikasi Oli / Fluida",
+          "industrySector": "C",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "SAE 15W-40 CI-4",
+            "SAE 10W-30 TO-4",
+            "SAE 85W-140 GL-5",
+            "ISO VG 46 Hydraulic"
+          ],
+          "defaultValue": "SAE 15W-40 CI-4",
+          "helpText": "Spesifikasi viskositas & API service untuk perawatan workshop",
+          "status": "required"
+        }
+      ],
+      "standardFieldRules": [
+        {
+          "fieldKey": "bismt",
+          "technicalName": "MARA-BISMT",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Old Material Number / OEM Cross-Ref",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "brgew",
+          "technicalName": "MARA-BRGEW",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Gross Weight",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "optional",
+            "F": "required",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "groes",
+          "technicalName": "MARA-GROES",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Size / Dimensions",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "optional",
+            "P": "hide",
+            "F": "optional",
+            "R": "required",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "ean11",
+          "technicalName": "MARA-EAN11",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "EAN / UPC Barcode",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "xchpf",
+          "technicalName": "MARA-XCHPF",
+          "tableName": "MARA",
+          "viewKey": "purchasing",
+          "label": "Batch Management Requirement",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "kautb",
+          "technicalName": "MARC-KAUTB",
+          "tableName": "MARC",
+          "viewKey": "purchasing",
+          "label": "Automatic PO Allowed",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "display",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "eisbe",
+          "technicalName": "MARC-EISBE",
+          "tableName": "MARC",
+          "viewKey": "mrp",
+          "label": "Safety Stock",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "required",
+            "F": "optional",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "tempb",
+          "technicalName": "MARD-TEMPB",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Temperature Conditions",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "mhdrz",
+          "technicalName": "MARD-MHDRZ",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Minimum Remaining Shelf Life (Days)",
+          "rulesByIndustry": {
+            "M": "hide",
+            "C": "optional",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "sernp",
+          "technicalName": "MARC-SERNP",
+          "tableName": "MARC",
+          "viewKey": "storage",
+          "label": "Serial Number Profile",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "optional",
+            "F": "hide",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "bwtty",
+          "technicalName": "MBEW-BWTTY",
+          "tableName": "MBEW",
+          "viewKey": "accounting",
+          "label": "Valuation Category (Split Valuation)",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        }
+      ],
+      "materialGroups": [
+        {
+          "matkl": "HYD-PUMP",
+          "label": "Hydraulic Pump, Motor & Cylinder",
+          "defaultMtart": "ERSA",
+          "description": "Komponen utama sistem hidrolik alat berat untuk overhaul maupun rekondisi.",
+          "characteristics": [
+            {
+              "id": "ch-ws-disp",
+              "charName": "CHR_DISP_CC",
+              "label": "Displacement",
+              "dataType": "number",
+              "unit": "cc/rev",
+              "required": true,
+              "helpText": "Kapasitas volume per putaran pompa hidrolik"
+            },
+            {
+              "id": "ch-ws-prs",
+              "charName": "CHR_MAX_PRESS",
+              "label": "Max Operating Pressure",
+              "dataType": "number",
+              "unit": "bar",
+              "required": true,
+              "helpText": "Tekanan kerja maksimum sistem hidrolik"
+            },
+            {
+              "id": "ch-ws-rot",
+              "charName": "CHR_ROTATION",
+              "label": "Arah Putaran Shaft",
+              "dataType": "select",
+              "options": [
+                "Clockwise (CW)",
+                "Counter-Clockwise (CCW)",
+                "Bi-Directional"
+              ],
+              "required": true,
+              "helpText": "Arah rotasi input shaft"
+            },
+            {
+              "id": "ch-ws-cnd",
+              "charName": "CHR_PART_GRADE",
+              "label": "Klasifikasi Komponen",
+              "dataType": "select",
+              "options": [
+                "Genuine OEM",
+                "OEM Equivalent",
+                "Reconditioned / Core"
+              ],
+              "required": false,
+              "helpText": "Grade komponen workshop"
+            }
+          ]
+        },
+        {
+          "matkl": "FLT-KIT",
+          "label": "PM Service Filter & Seal Kit",
+          "defaultMtart": "ERSA",
+          "description": "Paket filter bahan bakar, oli, udara, dan seal preventive maintenance.",
+          "characteristics": [
+            {
+              "id": "ch-ws-mic",
+              "charName": "CHR_MICRON_RATING",
+              "label": "Filtration Rating",
+              "dataType": "number",
+              "unit": "µm",
+              "required": true,
+              "helpText": "Ukuran partikel penyaringan dalam mikron"
+            },
+            {
+              "id": "ch-ws-int",
+              "charName": "CHR_PM_INTERVAL",
+              "label": "Interval Preventive Maintenance",
+              "dataType": "select",
+              "options": [
+                "250 HM",
+                "500 HM",
+                "1000 HM",
+                "2000 HM"
+              ],
+              "required": true,
+              "helpText": "Jadwal PM alat berat yang memakai kit ini"
+            },
+            {
+              "id": "ch-ws-cnt",
+              "charName": "CHR_KIT_CONTENTS",
+              "label": "Rincian Isi Kit",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Daftar filter/seal yang termasuk dalam satu set"
+            }
+          ]
+        },
+        {
+          "matkl": "LUBE-HD",
+          "label": "Heavy Duty Lubricants & Coolant",
+          "defaultMtart": "ROH",
+          "description": "Pelumas mesin diesel berat, oli hidrolik, transmisi, dan grease.",
+          "characteristics": [
+            {
+              "id": "ch-ws-vis",
+              "charName": "CHR_SAE_VISC",
+              "label": "Viskositas SAE / ISO",
+              "dataType": "select",
+              "options": [
+                "SAE 15W-40",
+                "SAE 10W-30",
+                "SAE 85W-140",
+                "ISO VG 46",
+                "ISO VG 68"
+              ],
+              "required": true,
+              "helpText": "Standar kekentalan pelumas"
+            },
+            {
+              "id": "ch-ws-api",
+              "charName": "CHR_API_CLASS",
+              "label": "API / JASO Performance",
+              "dataType": "select",
+              "options": [
+                "API CI-4",
+                "API CK-4",
+                "API GL-5",
+                "Caterpillar TO-4",
+                "DIN 51524 HLP"
+              ],
+              "required": true,
+              "helpText": "Standar performa pelumas OEM"
+            },
+            {
+              "id": "ch-ws-vol",
+              "charName": "CHR_PACK_VOL",
+              "label": "Volume Kemasan",
+              "dataType": "number",
+              "unit": "L",
+              "required": true,
+              "helpText": "Isi bersih per drum / pail"
+            }
+          ]
+        },
+        {
+          "matkl": "LIGHT-VEH",
+          "label": "Light Vehicle & Operational Fleet",
+          "defaultMtart": "HAWA",
+          "description": "Kendaraan operasional ringan (MPV, SUV, Double Cabin) dengan format Short Desc Nama-Type-Transmisi-Gardan-Brand.",
+          "characteristics": [
+            {
+              "id": "ch-lv-nm",
+              "charName": "CHR_NAMA",
+              "label": "Nama",
+              "dataType": "select",
+              "options": [
+                "Avanza",
+                "Hilux",
+                "Innova",
+                "Fortuner",
+                "Triton",
+                "Pajero",
+                "X-Trail",
+                "Navara",
+                "CR-V"
+              ],
+              "required": true,
+              "helpText": "Model / nama unit kendaraan ringan"
+            },
+            {
+              "id": "ch-lv-tp",
+              "charName": "CHR_TYPE",
+              "label": "Type",
+              "dataType": "select",
+              "options": [
+                "SUV",
+                "DC",
+                "MPV",
+                "Pickup",
+                "Sedan"
+              ],
+              "required": true,
+              "helpText": "Tipe bodi kendaraan (SUV / Double Cabin / MPV)"
+            },
+            {
+              "id": "ch-lv-tr",
+              "charName": "CHR_TRANSMISI",
+              "label": "Transmisi",
+              "dataType": "select",
+              "options": [
+                "Manual",
+                "Matic",
+                "Hybrid",
+                "Electric"
+              ],
+              "required": true,
+              "helpText": "Sistem transmisi kendaraan"
+            },
+            {
+              "id": "ch-lv-gd",
+              "charName": "CHR_GARDAN",
+              "label": "Gardan",
+              "dataType": "select",
+              "options": [
+                "2x4",
+                "4x4"
+              ],
+              "required": true,
+              "helpText": "Konfigurasi penggerak gardan"
+            },
+            {
+              "id": "ch-lv-br",
+              "charName": "CHR_BRAND",
+              "label": "Brand",
+              "dataType": "select",
+              "options": [
+                "Toyota",
+                "Nissan",
+                "Honda",
+                "Mitsubishi"
+              ],
+              "required": true,
+              "helpText": "Merek / pabrikan kendaraan"
+            }
+          ]
+        }
+      ],
+      "changeDocuments": [
+        {
+          "changenr": "CHG-000902",
+          "objectClass": "MM_DOC",
+          "objectId": "5000019101",
+          "tableName": "MARD / MBEW",
+          "fieldName": "MIGO 201 (WS01/0003 · OLD)",
+          "oldValue": "4 EA",
+          "newValue": "3 EA · MAP 34.277.778 IDR",
+          "username": "MEKANIK_01",
+          "timestamp": "2026-11-16T11:45:00Z"
+        },
+        {
+          "changenr": "CHG-000101",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX02-WS20",
+          "tableName": "T001 / CI_MARA",
+          "fieldName": "TENANT_PROVISIONING",
+          "oldValue": "-",
+          "newValue": "PT Traktor Prima Service (Workshop Alat Berat & Kendaraan)",
+          "username": "BASIS_ADMIN",
+          "timestamp": "2026-11-20T09:32:01.216Z"
+        }
+      ],
+      "plants": [
+        {
+          "werks": "WS01",
+          "name": "PT Traktor Prima Service - Central Rebuild Workshop",
+          "city": "Jakarta Timur",
+          "bukrs": "WS20",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Gudang Spare Parts Overhaul",
+              "type": "Main Warehouse"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "Gudang Oli, Pelumas & Filter",
+              "type": "Lubricant Store"
+            },
+            {
+              "lgort": "0003",
+              "lgobe": "Area Core & Komponen Rekondisi",
+              "type": "Recon Yard"
+            }
+          ]
+        },
+        {
+          "werks": "WS02",
+          "name": "PT Traktor Prima Service - Site Mining Workshop",
+          "city": "Sangatta",
+          "bukrs": "WS20",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Pit Service Field Store",
+              "type": "Site Store"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "Area Warranty & Claim",
+              "type": "Quarantine / QA"
+            }
+          ]
+        }
+      ],
+      "vendors": [
+        {
+          "lifnr": "V-WS01",
+          "name": "PT Komatsu Undercarriage Indonesia",
+          "city": "Bekasi",
+          "ekorg": "WS20",
+          "paymentTerms": "NT30"
+        },
+        {
+          "lifnr": "V-WS02",
+          "name": "PT Donaldson Filtration Systems",
+          "city": "Tangerang",
+          "ekorg": "WS20",
+          "paymentTerms": "NT30"
+        },
+        {
+          "lifnr": "V-WS03",
+          "name": "PT Pertamina Lubricants Industri",
+          "city": "Jakarta",
+          "ekorg": "WS20",
+          "paymentTerms": "NT14"
+        }
+      ]
+    },
+    "tenant-unitparts": {
+      "materials": [
+        {
+          "mara": {
+            "matnr": "400000101",
+            "maktx": "Wheel Loader 3 Ton Diesel Unit Complete CLG835H",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "UNIT-WL",
+            "bismt": "CLG835H-125HP",
+            "spart": "03",
+            "brgew": 10800,
+            "ntgew": 10800,
+            "gewei": "KG",
+            "volum": 38.5,
+            "voleh": "M3",
+            "groes": "7120 x 2470 x 3180 mm",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-06-20T09:00:00Z",
+            "createdBy": "D.HENDRA",
+            "updatedAt": "2026-11-17T10:00:00Z"
+          },
+          "marc": {
+            "US01": {
+              "werks": "US01",
+              "ekgrp": "P30",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 3,
+              "kordp": true,
+              "dismm": "PD",
+              "dispo": "US1",
+              "minbe": 2,
+              "disls": "EX",
+              "bstmi": 1,
+              "bstma": 6,
+              "bstfe": 1,
+              "eisbe": 1,
+              "beskz": "F",
+              "plifz": 45,
+              "mtvfp": "02",
+              "prctr": "PC-US01-UNIT",
+              "sernp": "CHASSIS"
+            }
+          },
+          "mard": {
+            "US01-0001": {
+              "werks": "US01",
+              "lgort": "0001",
+              "lgobe": "Unit Ready Display Yard",
+              "lgpbe": "YARD-U01",
+              "labst": 4,
+              "insme": 0,
+              "speme": 0,
+              "raube": "03 - Open Display Yard",
+              "tempb": "Ambient Outdoor",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            },
+            "US01-0002": {
+              "werks": "US01",
+              "lgort": "0002",
+              "lgobe": "PDI & Pre-Delivery Bay",
+              "lgpbe": "PDI-02",
+              "labst": 1,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Covered PDI Bay",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 0,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "US01": {
+              "bwkey": "US01",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 782000000,
+              "stprs": 820000000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 5,
+              "salk3": 3910000000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 860000000,
+                  "stprs": 860000000,
+                  "peinh": 1,
+                  "lbkum": 3,
+                  "salk3": 2580000000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 790000000,
+                  "stprs": 790000000,
+                  "peinh": 1,
+                  "lbkum": 1,
+                  "salk3": 790000000
+                },
+                "OLD": {
+                  "bwtar": "OLD",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 540000000,
+                  "stprs": 540000000,
+                  "peinh": 1,
+                  "lbkum": 1,
+                  "salk3": 540000000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "US30",
+            "vtweg": "10",
+            "dwerk": "US01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_ENGINE_POWER": 125,
+            "CHR_OP_WEIGHT": 10800,
+            "CHR_BUCKET_CAP": 1.8,
+            "CHR_DRIVE_TYPE": "4WD Articulated"
+          },
+          "industryExtensions": {
+            "ZZ_SALES_LINE": "Unit Alat Berat",
+            "ZZ_CHASSIS_SERIES": "CLG835H-MY2026",
+            "ZZ_PARTS_MOVING": "Unit Indent",
+            "ZZ_WARRANTY_MO": 24,
+            "ZZ_PDI_CHECK": true
+          }
+        },
+        {
+          "mara": {
+            "matnr": "400000102",
+            "maktx": "Alternator Assembly 24V 80A Genuine Heavy Truck",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "PART-ELEC",
+            "bismt": "101211-8850",
+            "spart": "03",
+            "brgew": 6.2,
+            "ntgew": 5.8,
+            "gewei": "KG",
+            "volum": 0.012,
+            "voleh": "M3",
+            "groes": "220 x 180 x 180 mm",
+            "ean11": "8990040010218",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-08-05T09:30:00Z",
+            "createdBy": "D.HENDRA",
+            "updatedAt": "2026-11-15T14:20:00Z"
+          },
+          "marc": {
+            "US02": {
+              "werks": "US02",
+              "ekgrp": "P31",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": true,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "US2",
+              "minbe": 15,
+              "disls": "FX",
+              "bstmi": 5,
+              "bstma": 60,
+              "bstfe": 20,
+              "eisbe": 8,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-US02-PARTS",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "US02-0001": {
+              "werks": "US02",
+              "lgort": "0001",
+              "lgobe": "Fast-Moving Genuine Rack",
+              "lgpbe": "RACK-E12",
+              "labst": 22,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Dry Parts Shelf",
+              "tempb": "Ambient",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            }
+          },
+          "mbew": {
+            "US02": {
+              "bwkey": "US02",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 4168182,
+              "stprs": 4300000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 22,
+              "salk3": 91700000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 4850000,
+                  "stprs": 4850000,
+                  "peinh": 1,
+                  "lbkum": 10,
+                  "salk3": 48500000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 4320000,
+                  "stprs": 4320000,
+                  "peinh": 1,
+                  "lbkum": 10,
+                  "salk3": 43200000
+                },
+                "FREE": {
+                  "bwtar": "FREE",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 0,
+                  "stprs": 0,
+                  "peinh": 1,
+                  "lbkum": 2,
+                  "salk3": 0
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "US30",
+            "vtweg": "10",
+            "dwerk": "US02",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_VOLTAGE": "24V DC",
+            "CHR_AMPERAGE": 80,
+            "CHR_CONNECTOR_TYPE": "2-Groove V-Pulley · 3-Pin Regulator Socket"
+          },
+          "industryExtensions": {
+            "ZZ_SALES_LINE": "Genuine Spare Part",
+            "ZZ_CHASSIS_SERIES": "Hino 500 / Fuso Fighter / Loader",
+            "ZZ_PARTS_MOVING": "Fast Moving",
+            "ZZ_WARRANTY_MO": 6,
+            "ZZ_PDI_CHECK": false
+          }
+        },
+        {
+          "mara": {
+            "matnr": "500000103",
+            "maktx": "Track Link & Shoe Assembly 45-Link Undercarriage (PC200)",
+            "mtart": "ERSA",
+            "mbrsh": "M",
+            "meins": "SET",
+            "matkl": "PART-UC",
+            "bismt": "20Y-32-00014",
+            "spart": "03",
+            "brgew": 1240,
+            "ntgew": 1240,
+            "gewei": "KG",
+            "volum": 1.4,
+            "voleh": "M3",
+            "groes": "Pitch 190mm · 45 Links · Shoe 600mm",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-09-12T13:00:00Z",
+            "createdBy": "D.HENDRA",
+            "updatedAt": "2026-11-10T11:30:00Z"
+          },
+          "marc": {
+            "US02": {
+              "werks": "US02",
+              "ekgrp": "P30",
+              "bstme": "SET",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 2,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "US2",
+              "minbe": 6,
+              "disls": "EX",
+              "bstmi": 2,
+              "bstma": 20,
+              "bstfe": 4,
+              "eisbe": 2,
+              "beskz": "F",
+              "plifz": 14,
+              "mtvfp": "02",
+              "prctr": "PC-US02-UC",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "US02-0002": {
+              "werks": "US02",
+              "lgort": "0002",
+              "lgobe": "Slow-Moving & OTR Tire Bay",
+              "lgpbe": "UC-A08",
+              "labst": 8,
+              "insme": 0,
+              "speme": 0,
+              "raube": "03 - Heavy Pallet Yard",
+              "tempb": "Ambient",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            }
+          },
+          "mbew": {
+            "US02": {
+              "bwkey": "US02",
+              "bwtty": "Z",
+              "bklas": "3040",
+              "vprsv": "V",
+              "verpr": 28250000,
+              "stprs": 29000000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 8,
+              "salk3": 226000000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 31000000,
+                  "stprs": 31000000,
+                  "peinh": 1,
+                  "lbkum": 4,
+                  "salk3": 124000000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3040",
+                  "vprsv": "V",
+                  "verpr": 25500000,
+                  "stprs": 25500000,
+                  "peinh": 1,
+                  "lbkum": 4,
+                  "salk3": 102000000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "US30",
+            "vtweg": "10",
+            "dwerk": "US02",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_TRACK_PITCH": 190,
+            "CHR_LINK_COUNT": 45,
+            "CHR_SHOE_WIDTH": 600
+          },
+          "industryExtensions": {
+            "ZZ_ALLOY_GRADE": "Boron Steel 35MnB5"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "400000104",
+            "maktx": "Hilux-DC-Manual-4x4-Toyota",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "LIGHT-VEH",
+            "bismt": "TOY-HILUX-DC-4X4",
+            "spart": "03",
+            "brgew": 2150,
+            "ntgew": 2150,
+            "gewei": "KG",
+            "volum": 14.5,
+            "voleh": "M3",
+            "groes": "5325 x 1855 x 1815 mm",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-10-05T08:00:00Z",
+            "createdBy": "D.HENDRA",
+            "updatedAt": "2026-11-16T09:00:00Z"
+          },
+          "marc": {
+            "US01": {
+              "werks": "US01",
+              "ekgrp": "P30",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 2,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "US1",
+              "minbe": 2,
+              "disls": "EX",
+              "bstmi": 1,
+              "bstma": 10,
+              "bstfe": 2,
+              "eisbe": 1,
+              "beskz": "F",
+              "plifz": 21,
+              "mtvfp": "02",
+              "prctr": "PC-US01-LV",
+              "sernp": "ZSER"
+            }
+          },
+          "mard": {
+            "US01-0001": {
+              "werks": "US01",
+              "lgort": "0001",
+              "lgobe": "Showroom Unit Ready Stock",
+              "lgpbe": "LV-BAY-01",
+              "labst": 4,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 730,
+              "mhdrz": 0,
+              "mhdhb": 730
+            }
+          },
+          "mbew": {
+            "US01": {
+              "bwkey": "US01",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 525000000,
+              "stprs": 525000000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 4,
+              "salk3": 2100000000,
+              "splitValuations": {
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 525000000,
+                  "stprs": 525000000,
+                  "peinh": 1,
+                  "lbkum": 4,
+                  "salk3": 2100000000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "US30",
+            "vtweg": "10",
+            "dwerk": "US01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_NAMA": "Hilux",
+            "CHR_TYPE": "DC",
+            "CHR_TRANSMISI": "Manual",
+            "CHR_GARDAN": "4x4",
+            "CHR_BRAND": "Toyota"
+          },
+          "industryExtensions": {
+            "ZZ_SALES_LINE": "Unit Kendaraan Niaga",
+            "ZZ_CHASSIS_SERIES": "HILUX-REVO-2026",
+            "ZZ_PARTS_MOVING": "Unit Indent",
+            "ZZ_WARRANTY_MO": 36,
+            "ZZ_PDI_CHECK": true
+          }
+        }
+      ],
+      "purchaseRequisitions": [
+        {
+          "banfn": "0010007101",
+          "matnr": "400000102",
+          "maktx": "Alternator Assembly 24V 80A Genuine Heavy Truck",
+          "werks": "US02",
+          "lgort": "0001",
+          "menge": 12,
+          "meins": "EA",
+          "lfdat": "2026-11-27",
+          "ekgrp": "P31",
+          "dispo": "US2",
+          "preis": 4850000,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "status": "Approved",
+          "createdAt": "2026-11-17T10:15:00Z",
+          "createdBy": "SALES_PARTS"
+        }
+      ],
+      "purchaseOrders": [
+        {
+          "ebeln": "4500007101",
+          "lifnr": "V-US01",
+          "vendorName": "PT LiuGong Machinery Principal",
+          "matnr": "400000101",
+          "maktx": "Wheel Loader 3 Ton Diesel Unit Complete CLG835H",
+          "werks": "US01",
+          "lgort": "0001",
+          "menge": 2,
+          "receivedQty": 0,
+          "meins": "EA",
+          "netpr": 860000000,
+          "peinh": 1,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "ekgrp": "P30",
+          "eindt": "2026-12-05",
+          "status": "Open",
+          "createdAt": "2026-11-14T15:00:00Z",
+          "createdBy": "D.HENDRA"
+        }
+      ],
+      "materialDocuments": [
+        {
+          "mblnr": "5000017101",
+          "mjahr": "2026",
+          "bwart": "311",
+          "bwartDesc": "Transfer Posting Storage Location",
+          "matnr": "400000101",
+          "maktx": "Wheel Loader 3 Ton Diesel Unit Complete CLG835H",
+          "werks": "US01",
+          "lgort": "0001",
+          "targetLgort": "0002",
+          "menge": 1,
+          "meins": "EA",
+          "dmbtr": 860000000,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "belnr": "4900071101",
+          "budat": "2026-11-17",
+          "usnam": "PDI_TEAM",
+          "bktxt": "Transfer Unit CLG835H ke PDI Bay untuk serah terima buyer"
+        }
+      ],
+      "customIndustryFields": [
+        {
+          "id": "cf-us-cat",
+          "fieldName": "ZZ_SALES_LINE",
+          "label": "Lini Penjualan Niaga",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "Unit Alat Berat",
+            "Kendaraan Niaga",
+            "Genuine Spare Part",
+            "Aftermarket Part"
+          ],
+          "defaultValue": "Genuine Spare Part",
+          "helpText": "Segmentasi produk untuk penetapan harga jual dan margin dealer",
+          "status": "required"
+        },
+        {
+          "id": "cf-us-chassis",
+          "fieldName": "ZZ_CHASSIS_SERIES",
+          "label": "Seri Rangka / Model Year",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "text",
+          "helpText": "Kode seri model atau tahun perakitan unit / kecocokan part (opsional)",
+          "status": "optional"
+        },
+        {
+          "id": "cf-us-vel",
+          "fieldName": "ZZ_PARTS_MOVING",
+          "label": "Klasifikasi Moving Parts",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "Fast Moving",
+            "Medium Moving",
+            "Slow Moving",
+            "Unit Indent"
+          ],
+          "defaultValue": "Fast Moving",
+          "helpText": "Kategori kecepatan perputaran stok di gudang distribusi",
+          "status": "required"
+        },
+        {
+          "id": "cf-us-war",
+          "fieldName": "ZZ_WARRANTY_MO",
+          "label": "Masa Garansi Penjualan",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "number",
+          "unit": "Bulan",
+          "helpText": "Durasi garansi resmi kepada pelanggan setelah serah terima",
+          "status": "optional"
+        },
+        {
+          "id": "cf-us-pdi",
+          "fieldName": "ZZ_PDI_CHECK",
+          "label": "Wajib Pre-Delivery Inspection (PDI)",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "boolean",
+          "defaultValue": true,
+          "helpText": "Wajib inspeksi pra-pengiriman sebelum unit/part dikirim ke pembeli",
+          "status": "required"
+        },
+        {
+          "id": "cf-us-alloy",
+          "fieldName": "ZZ_ALLOY_GRADE",
+          "label": "Material Konstruksi Undercarriage",
+          "industrySector": "M",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "Boron Steel 35MnB5",
+            "Alloy Steel 40Cr",
+            "Cast Iron FCD",
+            "Natural Rubber OTR"
+          ],
+          "defaultValue": "Boron Steel 35MnB5",
+          "helpText": "Material utama komponen aus atau undercarriage",
+          "status": "required"
+        }
+      ],
+      "standardFieldRules": [
+        {
+          "fieldKey": "bismt",
+          "technicalName": "MARA-BISMT",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Old Material Number / OEM Cross-Ref",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "brgew",
+          "technicalName": "MARA-BRGEW",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Gross Weight",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "optional",
+            "F": "required",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "groes",
+          "technicalName": "MARA-GROES",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Size / Dimensions",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "optional",
+            "P": "hide",
+            "F": "optional",
+            "R": "required",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "ean11",
+          "technicalName": "MARA-EAN11",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "EAN / UPC Barcode",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "xchpf",
+          "technicalName": "MARA-XCHPF",
+          "tableName": "MARA",
+          "viewKey": "purchasing",
+          "label": "Batch Management Requirement",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "kautb",
+          "technicalName": "MARC-KAUTB",
+          "tableName": "MARC",
+          "viewKey": "purchasing",
+          "label": "Automatic PO Allowed",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "display",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "eisbe",
+          "technicalName": "MARC-EISBE",
+          "tableName": "MARC",
+          "viewKey": "mrp",
+          "label": "Safety Stock",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "required",
+            "F": "optional",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "tempb",
+          "technicalName": "MARD-TEMPB",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Temperature Conditions",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "mhdrz",
+          "technicalName": "MARD-MHDRZ",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Minimum Remaining Shelf Life (Days)",
+          "rulesByIndustry": {
+            "M": "hide",
+            "C": "optional",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "sernp",
+          "technicalName": "MARC-SERNP",
+          "tableName": "MARC",
+          "viewKey": "storage",
+          "label": "Serial Number Profile",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "optional",
+            "F": "hide",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "bwtty",
+          "technicalName": "MBEW-BWTTY",
+          "tableName": "MBEW",
+          "viewKey": "accounting",
+          "label": "Valuation Category (Split Valuation)",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        }
+      ],
+      "materialGroups": [
+        {
+          "matkl": "LIGHT-VEH",
+          "label": "Light Vehicle & Fleet Unit",
+          "defaultMtart": "HAWA",
+          "description": "Penjualan unit kendaraan ringan (Avanza, Hilux, Innova, SUV/DC/MPV) — format Short Desc: Nama-Type-Transmisi-Gardan-Brand.",
+          "characteristics": [
+            {
+              "id": "ch-lv-nm",
+              "charName": "CHR_NAMA",
+              "label": "Nama",
+              "dataType": "select",
+              "options": [
+                "Avanza",
+                "Hilux",
+                "Innova",
+                "Fortuner",
+                "Triton",
+                "Pajero",
+                "X-Trail",
+                "Navara",
+                "CR-V"
+              ],
+              "required": true,
+              "helpText": "Model / nama unit kendaraan ringan"
+            },
+            {
+              "id": "ch-lv-tp",
+              "charName": "CHR_TYPE",
+              "label": "Type",
+              "dataType": "select",
+              "options": [
+                "SUV",
+                "DC",
+                "MPV",
+                "Pickup",
+                "Sedan"
+              ],
+              "required": true,
+              "helpText": "Tipe bodi kendaraan (SUV / Double Cabin / MPV)"
+            },
+            {
+              "id": "ch-lv-tr",
+              "charName": "CHR_TRANSMISI",
+              "label": "Transmisi",
+              "dataType": "select",
+              "options": [
+                "Manual",
+                "Matic",
+                "Hybrid",
+                "Electric"
+              ],
+              "required": true,
+              "helpText": "Sistem transmisi kendaraan"
+            },
+            {
+              "id": "ch-lv-gd",
+              "charName": "CHR_GARDAN",
+              "label": "Gardan",
+              "dataType": "select",
+              "options": [
+                "2x4",
+                "4x4"
+              ],
+              "required": true,
+              "helpText": "Konfigurasi penggerak gardan"
+            },
+            {
+              "id": "ch-lv-br",
+              "charName": "CHR_BRAND",
+              "label": "Brand",
+              "dataType": "select",
+              "options": [
+                "Toyota",
+                "Nissan",
+                "Honda",
+                "Mitsubishi"
+              ],
+              "required": true,
+              "helpText": "Merek / pabrikan kendaraan"
+            }
+          ]
+        },
+        {
+          "matkl": "UNIT-WL",
+          "label": "Heavy Unit & Commercial Vehicle",
+          "defaultMtart": "HAWA",
+          "description": "Unit alat berat & kendaraan niaga lengkap siap jual (Wheel Loader, Excavator, Dump Truck).",
+          "characteristics": [
+            {
+              "id": "ch-us-hp",
+              "charName": "CHR_ENGINE_POWER",
+              "label": "Engine Net Power",
+              "dataType": "number",
+              "unit": "HP",
+              "required": true,
+              "helpText": "Daya mesin terukur dalam Horsepower"
+            },
+            {
+              "id": "ch-us-wt",
+              "charName": "CHR_OP_WEIGHT",
+              "label": "Operating Weight",
+              "dataType": "number",
+              "unit": "kg",
+              "required": true,
+              "helpText": "Bobot operasi standar unit"
+            },
+            {
+              "id": "ch-us-bkt",
+              "charName": "CHR_BUCKET_CAP",
+              "label": "Bucket / Payload Capacity",
+              "dataType": "number",
+              "unit": "m³",
+              "required": true,
+              "helpText": "Kapasitas bucket atau bak standar"
+            },
+            {
+              "id": "ch-us-drv",
+              "charName": "CHR_DRIVE_TYPE",
+              "label": "Konfigurasi Penggerak",
+              "dataType": "select",
+              "options": [
+                "4WD Articulated",
+                "Crawler Track",
+                "6x4 Heavy Duty",
+                "8x4 Mining"
+              ],
+              "required": true,
+              "helpText": "Tipe sistem penggerak unit"
+            }
+          ]
+        },
+        {
+          "matkl": "PART-ELEC",
+          "label": "Electrical & Sensor Spare Parts",
+          "defaultMtart": "HAWA",
+          "description": "Alternator, starter motor, ECU, solenoid, dan sensor kelistrikan unit.",
+          "characteristics": [
+            {
+              "id": "ch-us-vlt",
+              "charName": "CHR_VOLTAGE",
+              "label": "Nominal Voltage",
+              "dataType": "select",
+              "options": [
+                "12V DC",
+                "24V DC"
+              ],
+              "required": true,
+              "helpText": "Tegangan sistem kelistrikan unit"
+            },
+            {
+              "id": "ch-us-amp",
+              "charName": "CHR_AMPERAGE",
+              "label": "Output / Arus Nominal",
+              "dataType": "number",
+              "unit": "A",
+              "required": true,
+              "helpText": "Kapasitas arus listrik dalam Ampere"
+            },
+            {
+              "id": "ch-us-plg",
+              "charName": "CHR_CONNECTOR_TYPE",
+              "label": "Tipe Pulley / Konektor",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Spesifikasi konektor pin atau groove pulley"
+            }
+          ]
+        },
+        {
+          "matkl": "PART-UC",
+          "label": "Undercarriage & Ground Engaging",
+          "defaultMtart": "ERSA",
+          "description": "Track link, track shoe, roller, idler, sprocket, dan bucket teeth.",
+          "characteristics": [
+            {
+              "id": "ch-us-ptc",
+              "charName": "CHR_TRACK_PITCH",
+              "label": "Link Pitch",
+              "dataType": "number",
+              "unit": "mm",
+              "required": true,
+              "helpText": "Jarak antar pin track link"
+            },
+            {
+              "id": "ch-us-lnk",
+              "charName": "CHR_LINK_COUNT",
+              "label": "Jumlah Link",
+              "dataType": "number",
+              "unit": "Links",
+              "required": true,
+              "helpText": "Total mata rantai per sisi track"
+            },
+            {
+              "id": "ch-us-shw",
+              "charName": "CHR_SHOE_WIDTH",
+              "label": "Lebar Track Shoe",
+              "dataType": "number",
+              "unit": "mm",
+              "required": true,
+              "helpText": "Lebar pelat shoe track"
+            }
+          ]
+        }
+      ],
+      "changeDocuments": [
+        {
+          "changenr": "CHG-000702",
+          "objectClass": "MM_DOC",
+          "objectId": "5000017101",
+          "tableName": "MARD / MBEW",
+          "fieldName": "MIGO 311 (US01/0001 -> 0002 · IMPORT)",
+          "oldValue": "5 EA Display",
+          "newValue": "4 EA Display · 1 EA PDI Bay",
+          "username": "PDI_TEAM",
+          "timestamp": "2026-11-17T09:10:00Z"
+        },
+        {
+          "changenr": "CHG-000101",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX02-US30",
+          "tableName": "T001 / CI_MARA",
+          "fieldName": "TENANT_PROVISIONING",
+          "oldValue": "-",
+          "newValue": "PT Mitra Armada Niaga (Penjualan Unit & Spare Parts)",
+          "username": "BASIS_ADMIN",
+          "timestamp": "2026-11-20T09:32:01.217Z"
+        }
+      ],
+      "plants": [
+        {
+          "werks": "US01",
+          "name": "PT Mitra Armada Niaga - Showroom & Unit PDI Yard",
+          "city": "Cikarang",
+          "bukrs": "US30",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Unit Ready Display Yard",
+              "type": "Unit Yard"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "PDI & Pre-Delivery Bay",
+              "type": "Inspection Bay"
+            }
+          ]
+        },
+        {
+          "werks": "US02",
+          "name": "PT Mitra Armada Niaga - National Parts DC",
+          "city": "Surabaya",
+          "bukrs": "US30",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Fast-Moving Genuine Rack",
+              "type": "Parts Rack"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "Slow-Moving & OTR Tire Bay",
+              "type": "Bulk Storage"
+            }
+          ]
+        }
+      ],
+      "vendors": [
+        {
+          "lifnr": "V-US01",
+          "name": "PT LiuGong Machinery Principal",
+          "city": "Jakarta",
+          "ekorg": "US30",
+          "paymentTerms": "NT45"
+        },
+        {
+          "lifnr": "V-US02",
+          "name": "PT Denso Genuine Parts Indonesia",
+          "city": "Bekasi",
+          "ekorg": "US30",
+          "paymentTerms": "NT30"
+        },
+        {
+          "lifnr": "V-US03",
+          "name": "PT Bridgestone OTR Tire Distribution",
+          "city": "Karawang",
+          "ekorg": "US30",
+          "paymentTerms": "NT30"
+        }
+      ]
+    },
+    "tenant-tools-ppe": {
+      "materials": [
+        {
+          "mara": {
+            "matnr": "400000201",
+            "maktx": "Portable Multi-Gas Detector 4-Gas (H2S/CO/O2/LEL) ATEX",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "INST-GAS",
+            "bismt": "ALTAIR-4XR-ATEX",
+            "spart": "04",
+            "brgew": 0.45,
+            "ntgew": 0.23,
+            "gewei": "KG",
+            "volum": 0.003,
+            "voleh": "M3",
+            "groes": "112 x 76 x 35 mm · IP68",
+            "ean11": "8990040020112",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-08-01T08:30:00Z",
+            "createdBy": "N.RAHMA",
+            "updatedAt": "2026-11-18T09:15:00Z"
+          },
+          "marc": {
+            "TL01": {
+              "werks": "TL01",
+              "ekgrp": "P40",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 2,
+              "kordp": true,
+              "dismm": "VB",
+              "dispo": "TL1",
+              "minbe": 15,
+              "disls": "EX",
+              "bstmi": 5,
+              "bstma": 100,
+              "bstfe": 10,
+              "eisbe": 8,
+              "beskz": "F",
+              "plifz": 14,
+              "mtvfp": "02",
+              "prctr": "PC-TL01-GAS",
+              "sernp": "SN-GAS"
+            },
+            "TL02": {
+              "werks": "TL02",
+              "ekgrp": "P40",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "TL2",
+              "minbe": 6,
+              "disls": "EX",
+              "bstmi": 2,
+              "bstma": 30,
+              "bstfe": 5,
+              "eisbe": 3,
+              "beskz": "F",
+              "plifz": 5,
+              "mtvfp": "02",
+              "prctr": "PC-TL02-BPP",
+              "sernp": "SN-GAS"
+            }
+          },
+          "mard": {
+            "TL01-0002": {
+              "werks": "TL01",
+              "lgort": "0002",
+              "lgobe": "Lab Kalibrasi & Gas Detector",
+              "lgpbe": "LAB-G01",
+              "labst": 18,
+              "insme": 2,
+              "speme": 0,
+              "raube": "02 - ESD & Climate Controlled",
+              "tempb": "18°C - 25°C",
+              "maxlz": 730,
+              "mhdrz": 180,
+              "mhdhb": 730
+            },
+            "TL02-0001": {
+              "werks": "TL02",
+              "lgort": "0001",
+              "lgobe": "Counter Penjualan & Ready Stock",
+              "lgpbe": "BPP-G04",
+              "labst": 7,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Dry Display Cabinet",
+              "tempb": "18°C - 26°C",
+              "maxlz": 730,
+              "mhdrz": 180,
+              "mhdhb": 730
+            }
+          },
+          "mbew": {
+            "TL01": {
+              "bwkey": "TL01",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 11260000,
+              "stprs": 12500000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 20,
+              "salk3": 225200000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 13200000,
+                  "stprs": 13200000,
+                  "peinh": 1,
+                  "lbkum": 12,
+                  "salk3": 158400000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 11800000,
+                  "stprs": 11800000,
+                  "peinh": 1,
+                  "lbkum": 4,
+                  "salk3": 47200000
+                },
+                "FREE": {
+                  "bwtar": "FREE",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 0,
+                  "stprs": 0,
+                  "peinh": 1,
+                  "lbkum": 2,
+                  "salk3": 0
+                },
+                "OLD": {
+                  "bwtar": "OLD",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 9800000,
+                  "stprs": 9800000,
+                  "peinh": 1,
+                  "lbkum": 2,
+                  "salk3": 19600000
+                }
+              }
+            },
+            "TL02": {
+              "bwkey": "TL02",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 13200000,
+              "stprs": 13200000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 7,
+              "salk3": 92400000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 13200000,
+                  "stprs": 13200000,
+                  "peinh": 1,
+                  "lbkum": 7,
+                  "salk3": 92400000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "TL40",
+            "vtweg": "10",
+            "dwerk": "TL01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_SENSOR_GASES": "H2S, CO, O2, LEL (CH4)",
+            "CHR_ATEX_CERT": "ATEX Zone 0 / Ex ia",
+            "CHR_BATTERY_LIFE": 24
+          },
+          "industryExtensions": {
+            "ZZ_TOOL_PPE_GROUP": "Gas Detector & Instrument",
+            "ZZ_SAFETY_STD": "ATEX / IECEx",
+            "ZZ_CALIB_MONTHS": 6,
+            "ZZ_EX_RATING": "Ex ia IIC T4 Ga / IP68",
+            "ZZ_SIZE_DRIVE": "4-Gas (H2S, CO, O2, LEL)"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "400000202",
+            "maktx": "Combination Wrench Set 8–32mm Cr-V 14-Pcs (Kunci Pas Ring)",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "SET",
+            "matkl": "TOOL-HAND",
+            "bismt": "STW-14-832",
+            "spart": "04",
+            "brgew": 4.8,
+            "ntgew": 4.4,
+            "gewei": "KG",
+            "volum": 0.008,
+            "voleh": "M3",
+            "groes": "8, 10, 12, 13, 14, 17, 19, 22, 24, 27, 30, 32 mm",
+            "ean11": "8990040020228",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-08-19T10:00:00Z",
+            "createdBy": "N.RAHMA",
+            "updatedAt": "2026-11-12T13:10:00Z"
+          },
+          "marc": {
+            "TL01": {
+              "werks": "TL01",
+              "ekgrp": "P41",
+              "bstme": "SET",
+              "ekwsl": "Z001",
+              "kautb": true,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "TL1",
+              "minbe": 25,
+              "disls": "FX",
+              "bstmi": 10,
+              "bstma": 200,
+              "bstfe": 25,
+              "eisbe": 10,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-TL01-TOOL",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "TL01-0001": {
+              "werks": "TL01",
+              "lgort": "0001",
+              "lgobe": "Rak Hand Tools & Kunci Momen",
+              "lgpbe": "TOOL-K03",
+              "labst": 42,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Dry Tool Rack",
+              "tempb": "Ambient",
+              "maxlz": 1825,
+              "mhdrz": 0,
+              "mhdhb": 1825
+            }
+          },
+          "mbew": {
+            "TL01": {
+              "bwkey": "TL01",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 1714286,
+              "stprs": 1800000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 42,
+              "salk3": 72000000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 2100000,
+                  "stprs": 2100000,
+                  "peinh": 1,
+                  "lbkum": 20,
+                  "salk3": 42000000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 1363636,
+                  "stprs": 1363636,
+                  "peinh": 1,
+                  "lbkum": 22,
+                  "salk3": 30000000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "TL40",
+            "vtweg": "10",
+            "dwerk": "TL01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_SIZE_RANGE": "8, 10, 12, 13, 14, 17, 19, 22, 24, 27, 30, 32 mm",
+            "CHR_PCS_COUNT": 14,
+            "CHR_TOOL_ALLOY": "Chrome Vanadium (Cr-V)"
+          },
+          "industryExtensions": {
+            "ZZ_TOOL_PPE_GROUP": "Hand Tools & Kunci",
+            "ZZ_SAFETY_STD": "DIN / ISO",
+            "ZZ_CALIB_MONTHS": 0,
+            "ZZ_EX_RATING": "Standard Chrome Vanadium",
+            "ZZ_SIZE_DRIVE": "8mm - 32mm (14-Pcs)"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "400000203",
+            "maktx": "Torque Wrench Click-Type 1/2\" Drive 40–200 Nm (Kunci Momen)",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "TOOL-TORQ",
+            "bismt": "TRQ-12-200NM",
+            "spart": "04",
+            "brgew": 1.9,
+            "ntgew": 1.5,
+            "gewei": "KG",
+            "volum": 0.004,
+            "voleh": "M3",
+            "groes": "1/2\" Sq Drive · Panjang 485 mm",
+            "ean11": "8990040020334",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-09-04T09:20:00Z",
+            "createdBy": "N.RAHMA",
+            "updatedAt": "2026-11-14T11:00:00Z"
+          },
+          "marc": {
+            "TL01": {
+              "werks": "TL01",
+              "ekgrp": "P41",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 2,
+              "kordp": true,
+              "dismm": "VB",
+              "dispo": "TL1",
+              "minbe": 12,
+              "disls": "EX",
+              "bstmi": 4,
+              "bstma": 40,
+              "bstfe": 8,
+              "eisbe": 5,
+              "beskz": "F",
+              "plifz": 10,
+              "mtvfp": "02",
+              "prctr": "PC-TL01-TOOL",
+              "sernp": "SN-TRQ"
+            }
+          },
+          "mard": {
+            "TL01-0001": {
+              "werks": "TL01",
+              "lgort": "0001",
+              "lgobe": "Rak Hand Tools & Kunci Momen",
+              "lgpbe": "TOOL-T01",
+              "labst": 16,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Precision Tool Case",
+              "tempb": "Ambient",
+              "maxlz": 1095,
+              "mhdrz": 0,
+              "mhdhb": 1095
+            }
+          },
+          "mbew": {
+            "TL01": {
+              "bwkey": "TL01",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 3450000,
+              "stprs": 3450000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 16,
+              "salk3": 55200000,
+              "splitValuations": {
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 3650000,
+                  "stprs": 3650000,
+                  "peinh": 1,
+                  "lbkum": 10,
+                  "salk3": 36500000
+                },
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 3116667,
+                  "stprs": 3116667,
+                  "peinh": 1,
+                  "lbkum": 6,
+                  "salk3": 18700000
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "TL40",
+            "vtweg": "10",
+            "dwerk": "TL01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_DRIVE_SIZE": "1/2\"",
+            "CHR_TORQUE_RANGE": "40 - 200 Nm",
+            "CHR_ACCURACY": "±3% ISO 6789"
+          },
+          "industryExtensions": {
+            "ZZ_TOOL_PPE_GROUP": "Torque & Precision Tool",
+            "ZZ_SAFETY_STD": "DIN / ISO",
+            "ZZ_CALIB_MONTHS": 12,
+            "ZZ_EX_RATING": "ISO 6789 ±3% Accuracy",
+            "ZZ_SIZE_DRIVE": "1/2\" Drive (40-200 Nm)"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "400000204",
+            "maktx": "Full Body Harness Double Lanyard + Shock Absorber EN 361 (APD)",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "PPE-FALL",
+            "bismt": "FBH-2L-EN361",
+            "spart": "04",
+            "brgew": 2.3,
+            "ntgew": 2.1,
+            "gewei": "KG",
+            "volum": 0.009,
+            "voleh": "M3",
+            "groes": "Universal L-XL · Webbing 45mm",
+            "ean11": "8990040020440",
+            "mstae": "",
+            "xchpf": true,
+            "createdAt": "2026-09-20T14:00:00Z",
+            "createdBy": "N.RAHMA",
+            "updatedAt": "2026-11-16T10:00:00Z"
+          },
+          "marc": {
+            "TL01": {
+              "werks": "TL01",
+              "ekgrp": "P42",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": true,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "TL1",
+              "minbe": 40,
+              "disls": "FX",
+              "bstmi": 10,
+              "bstma": 300,
+              "bstfe": 50,
+              "eisbe": 20,
+              "beskz": "F",
+              "plifz": 5,
+              "mtvfp": "02",
+              "prctr": "PC-TL01-APD",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "TL01-0003": {
+              "werks": "TL01",
+              "lgort": "0003",
+              "lgobe": "Gudang Bersih APD / PPE",
+              "lgpbe": "PPE-F02",
+              "labst": 65,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Clean Dry Rack",
+              "tempb": "Ambient < 30°C",
+              "maxlz": 1825,
+              "mhdrz": 365,
+              "mhdhb": 1825
+            }
+          },
+          "mbew": {
+            "TL01": {
+              "bwkey": "TL01",
+              "bwtty": "Z",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 1126923,
+              "stprs": 1200000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 65,
+              "salk3": 73250000,
+              "splitValuations": {
+                "LOCAL": {
+                  "bwtar": "LOCAL",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 950000,
+                  "stprs": 950000,
+                  "peinh": 1,
+                  "lbkum": 40,
+                  "salk3": 38000000
+                },
+                "IMPORT": {
+                  "bwtar": "IMPORT",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 1762500,
+                  "stprs": 1762500,
+                  "peinh": 1,
+                  "lbkum": 20,
+                  "salk3": 35250000
+                },
+                "FREE": {
+                  "bwtar": "FREE",
+                  "bklas": "3100",
+                  "vprsv": "V",
+                  "verpr": 0,
+                  "stprs": 0,
+                  "peinh": 1,
+                  "lbkum": 5,
+                  "salk3": 0
+                }
+              }
+            }
+          },
+          "mvke": {
+            "vkorg": "TL40",
+            "vtweg": "10",
+            "dwerk": "TL01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_MAX_LOAD_KG": 140,
+            "CHR_D_RING_COUNT": "2 Dorsal + Sternal",
+            "CHR_LANYARD_TYPE": "Double Webbing + Absorber"
+          },
+          "industryExtensions": {
+            "ZZ_TOOL_PPE_GROUP": "APD Fall Protection",
+            "ZZ_SAFETY_STD": "EN / CE",
+            "ZZ_CALIB_MONTHS": 12,
+            "ZZ_EX_RATING": "EN 361 / EN 355 (Max 140 kg)",
+            "ZZ_SIZE_DRIVE": "Universal Adjustable L-XL"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "400000205",
+            "maktx": "Safety Helmet V-Gard HDPE + Chin Strap ANSI Z89.1 Class E (APD)",
+            "mtart": "HAWA",
+            "mbrsh": "R",
+            "meins": "EA",
+            "matkl": "PPE-HEAD",
+            "bismt": "VGARD-WHT-CL-E",
+            "spart": "04",
+            "brgew": 0.42,
+            "ntgew": 0.38,
+            "gewei": "KG",
+            "volum": 0.006,
+            "voleh": "M3",
+            "groes": "52 - 64 cm Ratchet Suspension",
+            "ean11": "8990040020556",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-10-01T08:00:00Z",
+            "createdBy": "N.RAHMA",
+            "updatedAt": "2026-11-11T09:00:00Z"
+          },
+          "marc": {
+            "TL01": {
+              "werks": "TL01",
+              "ekgrp": "P42",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": true,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "TL1",
+              "minbe": 100,
+              "disls": "FX",
+              "bstmi": 50,
+              "bstma": 1000,
+              "bstfe": 200,
+              "eisbe": 40,
+              "beskz": "F",
+              "plifz": 3,
+              "mtvfp": "02",
+              "prctr": "PC-TL01-APD",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "TL01-0003": {
+              "werks": "TL01",
+              "lgort": "0003",
+              "lgobe": "Gudang Bersih APD / PPE",
+              "lgpbe": "PPE-H01",
+              "labst": 180,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Clean Dry Rack",
+              "tempb": "Ambient",
+              "maxlz": 1825,
+              "mhdrz": 0,
+              "mhdhb": 1825
+            }
+          },
+          "mbew": {
+            "TL01": {
+              "bwkey": "TL01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 165000,
+              "stprs": 165000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 180,
+              "salk3": 29700000
+            }
+          },
+          "mvke": {
+            "vkorg": "TL40",
+            "vtweg": "10",
+            "dwerk": "TL01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_DIELECTRIC_CLS": "Class E (20,000V)",
+            "CHR_SUSPENSION": "4-Point Ratchet",
+            "CHR_COLOR_CODE": "Putih"
+          },
+          "industryExtensions": {
+            "ZZ_TOOL_PPE_GROUP": "APD Kepala & Mata",
+            "ZZ_SAFETY_STD": "ANSI / ISEA",
+            "ZZ_CALIB_MONTHS": 0,
+            "ZZ_EX_RATING": "20,000V Dielectric Class E",
+            "ZZ_SIZE_DRIVE": "All Size (52-64cm)"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "100000206",
+            "maktx": "Calibration Gas Cylinder 4-Gas Mix 58L (25ppm H2S/60ppm CO/O2/LEL)",
+            "mtart": "ROH",
+            "mbrsh": "C",
+            "meins": "EA",
+            "matkl": "INST-CAL",
+            "bismt": "CAL-58L-4GAS",
+            "spart": "04",
+            "brgew": 1.4,
+            "ntgew": 0.9,
+            "gewei": "KG",
+            "volum": 0.005,
+            "voleh": "M3",
+            "groes": "Tabung 58L Pressurized Aluminum",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": true,
+            "createdAt": "2026-10-12T10:00:00Z",
+            "createdBy": "N.RAHMA",
+            "updatedAt": "2026-11-15T10:00:00Z"
+          },
+          "marc": {
+            "TL01": {
+              "werks": "TL01",
+              "ekgrp": "P40",
+              "bstme": "EA",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "VB",
+              "dispo": "TL1",
+              "minbe": 10,
+              "disls": "EX",
+              "bstmi": 2,
+              "bstma": 30,
+              "bstfe": 5,
+              "eisbe": 4,
+              "beskz": "F",
+              "plifz": 14,
+              "mtvfp": "02",
+              "prctr": "PC-TL01-GAS",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "TL01-0002": {
+              "werks": "TL01",
+              "lgort": "0002",
+              "lgobe": "Lab Kalibrasi & Gas Detector",
+              "lgpbe": "CAL-C02",
+              "labst": 12,
+              "insme": 0,
+              "speme": 0,
+              "raube": "05 - Pressurized Cylinder Cage",
+              "tempb": "15°C - 25°C",
+              "maxlz": 540,
+              "mhdrz": 120,
+              "mhdhb": 540
+            }
+          },
+          "mbew": {
+            "TL01": {
+              "bwkey": "TL01",
+              "bwtty": "",
+              "bklas": "3000",
+              "vprsv": "V",
+              "verpr": 4250000,
+              "stprs": 4250000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 12,
               "salk3": 51000000
-            },
-            "OLD": {
-              "bwtar": "OLD",
-              "bklas": "7900",
-              "vprsv": "V",
-              "verpr": 300000,
-              "stprs": 300000,
-              "peinh": 1,
-              "lbkum": 30,
-              "salk3": 9000000
             }
+          },
+          "mvke": {
+            "vkorg": "TL40",
+            "vtweg": "10",
+            "dwerk": "TL01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_CYLINDER_VOL": 58,
+            "CHR_GAS_BLEND": "25ppm H2S / 60ppm CO / 1.45% CH4 / 15% O2",
+            "CHR_STABILITY_MO": 24
+          },
+          "industryExtensions": {
+            "ZZ_GAS_MIX_SPEC": "1.45% CH4 / 15% O2 / 60ppm CO / 25ppm H2S bal N2"
           }
         }
-      },
-      "mvke": {
-        "vkorg": "1000",
-        "vtweg": "10",
-        "dwerk": "2000",
-        "taxkm": "1",
-        "mtpos": "NORM",
-        "kondm": "01",
-        "tragr": "0001",
-        "ladgr": "0002"
-      },
-      "industryExtensions": {
-        "ZZ_CAD_REV": "DWG-SHF-042 Rev.D",
-        "ZZ_ALLOY_GRADE": "SS304 Stainless",
-        "ZZ_TOLERANCE_ISO": "ISO 2768-f (Fine)"
-      }
-    },
-    {
-      "mara": {
-        "matnr": "100000412",
-        "maktx": "Refined Bleached Deodorized Palm Olein (RBDPO)",
-        "mtart": "ROH",
-        "mbrsh": "F",
-        "meins": "L",
-        "matkl": "FOOD-OIL",
-        "bismt": "AGRO-RBD-09",
-        "spart": "04",
-        "brgew": 0.92,
-        "ntgew": 0.91,
-        "gewei": "KG",
-        "volum": 0.001,
-        "voleh": "M3",
-        "groes": "IBC Tank 1000L",
-        "ean11": "8998821004129",
-        "mstae": "",
-        "xchpf": true,
-        "createdAt": "2026-04-20T07:45:00Z",
-        "createdBy": "D.SARI",
-        "updatedAt": "2026-11-05T09:30:00Z"
-      },
-      "marc": {
-        "1000": {
-          "werks": "1000",
-          "ekgrp": "P04",
-          "bstme": "L",
-          "ekwsl": "Z003",
-          "kautb": true,
-          "webaz": 1,
-          "kordp": true,
-          "dismm": "VB",
-          "dispo": "F01",
-          "minbe": 3000,
-          "disls": "FX",
-          "bstmi": 1000,
-          "bstma": 10000,
-          "bstfe": 4000,
-          "eisbe": 1200,
-          "beskz": "F",
-          "plifz": 3,
-          "mtvfp": "02",
-          "prctr": "PC-1000-FOOD",
-          "sernp": ""
-        }
-      },
-      "mard": {
-        "1000-0001": {
-          "werks": "1000",
-          "lgort": "0001",
-          "lgobe": "Gudang Utama Bahan Baku",
-          "lgpbe": "TNK-F02-01",
-          "labst": 2400,
-          "insme": 0,
-          "speme": 0,
-          "raube": "03 - Food Grade Clean",
-          "tempb": "20°C - 28°C",
-          "maxlz": 365,
-          "mhdrz": 120,
-          "mhdhb": 365
-        }
-      },
-      "mbew": {
-        "1000": {
-          "bwkey": "1000",
-          "bklas": "3000",
-          "vprsv": "V",
-          "verpr": 16200,
-          "stprs": 16000,
-          "peinh": 1,
-          "waers": "IDR",
-          "lbkum": 2400,
-          "salk3": 38880000
-        }
-      },
-      "mvke": {
-        "vkorg": "1000",
-        "vtweg": "20",
-        "dwerk": "1000",
-        "taxkm": "1",
-        "mtpos": "NORM",
-        "kondm": "03",
-        "tragr": "0001",
-        "ladgr": "0001"
-      },
-      "industryExtensions": {
-        "ZZ_HALAL_CERT": "ID00410000182940924",
-        "ZZ_ALLERGEN_INFO": "Bebas Alergen"
-      }
-    },
-    {
-      "mara": {
-        "matnr": "400000508",
-        "maktx": "Smart Industrial IoT Gateway Module X4 (Retail SKU)",
-        "mtart": "HAWA",
-        "mbrsh": "R",
-        "meins": "PC",
-        "matkl": "RTL-ELEC",
-        "bismt": "IOT-GW-X4",
-        "spart": "05",
-        "brgew": 0.65,
-        "ntgew": 0.52,
-        "gewei": "KG",
-        "volum": 0.0018,
-        "voleh": "M3",
-        "groes": "180 x 120 x 45 mm",
-        "ean11": "8991002508991",
-        "mstae": "",
-        "xchpf": false,
-        "createdAt": "2026-05-10T11:20:00Z",
-        "createdBy": "B.SANTOSO",
-        "updatedAt": "2026-10-12T13:00:00Z"
-      },
-      "marc": {
-        "3000": {
-          "werks": "3000",
-          "ekgrp": "P05",
-          "bstme": "PC",
-          "ekwsl": "Z001",
-          "kautb": true,
-          "webaz": 1,
-          "kordp": false,
-          "dismm": "PD",
-          "dispo": "R01",
-          "minbe": 50,
-          "disls": "EX",
-          "bstmi": 10,
-          "bstma": 500,
-          "bstfe": 50,
-          "eisbe": 25,
-          "beskz": "F",
-          "plifz": 6,
-          "mtvfp": "02",
-          "prctr": "PC-3000-RTL",
-          "sernp": "ZSER"
-        }
-      },
-      "mard": {
-        "3000-0001": {
-          "werks": "3000",
-          "lgort": "0001",
-          "lgobe": "Pusat Distribusi Timur",
-          "lgpbe": "SLF-R08-14",
-          "labst": 180,
-          "insme": 0,
-          "speme": 0,
-          "raube": "01 - Normal Indoor",
-          "tempb": "10°C - 35°C",
-          "maxlz": 0,
-          "mhdrz": 0,
-          "mhdhb": 0
-        }
-      },
-      "mbew": {
-        "3000": {
-          "bwkey": "3000",
-          "bklas": "3100",
-          "vprsv": "V",
-          "verpr": 1250000,
-          "stprs": 1250000,
-          "peinh": 1,
-          "waers": "IDR",
-          "lbkum": 180,
-          "salk3": 225000000
-        }
-      },
-      "mvke": {
-        "vkorg": "1000",
-        "vtweg": "20",
-        "dwerk": "3000",
-        "taxkm": "1",
-        "mtpos": "NORM",
-        "kondm": "04",
-        "tragr": "0001",
-        "ladgr": "0001"
-      },
-      "industryExtensions": {
-        "ZZ_RETAIL_SEASON": "Core Year-Round",
-        "ZZ_MERCH_CATEGORY": "Automation & Edge Devices"
-      }
-    },
-    {
-      "mara": {
-        "matnr": "500000602",
-        "maktx": "Synthetic Turbine Lubricant ISO VG 46 (Drum 209L)",
-        "mtart": "ERSA",
-        "mbrsh": "O",
-        "meins": "L",
-        "matkl": "ENG-LUB",
-        "bismt": "LUB-TRB-46",
-        "spart": "06",
-        "brgew": 198,
-        "ntgew": 181,
-        "gewei": "KG",
-        "volum": 0.21,
-        "voleh": "M3",
-        "groes": "Steel Drum 209L",
-        "ean11": "",
-        "mstae": "",
-        "xchpf": true,
-        "createdAt": "2026-06-08T13:15:00Z",
-        "createdBy": "H.GUNAWAN",
-        "updatedAt": "2026-11-10T10:05:00Z"
-      },
-      "marc": {
-        "3000": {
-          "werks": "3000",
-          "ekgrp": "P06",
-          "bstme": "L",
-          "ekwsl": "Z002",
-          "kautb": false,
-          "webaz": 2,
-          "kordp": true,
-          "dismm": "VB",
-          "dispo": "O01",
-          "minbe": 600,
-          "disls": "FX",
-          "bstmi": 209,
-          "bstma": 2090,
-          "bstfe": 418,
-          "eisbe": 209,
-          "beskz": "F",
-          "plifz": 5,
-          "mtvfp": "01",
-          "prctr": "PC-3000-ENG",
-          "sernp": ""
-        }
-      },
-      "mard": {
-        "3000-0002": {
-          "werks": "3000",
+      ],
+      "purchaseRequisitions": [
+        {
+          "banfn": "0010006101",
+          "matnr": "400000201",
+          "maktx": "Portable Multi-Gas Detector 4-Gas (H2S/CO/O2/LEL) ATEX",
+          "werks": "TL01",
           "lgort": "0002",
-          "lgobe": "Gudang Suku Cadang (MRO)",
-          "lgpbe": "DRM-O01-05",
-          "labst": 418,
-          "insme": 0,
-          "speme": 0,
-          "raube": "01 - Normal Indoor",
-          "tempb": "Ambient <40°C",
-          "maxlz": 1095,
-          "mhdrz": 0,
-          "mhdhb": 1095
+          "menge": 10,
+          "meins": "EA",
+          "lfdat": "2026-11-26",
+          "ekgrp": "P40",
+          "dispo": "TL1",
+          "preis": 13200000,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "status": "Approved",
+          "createdAt": "2026-11-18T07:50:00Z",
+          "createdBy": "SALES_SAFETY"
         }
-      },
-      "mbew": {
-        "3000": {
-          "bwkey": "3000",
-          "bklas": "3040",
-          "vprsv": "V",
-          "verpr": 82000,
-          "stprs": 82000,
+      ],
+      "purchaseOrders": [
+        {
+          "ebeln": "4500006101",
+          "lifnr": "V-TL02",
+          "vendorName": "PT Stahlwille & Snap-on Tools Nusantara",
+          "matnr": "400000203",
+          "maktx": "Torque Wrench Click-Type 1/2\" Drive 40–200 Nm (Kunci Momen)",
+          "werks": "TL01",
+          "lgort": "0001",
+          "menge": 8,
+          "receivedQty": 4,
+          "meins": "EA",
+          "netpr": 3650000,
           "peinh": 1,
           "waers": "IDR",
-          "lbkum": 418,
-          "salk3": 34276000,
-          "bwtty": "Z",
-          "splitValuations": {
-            "LOCAL": {
-              "bwtar": "LOCAL",
-              "bklas": "3040",
-              "vprsv": "V",
-              "verpr": 78000,
-              "stprs": 78000,
-              "peinh": 1,
-              "lbkum": 209,
-              "salk3": 16302000
-            },
-            "IMPORT": {
-              "bwtar": "IMPORT",
-              "bklas": "3040",
-              "vprsv": "V",
-              "verpr": 86000,
-              "stprs": 86000,
-              "peinh": 1,
-              "lbkum": 209,
-              "salk3": 17974000
-            },
-            "FREE": {
-              "bwtar": "FREE",
-              "bklas": "3040",
-              "vprsv": "V",
-              "verpr": 0,
-              "stprs": 0,
-              "peinh": 1,
-              "lbkum": 0,
-              "salk3": 0
-            },
-            "OLD": {
-              "bwtar": "OLD",
-              "bklas": "3040",
-              "vprsv": "V",
-              "verpr": 52000,
-              "stprs": 52000,
-              "peinh": 1,
-              "lbkum": 0,
-              "salk3": 0
-            }
+          "bwtar": "IMPORT",
+          "ekgrp": "P41",
+          "eindt": "2026-11-24",
+          "status": "Partially Received",
+          "createdAt": "2026-11-12T10:00:00Z",
+          "createdBy": "N.RAHMA"
+        }
+      ],
+      "materialDocuments": [
+        {
+          "mblnr": "5000016101",
+          "mjahr": "2026",
+          "bwart": "101",
+          "bwartDesc": "Goods Receipt for Purchase Order",
+          "matnr": "400000203",
+          "maktx": "Torque Wrench Click-Type 1/2\" Drive 40–200 Nm (Kunci Momen)",
+          "werks": "TL01",
+          "lgort": "0001",
+          "ebeln": "4500006101",
+          "menge": 4,
+          "meins": "EA",
+          "dmbtr": 14600000,
+          "waers": "IDR",
+          "bwtar": "IMPORT",
+          "belnr": "4900061101",
+          "budat": "2026-11-16",
+          "usnam": "WH_TOOLS",
+          "bktxt": "GR 4 unit Torque Wrench 1/2\" + Sertifikat Kalibrasi ISO 6789"
+        }
+      ],
+      "customIndustryFields": [
+        {
+          "id": "cf-tl-line",
+          "fieldName": "ZZ_TOOL_PPE_GROUP",
+          "label": "Kategori Tools & Safety",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "Hand Tools & Kunci",
+            "Torque & Precision Tool",
+            "Gas Detector & Instrument",
+            "APD Kepala & Mata",
+            "APD Fall Protection",
+            "Gas Kalibrasi"
+          ],
+          "defaultValue": "Hand Tools & Kunci",
+          "helpText": "Pengelompokan katalog penjualan perkakas, detektor gas, atau APD",
+          "status": "required"
+        },
+        {
+          "id": "cf-tl-std",
+          "fieldName": "ZZ_SAFETY_STD",
+          "label": "Standar Sertifikasi (ANSI/EN/ATEX/SNI)",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "select",
+          "options": [
+            "ATEX / IECEx",
+            "ANSI / ISEA",
+            "EN / CE",
+            "DIN / ISO",
+            "SNI / TKDN"
+          ],
+          "defaultValue": "EN / CE",
+          "helpText": "Standar sertifikasi keselamatan atau standar mutu perkakas",
+          "status": "required"
+        },
+        {
+          "id": "cf-tl-calib",
+          "fieldName": "ZZ_CALIB_MONTHS",
+          "label": "Siklus Kalibrasi Wajib",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "number",
+          "unit": "Bulan",
+          "helpText": "Interval kalibrasi untuk Gas Detector dan Kunci Momen (isi 0 jika tidak perlu)",
+          "status": "optional"
+        },
+        {
+          "id": "cf-tl-ex",
+          "fieldName": "ZZ_EX_RATING",
+          "label": "Rating Explosion-Proof / IP",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "text",
+          "helpText": "Mis. Ex ia IIC T4 Ga / IP68 untuk gas detector area migas",
+          "status": "optional"
+        },
+        {
+          "id": "cf-tl-size",
+          "fieldName": "ZZ_SIZE_DRIVE",
+          "label": "Ukuran / Drive / Kapasitas",
+          "industrySector": "R",
+          "targetView": "industry",
+          "dataType": "text",
+          "helpText": "Spesifikasi ukuran kunci (8-32mm, 1/2\" Dr), ukuran APD, atau sensor gas",
+          "status": "required"
+        },
+        {
+          "id": "cf-tl-cas",
+          "fieldName": "ZZ_GAS_MIX_SPEC",
+          "label": "Komposisi Gas Kalibrasi",
+          "industrySector": "C",
+          "targetView": "industry",
+          "dataType": "text",
+          "helpText": "Konsentrasi campuran gas standar untuk bump test & kalibrasi",
+          "status": "required"
+        }
+      ],
+      "standardFieldRules": [
+        {
+          "fieldKey": "bismt",
+          "technicalName": "MARA-BISMT",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Old Material Number / OEM Cross-Ref",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "brgew",
+          "technicalName": "MARA-BRGEW",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Gross Weight",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "optional",
+            "F": "required",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "groes",
+          "technicalName": "MARA-GROES",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "Size / Dimensions",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "optional",
+            "P": "hide",
+            "F": "optional",
+            "R": "required",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "ean11",
+          "technicalName": "MARA-EAN11",
+          "tableName": "MARA",
+          "viewKey": "basic",
+          "label": "EAN / UPC Barcode",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "xchpf",
+          "technicalName": "MARA-XCHPF",
+          "tableName": "MARA",
+          "viewKey": "purchasing",
+          "label": "Batch Management Requirement",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "kautb",
+          "technicalName": "MARC-KAUTB",
+          "tableName": "MARC",
+          "viewKey": "purchasing",
+          "label": "Automatic PO Allowed",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "display",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "eisbe",
+          "technicalName": "MARC-EISBE",
+          "tableName": "MARC",
+          "viewKey": "mrp",
+          "label": "Safety Stock",
+          "rulesByIndustry": {
+            "M": "required",
+            "C": "required",
+            "P": "required",
+            "F": "optional",
+            "R": "optional",
+            "O": "required"
+          }
+        },
+        {
+          "fieldKey": "tempb",
+          "technicalName": "MARD-TEMPB",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Temperature Conditions",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "required",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "mhdrz",
+          "technicalName": "MARD-MHDRZ",
+          "tableName": "MARD",
+          "viewKey": "storage",
+          "label": "Minimum Remaining Shelf Life (Days)",
+          "rulesByIndustry": {
+            "M": "hide",
+            "C": "optional",
+            "P": "required",
+            "F": "required",
+            "R": "optional",
+            "O": "hide"
+          }
+        },
+        {
+          "fieldKey": "sernp",
+          "technicalName": "MARC-SERNP",
+          "tableName": "MARC",
+          "viewKey": "storage",
+          "label": "Serial Number Profile",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "hide",
+            "P": "optional",
+            "F": "hide",
+            "R": "optional",
+            "O": "optional"
+          }
+        },
+        {
+          "fieldKey": "bwtty",
+          "technicalName": "MBEW-BWTTY",
+          "tableName": "MBEW",
+          "viewKey": "accounting",
+          "label": "Valuation Category (Split Valuation)",
+          "rulesByIndustry": {
+            "M": "optional",
+            "C": "optional",
+            "P": "optional",
+            "F": "optional",
+            "R": "optional",
+            "O": "optional"
           }
         }
-      },
-      "mvke": {
-        "vkorg": "1000",
-        "vtweg": "10",
-        "dwerk": "3000",
-        "taxkm": "1",
-        "mtpos": "NORM",
-        "kondm": "01",
-        "tragr": "0001",
-        "ladgr": "0002"
-      },
-      "industryExtensions": {
-        "ZZ_SULFUR_PCT": 0.03,
-        "ZZ_ENERGY_SPEC": "DIN 51515 Part 1 / ISO VG 46"
-      }
-    }
-  ],
-  "purchaseRequisitions": [
-    {
-      "banfn": "0010004521",
-      "matnr": "100000205",
-      "maktx": "Paracetamol Micronized API BP/USP Grade",
-      "werks": "1000",
-      "lgort": "0002",
-      "menge": 300,
-      "meins": "KG",
-      "lfdat": "2026-11-28",
-      "ekgrp": "P01",
-      "dispo": "P01",
-      "preis": 185000,
-      "waers": "IDR",
-      "status": "Approved",
-      "createdAt": "2026-11-15T09:00:00Z",
-      "createdBy": "R.KUSUMA"
-    },
-    {
-      "banfn": "0010004522",
-      "matnr": "100000412",
-      "maktx": "Refined Bleached Deodorized Palm Olein (RBDPO)",
-      "werks": "1000",
-      "lgort": "0001",
-      "menge": 2000,
-      "meins": "L",
-      "lfdat": "2026-11-25",
-      "ekgrp": "P04",
-      "dispo": "F01",
-      "preis": 16200,
-      "waers": "IDR",
-      "status": "Open",
-      "createdAt": "2026-11-17T14:20:00Z",
-      "createdBy": "D.SARI"
-    }
-  ],
-  "purchaseOrders": [
-    {
-      "ebeln": "4500008910",
-      "lifnr": "V-100042",
-      "vendorName": "PT Kimia Raya Sentosa Tbk",
-      "matnr": "100000101",
-      "maktx": "Caustic Soda Flakes 98% Industrial Grade (NaOH)",
-      "werks": "1000",
-      "lgort": "0001",
-      "menge": 1000,
-      "receivedQty": 0,
-      "meins": "KG",
-      "netpr": 15200,
-      "peinh": 1,
-      "waers": "IDR",
-      "ekgrp": "P02",
-      "eindt": "2026-11-22",
-      "status": "Open",
-      "createdAt": "2026-11-14T10:30:00Z",
-      "createdBy": "S.PRATAMA"
-    },
-    {
-      "ebeln": "4500008911",
-      "lifnr": "V-100234",
-      "vendorName": "PT Mitra Energi Pelumas",
-      "matnr": "500000602",
-      "maktx": "Synthetic Turbine Lubricant ISO VG 46 (Drum 209L)",
-      "werks": "3000",
-      "lgort": "0002",
-      "menge": 418,
-      "receivedQty": 209,
-      "meins": "L",
-      "netpr": 84500,
-      "peinh": 1,
-      "waers": "IDR",
-      "ekgrp": "P06",
-      "eindt": "2026-11-21",
-      "status": "Partially Received",
-      "createdAt": "2026-11-12T08:15:00Z",
-      "createdBy": "H.GUNAWAN"
-    }
-  ],
-  "materialDocuments": [
-    {
-      "mblnr": "5000012041",
-      "mjahr": "2026",
-      "bwart": "101",
-      "bwartDesc": "Goods Receipt for Purchase Order",
-      "matnr": "500000602",
-      "maktx": "Synthetic Turbine Lubricant ISO VG 46 (Drum 209L)",
-      "werks": "3000",
-      "lgort": "0002",
-      "ebeln": "4500008911",
-      "menge": 209,
-      "meins": "L",
-      "dmbtr": 17660500,
-      "waers": "IDR",
-      "belnr": "4900051102",
-      "budat": "2026-11-16",
-      "usnam": "H.GUNAWAN",
-      "bktxt": "GR Parsial 1 Drum 209L PO 4500008911"
-    },
-    {
-      "mblnr": "5000012039",
-      "mjahr": "2026",
-      "bwart": "561",
-      "bwartDesc": "Initial Entry of Stock Balances",
-      "matnr": "100000101",
-      "maktx": "Caustic Soda Flakes 98% Industrial Grade (NaOH)",
-      "werks": "1000",
-      "lgort": "0001",
-      "menge": 3200,
-      "meins": "KG",
-      "dmbtr": 46400000,
-      "waers": "IDR",
-      "belnr": "4900051098",
-      "budat": "2026-11-01",
-      "usnam": "S.PRATAMA",
-      "bktxt": "Saldo Awal Cutover S/4HANA Plant 1000"
-    }
-  ],
-  "customIndustryFields": [
-    {
-      "id": "cf-cas",
-      "fieldName": "ZZ_CAS_NUMBER",
-      "label": "CAS Registry Number",
-      "industrySector": "C",
-      "targetView": "industry",
-      "dataType": "text",
-      "defaultValue": "",
-      "helpText": "Nomor identifikasi unik zat kimia sesuai Chemical Abstracts Service (mis. 1310-73-2)",
-      "status": "required"
-    },
-    {
-      "id": "cf-un-hazard",
-      "fieldName": "ZZ_HAZARD_CLASS",
-      "label": "Kelas Bahaya GHS / UN",
-      "industrySector": "C",
-      "targetView": "industry",
-      "dataType": "select",
-      "options": [
-        "Non-Hazardous",
-        "Class 3 - Flammable Liquid",
-        "Class 5.1 - Oxidizer",
-        "Class 8 - Corrosive",
-        "Class 9 - Misc Dangerous"
       ],
-      "defaultValue": "Non-Hazardous",
-      "helpText": "Klasifikasi bahan berbahaya untuk penanganan gudang B3 & pengiriman",
-      "status": "required"
-    },
-    {
-      "id": "cf-flash-point",
-      "fieldName": "ZZ_FLASH_POINT",
-      "label": "Flash Point (Titik Nyala)",
-      "industrySector": "C",
-      "targetView": "industry",
-      "dataType": "number",
-      "unit": "°C",
-      "helpText": "Suhu terendah di mana uap bahan kimia dapat menyala",
-      "status": "optional"
-    },
-    {
-      "id": "cf-bpom",
-      "fieldName": "ZZ_BPOM_REG",
-      "label": "Nomor Registrasi BPOM / NIE",
-      "industrySector": "P",
-      "targetView": "industry",
-      "dataType": "text",
-      "helpText": "Nomor Izin Edar atau persetujuan bahan baku farmasi dari BPOM RI",
-      "status": "required"
-    },
-    {
-      "id": "cf-gmp-grade",
-      "fieldName": "ZZ_GMP_GRADE",
-      "label": "Standar Farmakope / GMP Grade",
-      "industrySector": "P",
-      "targetView": "industry",
-      "dataType": "select",
-      "options": [
-        "BP / USP Grade",
-        "EP Grade",
-        "Food / Pharma Excipient",
-        "Sterile Injectable Grade"
-      ],
-      "defaultValue": "BP / USP Grade",
-      "helpText": "Kualitas kepatuhan CPOB / cGMP untuk material produksi farmasi",
-      "status": "required"
-    },
-    {
-      "id": "cf-cold-chain",
-      "fieldName": "ZZ_COLD_CHAIN",
-      "label": "Wajib Cold Chain (2°C - 8°C)",
-      "industrySector": "P",
-      "targetView": "industry",
-      "dataType": "boolean",
-      "defaultValue": false,
-      "helpText": "Aktifkan jika material memerlukan transportasi dan penyimpanan rantai dingin",
-      "status": "required"
-    },
-    {
-      "id": "cf-cad-rev",
-      "fieldName": "ZZ_CAD_REV",
-      "label": "Nomor & Revisi Gambar Teknik (CAD)",
-      "industrySector": "M",
-      "targetView": "industry",
-      "dataType": "text",
-      "helpText": "Referensi dokumen engineering drawing terbaru (mis. DWG-SHF-042 Rev.C)",
-      "status": "required"
-    },
-    {
-      "id": "cf-alloy",
-      "fieldName": "ZZ_ALLOY_GRADE",
-      "label": "Material Alloy / Grade Logam",
-      "industrySector": "M",
-      "targetView": "industry",
-      "dataType": "select",
-      "options": [
-        "SS304 Stainless",
-        "SS316L Marine Grade",
-        "AISI 4140 Alloy Steel",
-        "AL6061-T6 Aluminum",
-        "Carbon Steel S45C"
-      ],
-      "defaultValue": "SS304 Stainless",
-      "helpText": "Spesifikasi metalurgi material atau komponen mekanikal",
-      "status": "required"
-    },
-    {
-      "id": "cf-tolerance",
-      "fieldName": "ZZ_TOLERANCE_ISO",
-      "label": "Kelas Toleransi ISO 2768",
-      "industrySector": "M",
-      "targetView": "industry",
-      "dataType": "select",
-      "options": [
-        "ISO 2768-f (Fine)",
-        "ISO 2768-m (Medium)",
-        "ISO 2768-c (Coarse)"
-      ],
-      "defaultValue": "ISO 2768-m (Medium)",
-      "helpText": "Toleransi dimensi standar untuk QC incoming inspection",
-      "status": "optional"
-    },
-    {
-      "id": "cf-halal",
-      "fieldName": "ZZ_HALAL_CERT",
-      "label": "Nomor Sertifikat Halal BPJPH",
-      "industrySector": "F",
-      "targetView": "industry",
-      "dataType": "text",
-      "helpText": "Nomor registrasi sertifikasi halal yang valid untuk bahan baku pangan",
-      "status": "required"
-    },
-    {
-      "id": "cf-allergen",
-      "fieldName": "ZZ_ALLERGEN_INFO",
-      "label": "Deklarasi Alergen",
-      "industrySector": "F",
-      "targetView": "industry",
-      "dataType": "select",
-      "options": [
-        "Bebas Alergen",
-        "Mengandung Susu / Laktosa",
-        "Mengandung Kedelai",
-        "Mengandung Gluten",
-        "Kacang-kacangan"
-      ],
-      "defaultValue": "Bebas Alergen",
-      "helpText": "Informasi alergen wajib untuk pelabelan produk pangan",
-      "status": "required"
-    },
-    {
-      "id": "cf-season",
-      "fieldName": "ZZ_RETAIL_SEASON",
-      "label": "Periode / Koleksi Ritel",
-      "industrySector": "R",
-      "targetView": "industry",
-      "dataType": "select",
-      "options": [
-        "Core Year-Round",
-        "Ramadan / Festive",
-        "Q4 Peak Season",
-        "Limited Edition"
-      ],
-      "defaultValue": "Core Year-Round",
-      "helpText": "Klasifikasi musim penjualan untuk alokasi rak dan promosi",
-      "status": "required"
-    },
-    {
-      "id": "cf-brand-tier",
-      "fieldName": "ZZ_MERCH_CATEGORY",
-      "label": "Kategori Merchandising",
-      "industrySector": "R",
-      "targetView": "industry",
-      "dataType": "text",
-      "helpText": "Hierarki kategori barang di sistem POS dan e-commerce",
-      "status": "optional"
-    },
-    {
-      "id": "cf-sulfur",
-      "fieldName": "ZZ_SULFUR_PCT",
-      "label": "Kadar Sulfur Maksimum",
-      "industrySector": "O",
-      "targetView": "industry",
-      "dataType": "number",
-      "unit": "% wt",
-      "helpText": "Persentase kandungan sulfur untuk kepatuhan emisi lingkungan",
-      "status": "required"
-    },
-    {
-      "id": "cf-api-spec",
-      "fieldName": "ZZ_ENERGY_SPEC",
-      "label": "Standar Spesifikasi API / ASTM",
-      "industrySector": "O",
-      "targetView": "industry",
-      "dataType": "text",
-      "helpText": "Referensi standar mutu energi atau pelumas industri (mis. ISO VG 46 / ASTM D445)",
-      "status": "required"
-    }
-  ],
-  "standardFieldRules": [
-    {
-      "fieldKey": "bismt",
-      "technicalName": "MARA-BISMT",
-      "tableName": "MARA",
-      "viewKey": "basic",
-      "label": "Old Material Number / Legacy Code",
-      "rulesByIndustry": {
-        "M": "optional",
-        "C": "optional",
-        "P": "optional",
-        "F": "optional",
-        "R": "optional",
-        "O": "optional"
-      }
-    },
-    {
-      "fieldKey": "brgew",
-      "technicalName": "MARA-BRGEW",
-      "tableName": "MARA",
-      "viewKey": "basic",
-      "label": "Gross Weight",
-      "rulesByIndustry": {
-        "M": "required",
-        "C": "required",
-        "P": "optional",
-        "F": "required",
-        "R": "required",
-        "O": "required"
-      }
-    },
-    {
-      "fieldKey": "groes",
-      "technicalName": "MARA-GROES",
-      "tableName": "MARA",
-      "viewKey": "basic",
-      "label": "Size / Dimensions",
-      "rulesByIndustry": {
-        "M": "required",
-        "C": "optional",
-        "P": "hide",
-        "F": "optional",
-        "R": "required",
-        "O": "optional"
-      }
-    },
-    {
-      "fieldKey": "ean11",
-      "technicalName": "MARA-EAN11",
-      "tableName": "MARA",
-      "viewKey": "basic",
-      "label": "EAN / UPC Barcode",
-      "rulesByIndustry": {
-        "M": "hide",
-        "C": "hide",
-        "P": "required",
-        "F": "required",
-        "R": "required",
-        "O": "hide"
-      }
-    },
-    {
-      "fieldKey": "xchpf",
-      "technicalName": "MARA-XCHPF",
-      "tableName": "MARA",
-      "viewKey": "purchasing",
-      "label": "Batch Management Requirement",
-      "rulesByIndustry": {
-        "M": "optional",
-        "C": "required",
-        "P": "required",
-        "F": "required",
-        "R": "hide",
-        "O": "optional"
-      }
-    },
-    {
-      "fieldKey": "kautb",
-      "technicalName": "MARC-KAUTB",
-      "tableName": "MARC",
-      "viewKey": "purchasing",
-      "label": "Automatic PO Allowed",
-      "rulesByIndustry": {
-        "M": "optional",
-        "C": "optional",
-        "P": "display",
-        "F": "optional",
-        "R": "required",
-        "O": "optional"
-      }
-    },
-    {
-      "fieldKey": "eisbe",
-      "technicalName": "MARC-EISBE",
-      "tableName": "MARC",
-      "viewKey": "mrp",
-      "label": "Safety Stock",
-      "rulesByIndustry": {
-        "M": "required",
-        "C": "required",
-        "P": "required",
-        "F": "optional",
-        "R": "optional",
-        "O": "required"
-      }
-    },
-    {
-      "fieldKey": "tempb",
-      "technicalName": "MARD-TEMPB",
-      "tableName": "MARD",
-      "viewKey": "storage",
-      "label": "Temperature Conditions",
-      "rulesByIndustry": {
-        "M": "hide",
-        "C": "required",
-        "P": "required",
-        "F": "required",
-        "R": "optional",
-        "O": "optional"
-      }
-    },
-    {
-      "fieldKey": "mhdrz",
-      "technicalName": "MARD-MHDRZ",
-      "tableName": "MARD",
-      "viewKey": "storage",
-      "label": "Minimum Remaining Shelf Life (Days)",
-      "rulesByIndustry": {
-        "M": "hide",
-        "C": "optional",
-        "P": "required",
-        "F": "required",
-        "R": "optional",
-        "O": "hide"
-      }
-    },
-    {
-      "fieldKey": "sernp",
-      "technicalName": "MARC-SERNP",
-      "tableName": "MARC",
-      "viewKey": "storage",
-      "label": "Serial Number Profile",
-      "rulesByIndustry": {
-        "M": "optional",
-        "C": "hide",
-        "P": "hide",
-        "F": "hide",
-        "R": "optional",
-        "O": "optional"
-      }
-    },
-    {
-      "fieldKey": "bwtty",
-      "technicalName": "MBEW-BWTTY",
-      "tableName": "MBEW",
-      "viewKey": "accounting",
-      "label": "Valuation Category (Split Valuation)",
-      "rulesByIndustry": {
-        "M": "optional",
-        "C": "optional",
-        "P": "optional",
-        "F": "optional",
-        "R": "optional",
-        "O": "optional"
-      }
-    }
-  ],
-  "changeDocuments": [
-    {
-      "changenr": "CHG-000941",
-      "objectClass": "MM_DOC",
-      "objectId": "5000012041",
-      "tableName": "MARD",
-      "fieldName": "LABST (Unrestricted Stock)",
-      "oldValue": "209 L",
-      "newValue": "418 L",
-      "username": "H.GUNAWAN",
-      "timestamp": "2026-11-16T15:12:00Z"
-    },
-    {
-      "changenr": "CHG-000940",
-      "objectClass": "CUSTOMIZING",
-      "objectId": "OMS9-C",
-      "tableName": "T137 / CI_MARA",
-      "fieldName": "ZZ_CAS_NUMBER",
-      "oldValue": "Optional",
-      "newValue": "Required",
-      "username": "BASIS_ADMIN",
-      "timestamp": "2026-11-10T11:00:00Z"
-    },
-    {
-      "changenr": "CHG-000939",
-      "objectClass": "MATERIAL",
-      "objectId": "100000205",
-      "tableName": "MARC",
-      "fieldName": "MINBE (Reorder Point)",
-      "oldValue": "300 KG",
-      "newValue": "400 KG",
-      "username": "R.KUSUMA",
-      "timestamp": "2026-11-01T11:10:00Z"
-    }
-  ],
-  "plants": [
-    {
-      "werks": "1000",
-      "name": "PT Nusantara Industri - Plant Jakarta",
-      "city": "Jakarta Utara",
-      "bukrs": "1000",
-      "storageLocations": [
+      "materialGroups": [
         {
-          "lgort": "0001",
-          "lgobe": "Gudang Utama Bahan Baku",
-          "type": "Main Warehouse"
+          "matkl": "INST-GAS",
+          "label": "Gas Detector & Calibration Instrument",
+          "defaultMtart": "HAWA",
+          "description": "Detektor gas portabel maupun fixed (H2S, CO, O2, LEL, VOC) bersertifikat ATEX/IECEx.",
+          "characteristics": [
+            {
+              "id": "ch-tl-gas",
+              "charName": "CHR_SENSOR_GASES",
+              "label": "Target Gas Sensor",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Daftar gas yang dideteksi (mis. H2S, CO, O2, LEL)"
+            },
+            {
+              "id": "ch-tl-atx",
+              "charName": "CHR_ATEX_CERT",
+              "label": "Klasifikasi Area Berbahaya",
+              "dataType": "select",
+              "options": [
+                "ATEX Zone 0 / Ex ia",
+                "ATEX Zone 1 / Ex ib",
+                "IECEx",
+                "Non-Ex Safe Area"
+              ],
+              "required": true,
+              "helpText": "Sertifikasi keselamatan area gas mudah terbakar"
+            },
+            {
+              "id": "ch-tl-bat",
+              "charName": "CHR_BATTERY_LIFE",
+              "label": "Daya Tahan Baterai",
+              "dataType": "number",
+              "unit": "Jam",
+              "required": true,
+              "helpText": "Durasi operasi kontinu sekali pengisian"
+            }
+          ]
         },
         {
-          "lgort": "0002",
-          "lgobe": "Gudang Suhu Terkendali / Cold Room",
-          "type": "Temperature Controlled"
+          "matkl": "TOOL-HAND",
+          "label": "Hand Tools & Kunci-kunci Industri",
+          "defaultMtart": "HAWA",
+          "description": "Kunci pas ring, kunci sok, kunci L, obeng insulated, dan tool set bengkel.",
+          "characteristics": [
+            {
+              "id": "ch-tl-rng",
+              "charName": "CHR_SIZE_RANGE",
+              "label": "Rentang Ukuran Kunci",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Mis. 8–32 mm atau 3/8\"–1-1/4\""
+            },
+            {
+              "id": "ch-tl-pcs",
+              "charName": "CHR_PCS_COUNT",
+              "label": "Jumlah Isi / Pieces",
+              "dataType": "number",
+              "unit": "Pcs",
+              "required": true,
+              "helpText": "Total item di dalam set atau satuan"
+            },
+            {
+              "id": "ch-tl-aly",
+              "charName": "CHR_TOOL_ALLOY",
+              "label": "Material Baja Perkakas",
+              "dataType": "select",
+              "options": [
+                "Chrome Vanadium (Cr-V)",
+                "Chrome Molybdenum (Cr-Mo)",
+                "Non-Sparking Cu-Be",
+                "VDE Insulated 1000V"
+              ],
+              "required": true,
+              "helpText": "Jenis baja / standar isolasi perkakas"
+            }
+          ]
         },
         {
-          "lgort": "0003",
-          "lgobe": "Supply Line Produksi",
-          "type": "Production Floor"
+          "matkl": "TOOL-TORQ",
+          "label": "Torque Wrench & Precision Tools",
+          "defaultMtart": "HAWA",
+          "description": "Kunci momen (click, dial, digital), torque multiplier, dan alat ukur presisi.",
+          "characteristics": [
+            {
+              "id": "ch-tl-drv",
+              "charName": "CHR_DRIVE_SIZE",
+              "label": "Square Drive Size",
+              "dataType": "select",
+              "options": [
+                "1/4\"",
+                "3/8\"",
+                "1/2\"",
+                "3/4\"",
+                "1\""
+              ],
+              "required": true,
+              "helpText": "Ukuran kepala square drive"
+            },
+            {
+              "id": "ch-tl-trq",
+              "charName": "CHR_TORQUE_RANGE",
+              "label": "Rentang Torsi Kerja",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Kapasitas torsi minimum–maksimum (mis. 40–200 Nm)"
+            },
+            {
+              "id": "ch-tl-acc",
+              "charName": "CHR_ACCURACY",
+              "label": "Toleransi Akurasi",
+              "dataType": "select",
+              "options": [
+                "±2% Digital",
+                "±3% ISO 6789",
+                "±4% Standard"
+              ],
+              "required": true,
+              "helpText": "Akurasi kalibrasi pabrikan"
+            }
+          ]
         },
         {
-          "lgort": "0004",
-          "lgobe": "Area Karantina & QC Inspection",
-          "type": "Quarantine / QA"
+          "matkl": "PPE-FALL",
+          "label": "APD Fall Protection & Working at Height",
+          "defaultMtart": "HAWA",
+          "description": "Full body harness, double lanyard, shock absorber, dan SRL kerja ketinggian.",
+          "characteristics": [
+            {
+              "id": "ch-tl-ld",
+              "charName": "CHR_MAX_LOAD_KG",
+              "label": "Beban Kerja Maksimum",
+              "dataType": "number",
+              "unit": "kg",
+              "required": true,
+              "helpText": "Batas berat pengguna + peralatan sesuai EN 361"
+            },
+            {
+              "id": "ch-tl-dr",
+              "charName": "CHR_D_RING_COUNT",
+              "label": "Konfigurasi D-Ring",
+              "dataType": "select",
+              "options": [
+                "1 Dorsal",
+                "2 Dorsal + Sternal",
+                "5 Full Body Rescue"
+              ],
+              "required": true,
+              "helpText": "Jumlah dan posisi attachment D-Ring"
+            },
+            {
+              "id": "ch-tl-ln",
+              "charName": "CHR_LANYARD_TYPE",
+              "label": "Tipe Lanyard / Absorber",
+              "dataType": "select",
+              "options": [
+                "Double Webbing + Absorber",
+                "Double Kernmantle Rope",
+                "Self-Retracting Lifeline (SRL)"
+              ],
+              "required": true,
+              "helpText": "Jenis tali penahan jatuh"
+            }
+          ]
+        },
+        {
+          "matkl": "PPE-HEAD",
+          "label": "APD Head, Eye & Respiratory",
+          "defaultMtart": "HAWA",
+          "description": "Safety helmet, kacamata safety, face shield, ear muff, dan respirator.",
+          "characteristics": [
+            {
+              "id": "ch-tl-die",
+              "charName": "CHR_DIELECTRIC_CLS",
+              "label": "Kelas Proteksi Dielektrik",
+              "dataType": "select",
+              "options": [
+                "Class E (20,000V)",
+                "Class G (2,200V)",
+                "Class C (Conductive / Vented)"
+              ],
+              "required": true,
+              "helpText": "Klasifikasi ketahanan listrik sesuai ANSI Z89.1"
+            },
+            {
+              "id": "ch-tl-sus",
+              "charName": "CHR_SUSPENSION",
+              "label": "Tipe Suspensi Dalam",
+              "dataType": "select",
+              "options": [
+                "4-Point Ratchet",
+                "6-Point Ratchet",
+                "Pin-Lock Standard"
+              ],
+              "required": true,
+              "helpText": "Sistem pengikat kepala di dalam helm"
+            },
+            {
+              "id": "ch-tl-clr",
+              "charName": "CHR_COLOR_CODE",
+              "label": "Kode Warna APD",
+              "dataType": "select",
+              "options": [
+                "Putih",
+                "Kuning",
+                "Merah",
+                "Biru",
+                "Hijau",
+                "Oranye"
+              ],
+              "required": true,
+              "helpText": "Warna identifikasi peran di site/lapangan"
+            }
+          ]
+        },
+        {
+          "matkl": "INST-CAL",
+          "label": "Calibration Gas & Lab Consumables",
+          "defaultMtart": "ROH",
+          "description": "Tabung gas kalibrasi campuran, regulator flow, dan sensor pengganti.",
+          "characteristics": [
+            {
+              "id": "ch-tl-cvl",
+              "charName": "CHR_CYLINDER_VOL",
+              "label": "Volume Tabung Gas",
+              "dataType": "number",
+              "unit": "L",
+              "required": true,
+              "helpText": "Kapasitas liter tabung bertekanan"
+            },
+            {
+              "id": "ch-tl-cbl",
+              "charName": "CHR_GAS_BLEND",
+              "label": "Konsentrasi Campuran Gas",
+              "dataType": "text",
+              "required": true,
+              "helpText": "Komposisi PPM / % LEL / % Vol"
+            },
+            {
+              "id": "ch-tl-shf",
+              "charName": "CHR_STABILITY_MO",
+              "label": "Stabilitas Sertifikat Gas",
+              "dataType": "number",
+              "unit": "Bulan",
+              "required": true,
+              "helpText": "Masa berlaku akurasi campuran gas"
+            }
+          ]
         }
-      ]
-    },
-    {
-      "werks": "2000",
-      "name": "PT Nusantara Industri - Plant Cikarang",
-      "city": "Kab. Bekasi",
-      "bukrs": "1000",
-      "storageLocations": [
+      ],
+      "changeDocuments": [
         {
-          "lgort": "0001",
-          "lgobe": "Gudang Utama Manufaktur",
-          "type": "Main Warehouse"
+          "changenr": "CHG-000602",
+          "objectClass": "MM_DOC",
+          "objectId": "5000016101",
+          "tableName": "MARD / MBEW",
+          "fieldName": "MIGO 101 (TL01/0001 · IMPORT)",
+          "oldValue": "12 EA",
+          "newValue": "16 EA · MAP 3.450.000 IDR",
+          "username": "WH_TOOLS",
+          "timestamp": "2026-11-16T13:30:00Z"
         },
         {
-          "lgort": "0002",
-          "lgobe": "Gudang Bahan Kimia & B3",
-          "type": "Hazmat Storage"
-        },
-        {
-          "lgort": "0003",
-          "lgobe": "Gudang Barang Jadi",
-          "type": "Finished Goods"
+          "changenr": "CHG-000101",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX02-TL40",
+          "tableName": "T001 / CI_MARA",
+          "fieldName": "TENANT_PROVISIONING",
+          "oldValue": "-",
+          "newValue": "PT Safetech Perkakas Mandiri (Penjualan Tools, Gas Detector & APD)",
+          "username": "BASIS_ADMIN",
+          "timestamp": "2026-11-20T09:32:01.217Z"
         }
-      ]
-    },
-    {
-      "werks": "3000",
-      "name": "PT Nusantara Industri - Plant Surabaya",
-      "city": "Surabaya",
-      "bukrs": "1000",
-      "storageLocations": [
+      ],
+      "plants": [
         {
-          "lgort": "0001",
-          "lgobe": "Pusat Distribusi Timur",
-          "type": "Distribution Center"
+          "werks": "TL01",
+          "name": "PT Safetech Perkakas Mandiri - Hub Pusat & Lab Kalibrasi",
+          "city": "Tangerang",
+          "bukrs": "TL40",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Rak Hand Tools & Kunci Momen",
+              "type": "Tools Bay"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "Lab Kalibrasi & Gas Detector",
+              "type": "Calibration Lab"
+            },
+            {
+              "lgort": "0003",
+              "lgobe": "Gudang Bersih APD / PPE",
+              "type": "PPE Warehouse"
+            }
+          ]
         },
         {
-          "lgort": "0002",
-          "lgobe": "Gudang Suku Cadang (MRO)",
-          "type": "Spare Parts"
+          "werks": "TL02",
+          "name": "PT Safetech Perkakas Mandiri - Cabang Industrial Safety",
+          "city": "Balikpapan",
+          "bukrs": "TL40",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Counter Penjualan & Ready Stock",
+              "type": "Retail Hub"
+            },
+            {
+              "lgort": "0002",
+              "lgobe": "Store Gas Kalibrasi & Unit Demo",
+              "type": "Hazmat / Demo"
+            }
+          ]
+        }
+      ],
+      "vendors": [
+        {
+          "lifnr": "V-TL01",
+          "name": "PT MSA Safety Instrumentation",
+          "city": "Jakarta",
+          "ekorg": "TL40",
+          "paymentTerms": "NT30"
+        },
+        {
+          "lifnr": "V-TL02",
+          "name": "PT Stahlwille & Snap-on Tools Nusantara",
+          "city": "Tangerang",
+          "ekorg": "TL40",
+          "paymentTerms": "NT45"
+        },
+        {
+          "lifnr": "V-TL03",
+          "name": "PT 3M & Honeywell APD Indonesia",
+          "city": "Bekasi",
+          "ekorg": "TL40",
+          "paymentTerms": "NT30"
         }
       ]
     }
-  ],
-  "vendors": [
-    {
-      "lifnr": "V-100042",
-      "name": "PT Kimia Raya Sentosa Tbk",
-      "city": "Cilegon",
-      "ekorg": "1000",
-      "paymentTerms": "NT30"
-    },
-    {
-      "lifnr": "V-100088",
-      "name": "PT Baja Presisi Mandiri",
-      "city": "Bekasi",
-      "ekorg": "1000",
-      "paymentTerms": "NT45"
-    },
-    {
-      "lifnr": "V-100115",
-      "name": "PT Biofarma Bahan Aktif",
-      "city": "Bandung",
-      "ekorg": "1000",
-      "paymentTerms": "NT30"
-    },
-    {
-      "lifnr": "V-100190",
-      "name": "PT Agro Sawit Nusantara",
-      "city": "Medan",
-      "ekorg": "1000",
-      "paymentTerms": "NT14"
-    },
-    {
-      "lifnr": "V-100234",
-      "name": "PT Mitra Energi Pelumas",
-      "city": "Jakarta",
-      "ekorg": "1000",
-      "paymentTerms": "NT30"
-    }
-  ],
-  "materialTypes": [
-    {
-      "mtart": "ROH",
-      "label": "Raw Material",
-      "description": "Bahan baku produksi yang dibeli dari vendor eksternal",
-      "defaultBklas": "3000",
-      "priceControlDefault": "V",
-      "internalNumberPrefix": "100000"
-    },
-    {
-      "mtart": "HALB",
-      "label": "Semi-Finished Goods",
-      "description": "Barang setengah jadi hasil proses produksi internal atau subkontrak",
-      "defaultBklas": "7900",
-      "priceControlDefault": "S",
-      "internalNumberPrefix": "200000"
-    },
-    {
-      "mtart": "FERT",
-      "label": "Finished Goods",
-      "description": "Produk akhir siap jual kepada pelanggan",
-      "defaultBklas": "7920",
-      "priceControlDefault": "S",
-      "internalNumberPrefix": "300000"
-    },
-    {
-      "mtart": "HAWA",
-      "label": "Trading Goods",
-      "description": "Barang dagangan yang dibeli dan dijual kembali tanpa proses manufaktur",
-      "defaultBklas": "3100",
-      "priceControlDefault": "V",
-      "internalNumberPrefix": "400000"
-    },
-    {
-      "mtart": "ERSA",
-      "label": "Spare Parts",
-      "description": "Suku cadang pemeliharaan mesin dan fasilitas pabrik (MRO)",
-      "defaultBklas": "3040",
-      "priceControlDefault": "V",
-      "internalNumberPrefix": "500000"
-    },
-    {
-      "mtart": "VERP",
-      "label": "Packaging Material",
-      "description": "Material kemasan primer maupun sekunder",
-      "defaultBklas": "3050",
-      "priceControlDefault": "V",
-      "internalNumberPrefix": "600000"
-    }
-  ],
-  "industrySectors": [
-    {
-      "mbrsh": "M",
-      "label": "Mechanical Engineering & Manufaktur",
-      "shortLabel": "Manufaktur (M)",
-      "description": "Industri perakitan mesin, logam presisi, otomotif, dan komponen teknik.",
-      "regulatoryContext": "Standar ISO 2768, kontrol revisi gambar CAD, dimensi, dan berat material."
-    },
-    {
-      "mbrsh": "C",
-      "label": "Chemical & Petrochemical",
-      "shortLabel": "Kimia (C)",
-      "description": "Bahan kimia industri, pelarut, resin, serta bahan berbahaya (B3).",
-      "regulatoryContext": "Wajib nomor CAS, kelas bahaya UN/GHS, titik nyala (Flash Point), dan manajemen batch."
-    },
-    {
-      "mbrsh": "P",
-      "label": "Pharmaceuticals & Healthcare",
-      "shortLabel": "Farmasi (P)",
-      "description": "Bahan aktif obat (API), eksipien, sediaan steril, dan alat kesehatan.",
-      "regulatoryContext": "Wajib registrasi BPOM/CPOB, grade GMP, kontrol rantai dingin, dan shelf-life (SLED)."
-    },
-    {
-      "mbrsh": "F",
-      "label": "Food, Beverage & Agribusiness",
-      "shortLabel": "Pangan & Agro (F)",
-      "description": "Bahan pangan olahan, minyak nabati, aditif makanan, dan produk konsumsi.",
-      "regulatoryContext": "Wajib sertifikasi Halal BPJPH, informasi alergen, dan masa kedaluwarsa ketat."
-    },
-    {
-      "mbrsh": "R",
-      "label": "Retail & Consumer Goods",
-      "shortLabel": "Ritel (R)",
-      "description": "Produk ritel cepat saji (FMCG), elektronik konsumen, dan distribusi modern.",
-      "regulatoryContext": "Fokus barcode EAN-13/GTIN, kategori merchandising, dan pengemasan ritel."
-    },
-    {
-      "mbrsh": "O",
-      "label": "Mining, Oil & Gas / Energy",
-      "shortLabel": "Pertambangan & Energi (O)",
-      "description": "Komoditas tambang, bahan bakar industri, pelumas turbin, dan utilitas energi.",
-      "regulatoryContext": "Parameter nilai kalori, kadar sulfur, izin lingkungan, dan spesifikasi API/ASTM."
-    }
-  ],
-  "valuationTypes": [
-    {
-      "bwtar": "LOCAL",
-      "label": "Local Procurement",
-      "description": "Material yang diperoleh dari vendor domestik dalam negeri.",
-      "defaultPriceRule": "Harga beli lokal + ongkos kirim domestik"
-    },
-    {
-      "bwtar": "IMPORT",
-      "label": "Import Procurement",
-      "description": "Material impor dari luar negeri termasuk bea masuk & freight.",
-      "defaultPriceRule": "Harga CIF/FOB + Bea Masuk & Landing Cost"
-    },
-    {
-      "bwtar": "FREE",
-      "label": "Free of Charge (Gratis)",
-      "description": "Barang bonus vendor, sampel, atau hibah tanpa nilai perolehan.",
-      "defaultPriceRule": "Nilai perolehan 0 (Free Goods)"
-    },
-    {
-      "bwtar": "OLD",
-      "label": "Old / Reconditioned Stock",
-      "description": "Stok lama, barang rekondisi, atau material sisa proyek terdahulu.",
-      "defaultPriceRule": "Nilai buku terdepresiasi / harga rekondisi"
-    }
-  ]
+  }
 }

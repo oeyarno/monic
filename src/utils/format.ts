@@ -1,3 +1,5 @@
+import type { MaterialGroupDefinition } from '../types/sap.ts';
+
 export function formatCurrency(amount: number, currency = 'IDR'): string {
   if (currency === 'IDR') {
     return new Intl.NumberFormat('id-ID', {
@@ -41,4 +43,37 @@ export function getMaterialStatusLabel(mstae: string): {
   if (mstae === '02') return { label: 'Diblokir Total (02)', tone: 'danger' };
   if (mstae === 'Z1') return { label: 'Obsolete / Non-Aktif (Z1)', tone: 'warning' };
   return { label: 'Aktif', tone: 'nominal' };
+}
+
+export function formatCharacteristicPattern(
+  matGroup: MaterialGroupDefinition | undefined,
+  separator = '-'
+): string {
+  if (!matGroup || matGroup.characteristics.length === 0) return '-';
+  return matGroup.characteristics.map((ch) => ch.label).join(separator);
+}
+
+export function buildMaterialShortDescription(
+  matGroup: MaterialGroupDefinition | undefined,
+  characteristics: Record<string, string | number | boolean> | undefined,
+  separator = '-'
+): string {
+  if (!matGroup || !characteristics || matGroup.characteristics.length === 0) return '';
+  const parts: string[] = [];
+  for (const ch of matGroup.characteristics) {
+    const raw = characteristics[ch.charName];
+    if (raw === undefined || raw === null) continue;
+    if (ch.dataType === 'boolean') {
+      if (raw === true) parts.push(ch.label);
+      continue;
+    }
+    const str = String(raw).trim();
+    if (!str) continue;
+    if (ch.dataType === 'number' && ch.unit) {
+      parts.push(`${str} ${ch.unit}`);
+    } else {
+      parts.push(str);
+    }
+  }
+  return parts.join(separator);
 }
