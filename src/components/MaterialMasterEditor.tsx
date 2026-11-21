@@ -1087,10 +1087,13 @@ export function MaterialMasterEditor({
                 <div className="rounded-lg border border-blue-200 bg-blue-50/40 p-4 space-y-3">
                   <h4 className="text-sm font-semibold text-slate-900">Kelola Master Characteristic — {activeMaterialGroup.matkl}</h4>
                   {ct04Message && <p className="text-xs text-slate-700">{ct04Message}</p>}
-                  {activeMaterialGroup.characteristics.map((ch) => (
-                    <div key={ch.id} className="flex flex-col md:flex-row gap-2 md:items-center">
-                      <div className="min-w-0 flex-1"><span className="font-mono text-xs">{ch.charName}</span><span className="ml-2 text-xs">{ch.label}</span></div>
-                      <button type="button" onClick={() => deleteCt04Characteristic(ch.id)} className="text-xs text-red-600 hover:underline">Hapus</button>
+                  {activeMaterialGroup.characteristics.map((ch, index) => (
+                    <div key={ch.id} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto_auto_auto] gap-2 items-center border-b border-blue-100 pb-2">
+                      <div className="min-w-0"><div className="font-mono text-[11px] text-slate-500">{ch.charName}</div><div className="text-xs font-medium">{ch.label}</div></div>
+                      <input aria-label={`Pilihan ${ch.label}`} value={(ch.options || []).join(', ')} onChange={(event) => setMaterialGroups((current) => current.map((group) => group.matkl === activeMaterialGroup.matkl ? { ...group, characteristics: group.characteristics.map((item) => item.id === ch.id ? { ...item, options: event.target.value.split(',').map((value) => value.trim()).filter(Boolean) } : item) } : group))} placeholder="Opsi dropdown dipisah koma" className="px-2 py-1.5 text-xs border rounded-md" />
+                      <label className="text-[11px] flex items-center gap-1"><input type="checkbox" checked={ch.required} onChange={(event) => setMaterialGroups((current) => current.map((group) => group.matkl === activeMaterialGroup.matkl ? { ...group, characteristics: group.characteristics.map((item) => item.id === ch.id ? { ...item, required: event.target.checked } : item) } : group))} />Wajib</label>
+                      <button type="button" disabled={index === 0} onClick={() => { const next = { ...activeMaterialGroup, characteristics: [...activeMaterialGroup.characteristics] }; [next.characteristics[index - 1], next.characteristics[index]] = [next.characteristics[index], next.characteristics[index - 1]]; setMaterialGroups((current) => current.map((group) => group.matkl === next.matkl ? next : group)); void persistCt04Group(next).catch((error) => setCt04Message(error.message)); }} className="text-xs text-[#0064D9] disabled:opacity-30">↑</button>
+                      <div className="flex gap-2"><button type="button" onClick={() => persistCt04Group({ ...activeMaterialGroup, characteristics: activeMaterialGroup.characteristics.map((item) => item.id === ch.id ? { ...item, options: ch.options } : item) }).catch((error) => setCt04Message(error.message))} className="text-xs text-[#0064D9]">Simpan</button><button type="button" onClick={() => deleteCt04Characteristic(ch.id)} className="text-xs text-red-600 hover:underline">Hapus</button></div>
                     </div>
                   ))}
                   <form onSubmit={addCt04Characteristic} className="grid grid-cols-1 md:grid-cols-3 gap-2">
