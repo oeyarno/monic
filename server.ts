@@ -67,48 +67,7 @@ function resolveDataDir(): string {
 }
 
 const DATA_DIR = resolveDataDir();
-
 const DB_FILE = path.join(DATA_DIR, 'sap-store.json');
-const SEED_IMPORT_MARKER = path.join(DATA_DIR, '.monic-seed-imported-zip-v5');
-
-function importBundledSeedOnce(): void {
-  if (process.env.MONIC_REPLACE_DB_FROM_SEED !== 'true' || fs.existsSync(SEED_IMPORT_MARKER)) {
-    return;
-  }
-
-  const seedFile = path.join(__dirname, 'seed-data', 'sap-store.json');
-  if (!fs.existsSync(seedFile)) {
-    throw new Error(`Seed database tidak ditemukan: ${seedFile}. Database produksi tidak diubah.`);
-  }
-
-  const seed = JSON.parse(fs.readFileSync(seedFile, 'utf-8')) as Partial<MultiTenantDatabase>;
-  if (
-    typeof seed.schemaVersion !== 'number' ||
-    seed.schemaVersion < 2 ||
-    !Array.isArray(seed.tenantCompanies) ||
-    seed.tenantCompanies.length === 0 ||
-    typeof seed.workspaces !== 'object' ||
-    seed.workspaces === null
-  ) {
-    throw new Error('Seed database tidak valid. Database produksi tidak diubah.');
-  }
-
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (fs.existsSync(DB_FILE)) {
-    createDatabaseBackup(DB_FILE, 'before-seed-replacement');
-  }
-
-  const tempFile = path.join(DATA_DIR, `sap-store.seed-import-${process.pid}-${Date.now()}.json`);
-  fs.copyFileSync(seedFile, tempFile, fs.constants.COPYFILE_EXCL);
-  const copied = JSON.parse(fs.readFileSync(tempFile, 'utf-8')) as Partial<MultiTenantDatabase>;
-  if (copied.schemaVersion !== seed.schemaVersion || !Array.isArray(copied.tenantCompanies)) {
-    fs.unlinkSync(tempFile);
-    throw new Error('Verifikasi salinan seed gagal. Database produksi tidak diubah.');
-  }
-  fs.renameSync(tempFile, DB_FILE);
-  fs.writeFileSync(SEED_IMPORT_MARKER, new Date().toISOString(), { flag: 'wx' });
-  console.log(`MONIC: database seed schema v${seed.schemaVersion} berhasil dipasang; backup database lama dibuat bila sebelumnya tersedia.`);
-}
 
 function createDatabaseBackup(sourceFile: string, reason: string): string {
   const safeReason = reason.replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -152,6 +111,24 @@ function saveDatabase(db: MultiTenantDatabase): void {
   }
 }
 
+function remapMatnrPrefix(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return value.replace(/^400000(\d{3})$/, '200000$1');
+  }
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      value[i] = remapMatnrPrefix(value[i]);
+    }
+    return value;
+  }
+  if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      (value as Record<string, unknown>)[key] = remapMatnrPrefix(child);
+    }
+  }
+  return value;
+}
+
 function loadDatabase(): MultiTenantDatabase {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -188,7 +165,7 @@ function loadDatabase(): MultiTenantDatabase {
   }
 
   const currentVersion = parsed.schemaVersion;
-  if (currentVersion < 14) {
+  if (currentVersion < 17) {
     try {
       createDatabaseBackup(DB_FILE, `pre-v${currentVersion}`);
     } catch (err) {
@@ -575,6 +552,57 @@ function loadDatabase(): MultiTenantDatabase {
       parsed.schemaVersion = 14;
     }
 
+    if (parsed.schemaVersion < 15) {
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        const standardGroups = createStandardizedMaterialGroups(company.coreBusinessType);
+        ws.materialGroups = structuredClone(standardGroups);
+
+        for (const mat of ws.materials || []) {
+          normalizeCorporateMara(mat);
+        }
+      }
+
+      const corporateByMatnr = new Map<string, MaterialMasterRecord>();
+      for (const company of parsed.tenantCompanies) {
+        for (const mat of parsed.workspaces[company.tenantId]?.materials || []) {
+          if (!corporateByMatnr.has(mat.mara.matnr)) {
+            const corporateMat = structuredClone(mat);
+            corporateMat.mara.mbrsh = 'M';
+            corporateMat.mara.mtart = 'HAWA';
+            corporateByMatnr.set(corporateMat.mara.matnr, corporateMat);
+          }
+        }
+      }
+      parsed.corporateMaraMaterials = Array.from(corporateByMatnr.values());
+      for (const corporateMaterial of parsed.corporateMaraMaterials) {
+        syncCorporateMaterial(parsed as MultiTenantDatabase, corporateMaterial);
+      }
+      parsed.schemaVersion = 15;
+    }
+
+    if (parsed.schemaVersion < 16) {
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+        ws.materialGroups = structuredClone(createStandardizedMaterialGroups(company.coreBusinessType));
+        for (const mat of ws.materials || []) {
+          normalizeCorporateMara(mat);
+        }
+      }
+      for (const mat of parsed.corporateMaraMaterials || []) {
+        normalizeCorporateMara(mat);
+      }
+      parsed.schemaVersion = 16;
+    }
+
+    if (parsed.schemaVersion < 17) {
+      remapMatnrPrefix(parsed);
+      parsed.schemaVersion = 17;
+    }
+
     saveDatabase(parsed as MultiTenantDatabase);
   }
 
@@ -624,6 +652,7 @@ function buildBootstrapPayload(
   return {
     activeTenant: company,
     tenants: buildTenantSummaries(db),
+    corporateMaraMaterials: db.corporateMaraMaterials || [],
     materials: ws.materials,
     purchaseRequisitions: ws.purchaseRequisitions,
     purchaseOrders: ws.purchaseOrders,
@@ -681,6 +710,74 @@ function generateInternalMaterialNumber(
     }
   }
   return `${prefix}${String(maxSeq).padStart(3, '0')}`;
+}
+
+function normalizeCorporateMara(material: MaterialMasterRecord): void {
+  material.mara.mbrsh = 'M';
+  material.mara.mtart = 'HAWA';
+
+  const legacyGroupMap: Record<string, string> = {
+    'UNIT-WL': 'UN-LVH',
+    'PART-ELEC': 'HE-ENG',
+    'PART-UC': 'HE-UND',
+    'OCTG-PIPE': 'HE-HYD',
+    'VALVE-HP': 'HE-HYD',
+    'DRILL-MUD': 'MN-LUB',
+    'LUBE-HD': 'MN-LUB',
+    'FLT-KIT': 'MN-FLT',
+    'HYD-PUMP': 'HE-HYD',
+    'CAL-INST': 'SV-CAL',
+    'INST-CAL': 'IN-MSR',
+    'PPE-HEAD': 'SF-APD',
+    'PPE-FALL': 'SF-APD',
+    'TOOL-TORQ': 'TL-HND',
+    'TOOL-HAND': 'TL-HND',
+    'INST-GAS': 'IN-GAS',
+  };
+  material.mara.matkl = legacyGroupMap[material.mara.matkl] || material.mara.matkl;
+}
+
+function syncCorporateMaterial(db: MultiTenantDatabase, source: MaterialMasterRecord): void {
+  normalizeCorporateMara(source);
+  if (!db.corporateMaraMaterials) db.corporateMaraMaterials = [];
+
+  const centralIdx = db.corporateMaraMaterials.findIndex(
+    (material) => material.mara.matnr === source.mara.matnr
+  );
+  if (centralIdx >= 0) {
+    db.corporateMaraMaterials[centralIdx] = structuredClone(source);
+  } else {
+    db.corporateMaraMaterials.unshift(structuredClone(source));
+  }
+
+  for (const company of db.tenantCompanies) {
+    const ws = db.workspaces[company.tenantId];
+    if (!ws) continue;
+    const tenantIdx = ws.materials.findIndex(
+      (material) => material.mara.matnr === source.mara.matnr
+    );
+    if (tenantIdx >= 0) {
+      const existing = ws.materials[tenantIdx];
+      existing.mara = structuredClone(source.mara);
+      existing.characteristics = structuredClone(source.characteristics || {});
+    } else {
+      ws.materials.unshift(structuredClone(source));
+    }
+  }
+}
+
+function removeCorporateMaterial(db: MultiTenantDatabase, matnr: string): void {
+  if (db.corporateMaraMaterials) {
+    db.corporateMaraMaterials = db.corporateMaraMaterials.filter(
+      (material) => material.mara.matnr !== matnr
+    );
+  }
+  for (const company of db.tenantCompanies) {
+    const ws = db.workspaces[company.tenantId];
+    if (ws) {
+      ws.materials = ws.materials.filter((material) => material.mara.matnr !== matnr);
+    }
+  }
 }
 
 function validateMaterialAgainstOms9(
@@ -894,7 +991,11 @@ async function startServer() {
     };
 
     // System-generated Material Number (Internal Number Range by MTART)
-    material.mara.matnr = generateInternalMaterialNumber(material.mara.mtart, workspace.materials);
+    material.mara.matnr = generateInternalMaterialNumber(
+      material.mara.mtart,
+      db.corporateMaraMaterials?.length ? db.corporateMaraMaterials : workspace.materials
+    );
+    normalizeCorporateMara(material);
     if (!material.characteristics) {
       material.characteristics = {};
     }
@@ -917,7 +1018,7 @@ async function startServer() {
     material.mara.updatedAt = now;
     material.mara.createdBy = username;
 
-    workspace.materials.unshift(material);
+    syncCorporateMaterial(db, material);
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MATERIAL',
@@ -932,6 +1033,137 @@ async function startServer() {
 
     saveDatabase(db);
     return res.status(201).json({ material, db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  // MM01 Batch - Import Material Masters from XLS/XLSX
+  app.post('/api/materials/import', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { rows, matkl: selectedMatkl, username = 'SAP_IMPORT' } = req.body as {
+      rows: Record<string, unknown>[];
+      matkl?: string;
+      username?: string;
+    };
+    if (!Array.isArray(rows) || rows.length === 0) {
+      return res.status(400).json({ error: 'Tidak ada baris material untuk diimpor.' });
+    }
+    if (rows.length > 1000) {
+      return res.status(400).json({ error: 'Maksimal 1.000 baris material per proses impor.' });
+    }
+
+    const created: string[] = [];
+    const updated: string[] = [];
+    const errors: Array<{ row: number; matnr?: string; errors: string[] }> = [];
+    const now = new Date().toISOString();
+
+    rows.forEach((rawRow, index) => {
+      const row: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(rawRow)) {
+        row[String(key).trim().toUpperCase()] = value;
+      }
+      const rowNumber = index + 2;
+      const matkl = String(row.MATKL || selectedMatkl || '').trim().toUpperCase();
+      const maktx = String(row.MAKTX || '').trim();
+      const meins = String(row.MEINS || '').trim().toUpperCase();
+      const matnrInput = String(row.MATNR || '').trim();
+      const mbrsh = String(row.MBRSH || 'M').trim().toUpperCase();
+      const mtart = String(row.MTART || 'HAWA').trim().toUpperCase();
+      const rowErrors: string[] = [];
+      if (!maktx) rowErrors.push('MAKTX (deskripsi material) wajib diisi.');
+      if (!matkl) rowErrors.push('MATKL (material group) wajib diisi.');
+      if (!meins) rowErrors.push('MEINS (base unit) wajib diisi.');
+
+      const matGroup = workspace.materialGroups.find((group) => group.matkl === matkl);
+      if (!matGroup) rowErrors.push(`MATKL "${matkl}" tidak terdaftar.`);
+      if (!workspace.unitsOfMeasure.some((unit) => unit.msehi === meins)) {
+        rowErrors.push(`MEINS "${meins}" tidak terdaftar di master unit.`);
+      }
+      if (mbrsh !== 'M') rowErrors.push('MBRSH hanya dapat menggunakan M.');
+      if (mtart !== 'HAWA') rowErrors.push('MTART hanya dapat menggunakan HAWA.');
+
+      if (rowErrors.length === 0 && matGroup) {
+        for (const char of matGroup.characteristics) {
+          if (!char.required) continue;
+          const value = row[char.charName.toUpperCase()] ?? row[char.label.toUpperCase()];
+          if (value === undefined || value === null || String(value).trim() === '') {
+            rowErrors.push(`Karakteristik wajib "${char.label}" (${char.charName}) belum diisi.`);
+          }
+        }
+      }
+
+      if (rowErrors.length > 0) {
+        errors.push({ row: rowNumber, matnr: matnrInput || undefined, errors: rowErrors });
+        return;
+      }
+
+      const template = workspace.materials.find((material) => material.mara.matkl === matkl)
+        || workspace.materials[0];
+      if (!template) {
+        errors.push({ row: rowNumber, matnr: matnrInput || undefined, errors: ['Data template material tenant tidak tersedia.'] });
+        return;
+      }
+
+      const material = structuredClone(template);
+      const matnr = matnrInput || generateInternalMaterialNumber(mtart as MaterialTypeCode, db.corporateMaraMaterials || workspace.materials);
+      const oldMatnr = matnrInput ? matnrInput : undefined;
+      material.mara = {
+        ...material.mara,
+        matnr,
+        maktx,
+        mtart: 'HAWA',
+        mbrsh: 'M',
+        meins,
+        matkl,
+        bismt: String(row.BISMT || row.LEGACY_CODE || '').trim(),
+        createdAt: oldMatnr && workspace.materials.some((m) => m.mara.matnr === oldMatnr) ? material.mara.createdAt : now,
+        createdBy: username,
+        updatedAt: now,
+      };
+
+      material.characteristics = {};
+      for (const char of matGroup?.characteristics || []) {
+        const value = row[char.charName.toUpperCase()] ?? row[char.label.toUpperCase()];
+        if (value !== undefined && value !== null && String(value).trim() !== '') {
+          if (char.dataType === 'number') {
+            material.characteristics[char.charName] = Number(value);
+          } else if (char.dataType === 'boolean') {
+            material.characteristics[char.charName] = ['true', '1', 'yes', 'ya'].includes(String(value).toLowerCase());
+          } else {
+            material.characteristics[char.charName] = String(value);
+          }
+        }
+      }
+
+      const validationErrors = validateMaterialAgainstOms9(material, workspace, workspace.plants[0]?.werks || '1000');
+      if (validationErrors.length > 0) {
+        errors.push({ row: rowNumber, matnr, errors: validationErrors });
+        return;
+      }
+
+      const existed = workspace.materials.some((m) => m.mara.matnr === matnr);
+      syncCorporateMaterial(db, material);
+      workspace.changeDocuments.unshift({
+        changenr: nextChangeNumber(workspace.changeDocuments),
+        objectClass: 'MATERIAL',
+        objectId: matnr,
+        tableName: 'MARA',
+        fieldName: existed ? 'IMPORT_UPDATE_MATERIAL (MM01/XLS)' : 'IMPORT_CREATE_MATERIAL (MM01/XLS)',
+        oldValue: existed ? 'Existing' : '-',
+        newValue: `${maktx} [HAWA/M]`,
+        username,
+        timestamp: now,
+      });
+      if (existed) updated.push(matnr);
+      else created.push(matnr);
+    });
+
+    saveDatabase(db);
+    return res.status(errors.length > 0 && created.length === 0 && updated.length === 0 ? 400 : 200).json({
+      created,
+      updated,
+      errors,
+      db: buildBootstrapPayload(db, tenantId),
+    });
   });
 
   // MM02 - Update Material Master
@@ -955,6 +1187,7 @@ async function startServer() {
     if (!material.characteristics) {
       material.characteristics = {};
     }
+    normalizeCorporateMara(material);
 
     const targetGroup = (workspace.materialGroups || []).find((mg) => mg.matkl === material.mara.matkl);
     if (autoGenerateMaktx || !material.mara.maktx.trim()) {
@@ -1045,7 +1278,7 @@ async function startServer() {
       });
     }
 
-    workspace.materials[idx] = material;
+    syncCorporateMaterial(db, material);
     workspace.changeDocuments.unshift(...diffs);
     saveDatabase(db);
     return res.json({ material, db: buildBootstrapPayload(db, tenantId) });
@@ -1075,7 +1308,29 @@ async function startServer() {
         error: `Material ${matnr} masih memiliki stok fisik (${totalStock}). Lakukan Goods Issue (MIGO 201) terlebih dahulu.`,
       });
     }
-    workspace.materials.splice(idx, 1);
+    for (const company of db.tenantCompanies) {
+      const tenantWorkspace = db.workspaces[company.tenantId];
+      if (!tenantWorkspace) continue;
+      const openPo = tenantWorkspace.purchaseOrders.find(
+        (po) => po.matnr === matnr && po.status !== 'Completed'
+      );
+      if (openPo) {
+        return res.status(400).json({
+          error: `Material ${matnr} masih memiliki Purchase Order terbuka di ${company.bukrs} (${openPo.ebeln}). Tidak dapat dihapus.`,
+        });
+      }
+      const sharedMaterial = tenantWorkspace.materials.find((mat) => mat.mara.matnr === matnr);
+      const tenantStock = Object.values(sharedMaterial?.mard || {}).reduce(
+        (sum, item) => sum + item.labst + item.insme + item.speme,
+        0
+      );
+      if (tenantStock > 0) {
+        return res.status(400).json({
+          error: `Material ${matnr} masih memiliki stok fisik di ${company.bukrs} (${tenantStock}). Tidak dapat dihapus.`,
+        });
+      }
+    }
+    removeCorporateMaterial(db, matnr);
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'MATERIAL',
@@ -2198,13 +2453,10 @@ async function startServer() {
     });
   }
 
-  const PORT = Number(process.env.PORT || 8080);
+  const PORT = 3000;
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`SAP S/4HANA Multi-Tenant Material Master & MM server running on http://0.0.0.0:${PORT}`);
   });
 }
 
-importBundledSeedOnce();
-const bootDatabase = loadDatabase();
-console.log(`MONIC database ready: schema v${bootDatabase.schemaVersion}, ${bootDatabase.tenantCompanies.length} companies, ${Object.keys(bootDatabase.workspaces).length} workspaces.`);
 startServer();

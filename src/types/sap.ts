@@ -374,13 +374,14 @@ export interface MultiTenantDatabase {
   activeTenantId: string;
   tenantCompanies: TenantCompany[];
   workspaces: Record<string, TenantWorkspaceData>;
+  corporateMaraMaterials?: MaterialMasterRecord[];
 }
 
 export interface SapBootstrapPayload extends TenantWorkspaceData {
   activeTenant: TenantCompany;
   tenants: TenantSummary[];
+  corporateMaraMaterials: MaterialMasterRecord[];
   materialTypes: MaterialTypeDefinition[];
   industrySectors: IndustrySectorDefinition[];
   valuationTypes: ValuationTypeDefinition[];
 }
-

@@ -55,7 +55,7 @@ export const MATERIAL_TYPES: MaterialTypeDefinition[] = [
     description: 'Material dagang, unit alat berat/kendaraan, spare parts, tools, dan kebutuhan operasional proyek/maintenance',
     defaultBklas: '3100',
     priceControlDefault: 'V',
-    internalNumberPrefix: '400000',
+    internalNumberPrefix: '200000',
   },
 ];
 
@@ -2642,7 +2642,7 @@ function buildUnitPartsWorkspace(): TenantWorkspaceData {
   const materials: MaterialMasterRecord[] = [
     {
       mara: {
-        matnr: '400000101',
+        matnr: '200000101',
         maktx: 'Wheel Loader 3 Ton Diesel Unit Complete CLG835H',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -2753,7 +2753,7 @@ function buildUnitPartsWorkspace(): TenantWorkspaceData {
     },
     {
       mara: {
-        matnr: '400000102',
+        matnr: '200000102',
         maktx: 'Alternator Assembly 24V 80A Genuine Heavy Truck',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -2941,7 +2941,7 @@ function buildUnitPartsWorkspace(): TenantWorkspaceData {
     },
     {
       mara: {
-        matnr: '400000104',
+        matnr: '200000104',
         maktx: 'Hilux-DC-Manual-4x4-Toyota',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -3040,7 +3040,7 @@ function buildUnitPartsWorkspace(): TenantWorkspaceData {
   const purchaseRequisitions: PurchaseRequisition[] = [
     {
       banfn: '0010007101',
-      matnr: '400000102',
+      matnr: '200000102',
       maktx: 'Alternator Assembly 24V 80A Genuine Heavy Truck',
       werks: 'US02',
       lgort: '0001',
@@ -3063,7 +3063,7 @@ function buildUnitPartsWorkspace(): TenantWorkspaceData {
       ebeln: '4500007101',
       lifnr: 'V-US01',
       vendorName: 'PT LiuGong Machinery Principal',
-      matnr: '400000101',
+      matnr: '200000101',
       maktx: 'Wheel Loader 3 Ton Diesel Unit Complete CLG835H',
       werks: 'US01',
       lgort: '0001',
@@ -3088,7 +3088,7 @@ function buildUnitPartsWorkspace(): TenantWorkspaceData {
       mjahr: '2026',
       bwart: '311',
       bwartDesc: 'Transfer Posting Storage Location',
-      matnr: '400000101',
+      matnr: '200000101',
       maktx: 'Wheel Loader 3 Ton Diesel Unit Complete CLG835H',
       werks: 'US01',
       lgort: '0001',
@@ -3135,7 +3135,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
   const materials: MaterialMasterRecord[] = [
     {
       mara: {
-        matnr: '400000201',
+        matnr: '200000201',
         maktx: 'Portable Multi-Gas Detector 4-Gas (H2S/CO/O2/LEL) ATEX',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -3284,7 +3284,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
     },
     {
       mara: {
-        matnr: '400000202',
+        matnr: '200000202',
         maktx: 'Combination Wrench Set 8–32mm Cr-V 14-Pcs (Kunci Pas Ring)',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -3380,7 +3380,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
     },
     {
       mara: {
-        matnr: '400000203',
+        matnr: '200000203',
         maktx: 'Torque Wrench Click-Type 1/2" Drive 40–200 Nm (Kunci Momen)',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -3476,7 +3476,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
     },
     {
       mara: {
-        matnr: '400000204',
+        matnr: '200000204',
         maktx: 'Full Body Harness Double Lanyard + Shock Absorber EN 361 (APD)',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -3573,7 +3573,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
     },
     {
       mara: {
-        matnr: '400000205',
+        matnr: '200000205',
         maktx: 'Safety Helmet V-Gard HDPE + Chin Strap ANSI Z89.1 Class E (APD)',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -3756,7 +3756,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
   const purchaseRequisitions: PurchaseRequisition[] = [
     {
       banfn: '0010006101',
-      matnr: '400000201',
+      matnr: '200000201',
       maktx: 'Portable Multi-Gas Detector 4-Gas (H2S/CO/O2/LEL) ATEX',
       werks: 'TL01',
       lgort: '0002',
@@ -3779,7 +3779,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
       ebeln: '4500006101',
       lifnr: 'V-TL02',
       vendorName: 'PT Stahlwille & Snap-on Tools Nusantara',
-      matnr: '400000203',
+      matnr: '200000203',
       maktx: 'Torque Wrench Click-Type 1/2" Drive 40–200 Nm (Kunci Momen)',
       werks: 'TL01',
       lgort: '0001',
@@ -3804,7 +3804,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
       mjahr: '2026',
       bwart: '101',
       bwartDesc: 'Goods Receipt for Purchase Order',
-      matnr: '400000203',
+      matnr: '200000203',
       maktx: 'Torque Wrench Click-Type 1/2" Drive 40–200 Nm (Kunci Momen)',
       werks: 'TL01',
       lgort: '0001',
@@ -3851,7 +3851,7 @@ export function buildMtCalibrationWorkspace(): TenantWorkspaceData {
   const materials: MaterialMasterRecord[] = [
     {
       mara: {
-        matnr: '400000301',
+        matnr: '200000301',
         maktx: 'Pressure Gauge Calibrator-0-700 bar-±0.05% FS-Druck',
         mtart: 'HAWA',
         mbrsh: 'M',
@@ -3954,8 +3954,8 @@ export function buildMtCalibrationWorkspace(): TenantWorkspaceData {
 }
 
 export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
-  return {
-    schemaVersion: 14,
+  const db: MultiTenantDatabase = {
+    schemaVersion: 17,
     activeTenantId: TENANT_COMPANIES[0].tenantId,
     tenantCompanies: structuredClone(TENANT_COMPANIES),
     workspaces: {
@@ -3966,4 +3966,28 @@ export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
       'tenant-unitparts': buildUnitPartsWorkspace(),
     },
   };
+
+  for (const company of db.tenantCompanies) {
+    const ws = db.workspaces[company.tenantId];
+    if (ws) {
+      ws.materialGroups = createStandardizedMaterialGroups(company.coreBusinessType);
+    }
+  }
+
+  const corporateMaterials = new Map<string, MaterialMasterRecord>();
+  for (const company of db.tenantCompanies) {
+    for (const material of db.workspaces[company.tenantId]?.materials || []) {
+      if (!corporateMaterials.has(material.mara.matnr)) {
+        corporateMaterials.set(material.mara.matnr, structuredClone(material));
+      }
+    }
+  }
+
+  db.corporateMaraMaterials = Array.from(corporateMaterials.values()).map((material) => {
+    material.mara.mbrsh = 'M';
+    material.mara.mtart = 'HAWA';
+    return material;
+  });
+  db.schemaVersion = 15;
+  return db;
 }

@@ -674,6 +674,7 @@ export default function App() {
                     setActiveRoute('mmbe');
                   }}
                   onCreateNewMaterial={() => handleNavigate('mm01')}
+                  onImported={(payload) => applyBootstrapPayload(payload, false)}
                 />
               )}
 

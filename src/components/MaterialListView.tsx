@@ -1,10 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import * as XLSX from 'xlsx';
 import {
   AlertTriangle,
   ArrowUpRight,
   CheckCircle2,
   ClipboardPlus,
+  Download,
   Search,
+  Upload,
   Warehouse,
   XCircle,
 } from 'lucide-react';
@@ -23,6 +26,7 @@ interface MaterialListViewProps {
   onCreatePrForMaterial: (matnr: string, werks: string) => void;
   onOpenStockOverview: (matnr: string) => void;
   onCreateNewMaterial: () => void;
+  onImported: (payload: SapBootstrapPayload) => void;
 }
 
 export function MaterialListView({
@@ -31,12 +35,20 @@ export function MaterialListView({
   onCreatePrForMaterial,
   onOpenStockOverview,
   onCreateNewMaterial,
+  onImported,
 }: MaterialListViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndustry, setSelectedIndustry] = useState<'ALL' | IndustrySectorCode>('ALL');
   const [selectedBklas, setSelectedBklas] = useState<'ALL' | string>('ALL');
   const [selectedType, setSelectedType] = useState<'ALL' | MaterialTypeCode>('ALL');
   const [selectedPlant, setSelectedPlant] = useState<'ALL' | string>('ALL');
+  const [templateMatkl, setTemplateMatkl] = useState<string>(data.materialGroups[0]?.matkl || '');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importing, setImporting] = useState(false);
+  const [importMessage, setImportMessage] = useState<{
+    type: 'success' | 'warning' | 'error';
+    text: string;
+  } | null>(null);
 
   const kpis = useMemo(() => {
     let totalInventoryValue = 0;
@@ -133,6 +145,91 @@ export function MaterialListView({
     };
   };
 
+  const downloadTemplate = () => {
+    const group = data.materialGroups.find((item) => item.matkl === templateMatkl);
+    if (!group) {
+      setImportMessage({ type: 'error', text: 'Pilih Material Group terlebih dahulu.' });
+      return;
+    }
+    const headers = [
+      'MATNR',
+      'MAKTX',
+      'MEINS',
+      'BISMT',
+      ...group.characteristics
+        .filter((char) => char.required)
+        .map((char) => char.charName),
+    ];
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      headers,
+      ['', 'Contoh Nama Material', data.unitsOfMeasure[0]?.msehi || 'EA', 'Kode lama', ...group.characteristics.filter((char) => char.required).map((char) => char.options?.[0] || '')],
+    ]);
+    worksheet['!cols'] = headers.map((header) => ({
+      wch: Math.max(header.length + 4, 18),
+    }));
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Material Master');
+    XLSX.writeFile(workbook, `Template_Material_${group.matkl}.xlsx`);
+  };
+
+  const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (!/\.(xlsx?|csv)$/i.test(file.name)) {
+      setImportMessage({ type: 'error', text: 'Format file harus XLS, XLSX, atau CSV.' });
+      return;
+    }
+    setImporting(true);
+    setImportMessage(null);
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      if (!sheetName) throw new Error('File tidak memiliki worksheet.');
+      const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(workbook.Sheets[sheetName], {
+        defval: '',
+        raw: false,
+      });
+      if (rows.length === 0) throw new Error('Worksheet tidak berisi data material.');
+
+      const response = await fetch('/api/materials/import', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Tenant-Id': data.activeTenant.tenantId,
+        },
+        body: JSON.stringify({ rows, matkl: templateMatkl, username: 'SAP_IMPORT_XLS' }),
+      });
+      const result = await response.json();
+      if (!response.ok && !result.db) {
+        throw new Error(result.error || 'Impor material gagal.');
+      }
+      if (result.db) onImported(result.db);
+
+      const errorCount = result.errors?.length || 0;
+      if (errorCount > 0) {
+        const first = result.errors[0];
+        setImportMessage({
+          type: 'warning',
+          text: `${result.created?.length || 0} dibuat, ${result.updated?.length || 0} diperbarui, ${errorCount} baris gagal. Baris ${first.row}: ${first.errors?.[0] || 'validasi gagal.'}`,
+        });
+      } else {
+        setImportMessage({
+          type: 'success',
+          text: `${result.created?.length || 0} material dibuat dan ${result.updated?.length || 0} diperbarui.`,
+        });
+      }
+    } catch (error) {
+      setImportMessage({
+        type: 'error',
+        text: error instanceof Error ? error.message : 'Gagal membaca atau mengimpor file.',
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* KPI Summary Strip - Flat Single Elevation Grid */}
@@ -144,6 +241,7 @@ export function MaterialListView({
           </div>
           <div className="mt-1 text-xs text-slate-500">
             {data.materialGroups.length} Material Group T023 · HAWA / Sektor {data.activeTenant.defaultIndustry}
+            {' · '}{(data.corporateMaraMaterials || []).length} MARA dibagikan korporat
           </div>
         </div>
 
@@ -317,7 +415,58 @@ export function MaterialListView({
               {data.activeTenant.name} · {data.activeTenant.coreBusiness} · Menampilkan {filteredMaterials.length} dari {data.materials.length} material
             </p>
           </div>
+          <div className="flex items-center gap-2">
+            <select
+              value={templateMatkl}
+              onChange={(event) => setTemplateMatkl(event.target.value)}
+              aria-label="Material Group untuk template XLS"
+              className="max-w-[220px] px-2.5 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-md text-slate-700"
+            >
+              {data.materialGroups.map((group) => (
+                <option key={group.matkl} value={group.matkl}>
+                  {group.matkl} · {group.label}
+                </option>
+              ))}
+            </select>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xls,.xlsx,.csv"
+              onChange={handleFileImport}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={downloadTemplate}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Template XLS
+            </button>
+            <button
+              type="button"
+              disabled={importing}
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#0064D9] hover:bg-[#0052B4] disabled:opacity-60 rounded-md"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              {importing ? 'Mengimpor...' : 'Import XLS'}
+            </button>
+          </div>
         </div>
+        {importMessage && (
+          <div
+            className={`mx-4 mt-3 mb-1 px-3 py-2 rounded-md text-xs border ${
+              importMessage.type === 'success'
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                : importMessage.type === 'warning'
+                ? 'bg-amber-50 text-amber-800 border-amber-200'
+                : 'bg-red-50 text-red-800 border-red-200'
+            }`}
+          >
+            {importMessage.text}
+          </div>
+        )}
 
         {filteredMaterials.length === 0 ? (
           <div className="p-10 text-center">
