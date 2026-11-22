@@ -7,10 +7,12 @@ import {
   Trash2,
 } from 'lucide-react';
 import type {
+  PlantDefinition,
   SapBootstrapPayload,
   TenantCoreBusinessType,
 } from '../types/sap.ts';
 import { formatCurrency, formatNumber } from '../utils/format.ts';
+import { PlantManagementView } from './PlantManagementView.tsx';
 
 interface TenantManagementViewProps {
   data: SapBootstrapPayload;
@@ -22,6 +24,11 @@ interface TenantManagementViewProps {
     city: string;
   }) => Promise<{ ok: boolean; error?: string }>;
   onDeleteTenant: (tenantId: string) => Promise<{ ok: boolean; error?: string }>;
+  onSavePlant: (
+    plant: PlantDefinition,
+    originalWerks?: string
+  ) => Promise<{ ok: boolean; error?: string }>;
+  onDeletePlant: (werks: string) => Promise<{ ok: boolean; error?: string }>;
 }
 
 const CORE_BUSINESS_TEMPLATES: {
@@ -66,6 +73,8 @@ export function TenantManagementView({
   onSwitchTenant,
   onCreateTenant,
   onDeleteTenant,
+  onSavePlant,
+  onDeletePlant,
 }: TenantManagementViewProps) {
   const [bukrs, setBukrs] = useState('');
   const [name, setName] = useState('');
@@ -275,6 +284,12 @@ export function TenantManagementView({
           </table>
         </div>
       </div>
+
+      <PlantManagementView
+        data={data}
+        onSave={onSavePlant}
+        onDelete={onDeletePlant}
+      />
 
       {/* Add New Tenant Form */}
       <form

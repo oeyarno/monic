@@ -14,6 +14,7 @@ import type {
   MaterialMasterRecord,
   MaterialTypeCode,
   MovementTypeCode,
+  PlantDefinition,
   SapBootstrapPayload,
   StandardFieldRule,
   TenantCoreBusinessType,
@@ -167,6 +168,42 @@ export default function App() {
       if (!res.ok) return { ok: false, error: json.error };
       const fresh = json as SapBootstrapPayload;
       applyBootstrapPayload(fresh, true);
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Gagal menghubungi server.' };
+    }
+  };
+
+  const handleSavePlant = async (plant: PlantDefinition, originalWerks?: string) => {
+    try {
+      const res = await fetch(
+        originalWerks
+          ? `/api/plants/${encodeURIComponent(originalWerks)}`
+          : '/api/plants',
+        {
+          method: originalWerks ? 'PUT' : 'POST',
+          headers: buildHeaders(true),
+          body: JSON.stringify(plant),
+        }
+      );
+      const json = await res.json();
+      if (!res.ok) return { ok: false, error: json.error as string | undefined };
+      setData(json.db as SapBootstrapPayload);
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Gagal menghubungi server.' };
+    }
+  };
+
+  const handleDeletePlant = async (werks: string) => {
+    try {
+      const res = await fetch(`/api/plants/${encodeURIComponent(werks)}`, {
+        method: 'DELETE',
+        headers: buildHeaders(false),
+      });
+      const json = await res.json();
+      if (!res.ok) return { ok: false, error: json.error as string | undefined };
+      setData(json.db as SapBootstrapPayload);
       return { ok: true };
     } catch {
       return { ok: false, error: 'Gagal menghubungi server.' };
@@ -735,6 +772,8 @@ export default function App() {
                   onSwitchTenant={handleSwitchTenant}
                   onCreateTenant={handleCreateTenant}
                   onDeleteTenant={handleDeleteTenant}
+                  onSavePlant={handleSavePlant}
+                  onDeletePlant={handleDeletePlant}
                 />
               )}
 

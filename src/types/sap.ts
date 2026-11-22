@@ -111,7 +111,6 @@ export const VALUATION_CLASSES: ValuationClassDefinition[] = [
   { bklas: '3040', label: 'Spare Parts / MRO', glAccount: '140200', description: 'Suku cadang alat berat, kendaraan, filter & ban' },
   { bklas: '3030', label: 'Operating Supplies & Consumables', glAccount: '140250', description: 'Pelumas, welding, tools & APD pemakaian operasional induk' },
   { bklas: '3200', label: 'Services (OMQW)', glAccount: '510200', description: 'Jasa kalibrasi, refill APAR, repair & rental unit' },
-  { bklas: '3000', label: 'Raw Materials', glAccount: '140100', description: 'Bahan baku & material proyek langsung' },
   { bklas: '3050', label: 'Packaging Materials', glAccount: '140300', description: 'Material kemasan & pengemasan' },
   { bklas: '7900', label: 'Semi-Finished Goods', glAccount: '142000', description: 'Barang setengah jadi / fabrikasi' },
   { bklas: '7920', label: 'Finished Goods', glAccount: '143000', description: 'Barang jadi hasil produksi' },

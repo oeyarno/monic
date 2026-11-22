@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 17,
+  "schemaVersion": 18,
   "activeTenantId": "tenant-oilgas",
   "tenantCompanies": [
     {
@@ -66,6 +66,114 @@
   "workspaces": {
     "tenant-oilgas": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000309",
+            "maktx": "Sabun / Deterjen / Disinfektan-22-Galon-Sunlight",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "GA-HSH",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-22T08:33:05.127Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-22T08:33:05.127Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3030",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_EXC_JENIS": "",
+            "CHR_EXC_KELAS": "",
+            "CHR_EXC_MODEL": "",
+            "CHR_EXC_BUCKET": "",
+            "CHR_EXC_BRAND": "",
+            "CHR_HSH_JENIS": "Sabun / Deterjen / Disinfektan",
+            "CHR_HSH_SPEC": "22",
+            "CHR_HSH_PACK": "Galon",
+            "CHR_HSH_BRAND": "Sunlight"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000308",
@@ -1394,7 +1502,7 @@
             "WS01": {
               "bwkey": "WS01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 46500,
               "stprs": 46500,
@@ -1938,7 +2046,7 @@
             "TL01": {
               "bwkey": "TL01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 4250000,
               "stprs": 4250000,
@@ -2754,7 +2862,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 11220000,
               "stprs": 11500000,
@@ -2765,7 +2873,7 @@
               "splitValuations": {
                 "LOCAL": {
                   "bwtar": "LOCAL",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 10400000,
                   "stprs": 10400000,
@@ -2775,7 +2883,7 @@
                 },
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -2785,7 +2893,7 @@
                 },
                 "OLD": {
                   "bwtar": "OLD",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 8666667,
                   "stprs": 8666667,
@@ -2798,7 +2906,7 @@
             "OG02": {
               "bwkey": "OG02",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 12800000,
               "stprs": 12800000,
@@ -2809,7 +2917,7 @@
               "splitValuations": {
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -3044,7 +3152,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 5200,
               "stprs": 5200,
@@ -6012,6 +6120,138 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000840",
+          "objectClass": "MATERIAL",
+          "objectId": "200000309",
+          "tableName": "MARA",
+          "fieldName": "CREATE_MATERIAL (MM01)",
+          "oldValue": "-",
+          "newValue": "Sabun / Deterjen / Disinfektan-22-Galon-Sunlight [HAWA/M]",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T08:33:05.127Z"
+        },
+        {
+          "changenr": "CHG-000839",
+          "objectClass": "MATERIAL",
+          "objectId": "100000803",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000838",
+          "objectClass": "MATERIAL",
+          "objectId": "100000801",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000837",
+          "objectClass": "MATERIAL",
+          "objectId": "100000206",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000836",
+          "objectClass": "MATERIAL",
+          "objectId": "100000903",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000835",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-OG02",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "Bayung 88",
+          "newValue": "Main Pool & Workshop Coal",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:42:20.690Z"
+        },
+        {
+          "changenr": "CHG-000834",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-OG01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "Duri  KM 8",
+          "newValue": "Main Workshop PHR",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:41:42.929Z"
+        },
+        {
+          "changenr": "CHG-000833",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-OG02",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "Bayung 88",
+          "newValue": "Bayung 88",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:38:26.974Z"
+        },
+        {
+          "changenr": "CHG-000832",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-OG01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "Duri  KM 8",
+          "newValue": "Duri  KM 8",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:36:58.643Z"
+        },
+        {
+          "changenr": "CHG-000831",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-OG02",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Energi Epik Offshore - Fabrication Yard",
+          "newValue": "Bayung 88",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:35:15.554Z"
+        },
+        {
+          "changenr": "CHG-000830",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-OG02",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Energi Epik Offshore - Fabrication Yard",
+          "newValue": "PT Energi Epik Offshore - Fabrication Yard",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:34:45.012Z"
+        },
+        {
+          "changenr": "CHG-000829",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-OG01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Energi Epik Offshore - Offshore Supply Base",
+          "newValue": "Duri  KM 8",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:34:11.564Z"
+        },
+        {
           "changenr": "CHG-000828",
           "objectClass": "MATERIAL",
           "objectId": "200000308",
@@ -6213,42 +6453,42 @@
       "plants": [
         {
           "werks": "OG01",
-          "name": "PT Energi Epik Offshore - Offshore Supply Base",
-          "city": "Balikpapan",
+          "name": "Main Workshop PHR",
+          "city": "Duri",
           "bukrs": "001",
           "storageLocations": [
             {
               "lgort": "0001",
-              "lgobe": "Pipe & OCTG Open Yard",
-              "type": "Pipe Yard"
+              "lgobe": "Material & Sparts",
+              "type": "Material"
             },
             {
               "lgort": "0002",
-              "lgobe": "Drilling Mud & Chemical Store",
-              "type": "Hazmat Storage"
+              "lgobe": "Tangki 1",
+              "type": "BBM"
             },
             {
               "lgort": "0003",
-              "lgobe": "Offshore Rig Staging Area",
-              "type": "Project Staging"
+              "lgobe": "Tangki 2",
+              "type": "BBM"
             }
           ]
         },
         {
           "werks": "OG02",
-          "name": "PT Energi Epik Offshore - Fabrication Yard",
-          "city": "Batam",
+          "name": "Main Pool & Workshop Coal",
+          "city": "Bayung Lencir",
           "bukrs": "001",
           "storageLocations": [
             {
               "lgort": "0001",
-              "lgobe": "Valve & Flange Warehouse",
+              "lgobe": "Material & Spart",
               "type": "Main Warehouse"
             },
             {
               "lgort": "0002",
-              "lgobe": "NDT & MTC Quarantine Bay",
-              "type": "Quarantine / QA"
+              "lgobe": "Tangki",
+              "type": "BBM"
             }
           ]
         }
@@ -6449,6 +6689,114 @@
     },
     "tenant-workshop": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000309",
+            "maktx": "Sabun / Deterjen / Disinfektan-22-Galon-Sunlight",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "GA-HSH",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-22T08:33:05.127Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-22T08:33:05.127Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3030",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_EXC_JENIS": "",
+            "CHR_EXC_KELAS": "",
+            "CHR_EXC_MODEL": "",
+            "CHR_EXC_BUCKET": "",
+            "CHR_EXC_BRAND": "",
+            "CHR_HSH_JENIS": "Sabun / Deterjen / Disinfektan",
+            "CHR_HSH_SPEC": "22",
+            "CHR_HSH_PACK": "Galon",
+            "CHR_HSH_BRAND": "Sunlight"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000308",
@@ -7888,7 +8236,7 @@
             "TL01": {
               "bwkey": "TL01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 4250000,
               "stprs": 4250000,
@@ -8668,7 +9016,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 5200,
               "stprs": 5200,
@@ -8935,7 +9283,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 11220000,
               "stprs": 11500000,
@@ -8946,7 +9294,7 @@
               "splitValuations": {
                 "LOCAL": {
                   "bwtar": "LOCAL",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 10400000,
                   "stprs": 10400000,
@@ -8956,7 +9304,7 @@
                 },
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -8966,7 +9314,7 @@
                 },
                 "OLD": {
                   "bwtar": "OLD",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 8666667,
                   "stprs": 8666667,
@@ -8979,7 +9327,7 @@
             "OG02": {
               "bwkey": "OG02",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 12800000,
               "stprs": 12800000,
@@ -8990,7 +9338,7 @@
               "splitValuations": {
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -9429,7 +9777,7 @@
             "WS01": {
               "bwkey": "WS01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 46500,
               "stprs": 46500,
@@ -12360,6 +12708,94 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000910",
+          "objectClass": "MATERIAL",
+          "objectId": "100000903",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000909",
+          "objectClass": "MATERIAL",
+          "objectId": "100000801",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000908",
+          "objectClass": "MATERIAL",
+          "objectId": "100000803",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000907",
+          "objectClass": "MATERIAL",
+          "objectId": "100000206",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000906",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-WS04",
+          "tableName": "T001W / T001L",
+          "fieldName": "CREATE_PLANT",
+          "oldValue": "-",
+          "newValue": "Main Workshop Harvesting IHM · 004",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:51:10.515Z"
+        },
+        {
+          "changenr": "CHG-000905",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-WS03",
+          "tableName": "T001W / T001L",
+          "fieldName": "CREATE_PLANT",
+          "oldValue": "-",
+          "newValue": "Main Workshop Harvesting AHL · 004",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:49:33.180Z"
+        },
+        {
+          "changenr": "CHG-000904",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-WS02",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Traktor Prima Service - Site Mining Workshop",
+          "newValue": "Main Workshop Harvesting",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:46:09.219Z"
+        },
+        {
+          "changenr": "CHG-000903",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-WS01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Traktor Prima Service - Central Rebuild Workshop",
+          "newValue": "Main Pool & Workshop Logging Hauler",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:44:34.717Z"
+        },
+        {
           "changenr": "CHG-000902",
           "objectClass": "MM_DOC",
           "objectId": "5000019101",
@@ -12385,8 +12821,8 @@
       "plants": [
         {
           "werks": "WS01",
-          "name": "PT Traktor Prima Service - Central Rebuild Workshop",
-          "city": "Jakarta Timur",
+          "name": "Main Pool & Workshop Logging Hauler",
+          "city": "Segati Pkl. Kerinci",
           "bukrs": "004",
           "storageLocations": [
             {
@@ -12408,8 +12844,8 @@
         },
         {
           "werks": "WS02",
-          "name": "PT Traktor Prima Service - Site Mining Workshop",
-          "city": "Sangatta",
+          "name": "Main Workshop Harvesting",
+          "city": "Cerenti",
           "bukrs": "004",
           "storageLocations": [
             {
@@ -12421,6 +12857,32 @@
               "lgort": "0002",
               "lgobe": "Area Warranty & Claim",
               "type": "Quarantine / QA"
+            }
+          ]
+        },
+        {
+          "werks": "WS03",
+          "name": "Main Workshop Harvesting AHL",
+          "city": "Sebakis",
+          "bukrs": "004",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Gudang Utama",
+              "type": "Main Warehouse"
+            }
+          ]
+        },
+        {
+          "werks": "WS04",
+          "name": "Main Workshop Harvesting IHM",
+          "city": "Senoni",
+          "bukrs": "004",
+          "storageLocations": [
+            {
+              "lgort": "0001",
+              "lgobe": "Gudang Utama",
+              "type": "Main Warehouse"
             }
           ]
         }
@@ -12621,6 +13083,114 @@
     },
     "tenant-unitparts": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000309",
+            "maktx": "Sabun / Deterjen / Disinfektan-22-Galon-Sunlight",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "GA-HSH",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-22T08:33:05.127Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-22T08:33:05.127Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3030",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_EXC_JENIS": "",
+            "CHR_EXC_KELAS": "",
+            "CHR_EXC_MODEL": "",
+            "CHR_EXC_BUCKET": "",
+            "CHR_EXC_BRAND": "",
+            "CHR_HSH_JENIS": "Sabun / Deterjen / Disinfektan",
+            "CHR_HSH_SPEC": "22",
+            "CHR_HSH_PACK": "Galon",
+            "CHR_HSH_BRAND": "Sunlight"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000308",
@@ -13437,7 +14007,7 @@
             "WS01": {
               "bwkey": "WS01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 46500,
               "stprs": 46500,
@@ -13981,7 +14551,7 @@
             "TL01": {
               "bwkey": "TL01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 4250000,
               "stprs": 4250000,
@@ -14761,7 +15331,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 5200,
               "stprs": 5200,
@@ -15028,7 +15598,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 11220000,
               "stprs": 11500000,
@@ -15039,7 +15609,7 @@
               "splitValuations": {
                 "LOCAL": {
                   "bwtar": "LOCAL",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 10400000,
                   "stprs": 10400000,
@@ -15049,7 +15619,7 @@
                 },
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -15059,7 +15629,7 @@
                 },
                 "OLD": {
                   "bwtar": "OLD",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 8666667,
                   "stprs": 8666667,
@@ -15072,7 +15642,7 @@
             "OG02": {
               "bwkey": "OG02",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 12800000,
               "stprs": 12800000,
@@ -15083,7 +15653,7 @@
               "splitValuations": {
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -18555,6 +19125,83 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000710",
+          "objectClass": "MATERIAL",
+          "objectId": "100000801",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000709",
+          "objectClass": "MATERIAL",
+          "objectId": "100000803",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000708",
+          "objectClass": "MATERIAL",
+          "objectId": "100000206",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000707",
+          "objectClass": "MATERIAL",
+          "objectId": "100000903",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000706",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-US01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "Main Store",
+          "newValue": "Sub Store",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:53:45.375Z"
+        },
+        {
+          "changenr": "CHG-000705",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-US02",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Mitra Armada Niaga - National Parts DC",
+          "newValue": "Main Store & Warehouse",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:53:25.908Z"
+        },
+        {
+          "changenr": "CHG-000704",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-US01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Mitra Armada Niaga - Showroom & Unit PDI Yard",
+          "newValue": "Main Store",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:52:32.350Z"
+        },
+        {
           "changenr": "CHG-000703",
           "objectClass": "MATERIAL",
           "objectId": "200000302",
@@ -18591,8 +19238,8 @@
       "plants": [
         {
           "werks": "US01",
-          "name": "PT Mitra Armada Niaga - Showroom & Unit PDI Yard",
-          "city": "Cikarang",
+          "name": "Sub Store",
+          "city": "Duri",
           "bukrs": "005",
           "storageLocations": [
             {
@@ -18609,8 +19256,8 @@
         },
         {
           "werks": "US02",
-          "name": "PT Mitra Armada Niaga - National Parts DC",
-          "city": "Surabaya",
+          "name": "Main Store & Warehouse",
+          "city": "Pekanbaru",
           "bukrs": "005",
           "storageLocations": [
             {
@@ -18822,6 +19469,114 @@
     },
     "tenant-tools-ppe": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000309",
+            "maktx": "Sabun / Deterjen / Disinfektan-22-Galon-Sunlight",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "GA-HSH",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-22T08:33:05.127Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-22T08:33:05.127Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3030",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_EXC_JENIS": "",
+            "CHR_EXC_KELAS": "",
+            "CHR_EXC_MODEL": "",
+            "CHR_EXC_BUCKET": "",
+            "CHR_EXC_BRAND": "",
+            "CHR_HSH_JENIS": "Sabun / Deterjen / Disinfektan",
+            "CHR_HSH_SPEC": "22",
+            "CHR_HSH_PACK": "Galon",
+            "CHR_HSH_BRAND": "Sunlight"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000308",
@@ -20150,7 +20905,7 @@
             "WS01": {
               "bwkey": "WS01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 46500,
               "stprs": 46500,
@@ -20694,7 +21449,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 5200,
               "stprs": 5200,
@@ -20961,7 +21716,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 11220000,
               "stprs": 11500000,
@@ -20972,7 +21727,7 @@
               "splitValuations": {
                 "LOCAL": {
                   "bwtar": "LOCAL",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 10400000,
                   "stprs": 10400000,
@@ -20982,7 +21737,7 @@
                 },
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -20992,7 +21747,7 @@
                 },
                 "OLD": {
                   "bwtar": "OLD",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 8666667,
                   "stprs": 8666667,
@@ -21005,7 +21760,7 @@
             "OG02": {
               "bwkey": "OG02",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 12800000,
               "stprs": 12800000,
@@ -21016,7 +21771,7 @@
               "splitValuations": {
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -21801,7 +22556,7 @@
             "TL01": {
               "bwkey": "TL01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 4250000,
               "stprs": 4250000,
@@ -24768,6 +25523,72 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000608",
+          "objectClass": "MATERIAL",
+          "objectId": "100000206",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000607",
+          "objectClass": "MATERIAL",
+          "objectId": "100000801",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000606",
+          "objectClass": "MATERIAL",
+          "objectId": "100000803",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000605",
+          "objectClass": "MATERIAL",
+          "objectId": "100000903",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000604",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-TL02",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Safetech Perkakas Mandiri - Cabang Industrial Safety",
+          "newValue": "Sub Store Jawa",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:40:48.521Z"
+        },
+        {
+          "changenr": "CHG-000603",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-TL01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT Safetech Perkakas Mandiri - Hub Pusat & Lab Kalibrasi",
+          "newValue": "Main Store Duri",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:40:18.280Z"
+        },
+        {
           "changenr": "CHG-000602",
           "objectClass": "MM_DOC",
           "objectId": "5000016101",
@@ -24793,8 +25614,8 @@
       "plants": [
         {
           "werks": "TL01",
-          "name": "PT Safetech Perkakas Mandiri - Hub Pusat & Lab Kalibrasi",
-          "city": "Tangerang",
+          "name": "Main Store Duri",
+          "city": "Duri",
           "bukrs": "002",
           "storageLocations": [
             {
@@ -24816,8 +25637,8 @@
         },
         {
           "werks": "TL02",
-          "name": "PT Safetech Perkakas Mandiri - Cabang Industrial Safety",
-          "city": "Balikpapan",
+          "name": "Sub Store Jawa",
+          "city": "Jakarta",
           "bukrs": "002",
           "storageLocations": [
             {
@@ -25029,6 +25850,114 @@
     },
     "tenant-mt": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000309",
+            "maktx": "Sabun / Deterjen / Disinfektan-22-Galon-Sunlight",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "GA-HSH",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-22T08:33:05.127Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-22T08:33:05.127Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3030",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "characteristics": {
+            "CHR_EXC_JENIS": "",
+            "CHR_EXC_KELAS": "",
+            "CHR_EXC_MODEL": "",
+            "CHR_EXC_BUCKET": "",
+            "CHR_EXC_BRAND": "",
+            "CHR_HSH_JENIS": "Sabun / Deterjen / Disinfektan",
+            "CHR_HSH_SPEC": "22",
+            "CHR_HSH_PACK": "Galon",
+            "CHR_HSH_BRAND": "Sunlight"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000308",
@@ -26357,7 +27286,7 @@
             "WS01": {
               "bwkey": "WS01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 46500,
               "stprs": 46500,
@@ -26790,7 +27719,7 @@
             "TL01": {
               "bwkey": "TL01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 4250000,
               "stprs": 4250000,
@@ -27570,7 +28499,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 5200,
               "stprs": 5200,
@@ -27837,7 +28766,7 @@
             "OG01": {
               "bwkey": "OG01",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 11220000,
               "stprs": 11500000,
@@ -27848,7 +28777,7 @@
               "splitValuations": {
                 "LOCAL": {
                   "bwtar": "LOCAL",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 10400000,
                   "stprs": 10400000,
@@ -27858,7 +28787,7 @@
                 },
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -27868,7 +28797,7 @@
                 },
                 "OLD": {
                   "bwtar": "OLD",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 8666667,
                   "stprs": 8666667,
@@ -27881,7 +28810,7 @@
             "OG02": {
               "bwkey": "OG02",
               "bwtty": "Z",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 12800000,
               "stprs": 12800000,
@@ -27892,7 +28821,7 @@
               "splitValuations": {
                 "IMPORT": {
                   "bwtar": "IMPORT",
-                  "bklas": "3000",
+                  "bklas": "3100",
                   "vprsv": "V",
                   "verpr": 12800000,
                   "stprs": 12800000,
@@ -31045,6 +31974,61 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000106",
+          "objectClass": "MATERIAL",
+          "objectId": "100000801",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000105",
+          "objectClass": "MATERIAL",
+          "objectId": "100000803",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000104",
+          "objectClass": "MATERIAL",
+          "objectId": "100000206",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000103",
+          "objectClass": "MATERIAL",
+          "objectId": "100000903",
+          "tableName": "MBEW",
+          "fieldName": "BKLAS (Valuation Class)",
+          "oldValue": "3000",
+          "newValue": "3100",
+          "username": "SYSTEM_MIGRATION",
+          "timestamp": "2026-11-22T08:06:54.775Z"
+        },
+        {
+          "changenr": "CHG-000102",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "OX10-MT01",
+          "tableName": "T001W / T001L",
+          "fieldName": "UPDATE_PLANT",
+          "oldValue": "PT. MT - Lab Kalibrasi Pusat (ISO 17025)",
+          "newValue": "PT. MT - Lab Kalibrasi Pusat (ISO 17025)",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-22T07:42:56.306Z"
+        },
+        {
           "changenr": "CHG-000101",
           "objectClass": "CUSTOMIZING",
           "objectId": "OX02-003",
@@ -31060,7 +32044,7 @@
         {
           "werks": "MT01",
           "name": "PT. MT - Lab Kalibrasi Pusat (ISO 17025)",
-          "city": "Jakarta",
+          "city": "Pekanbaru",
           "bukrs": "003",
           "storageLocations": [
             {
@@ -31100,6 +32084,114 @@
     }
   },
   "corporateMaraMaterials": [
+    {
+      "mara": {
+        "matnr": "200000309",
+        "maktx": "Sabun / Deterjen / Disinfektan-22-Galon-Sunlight",
+        "mtart": "HAWA",
+        "mbrsh": "M",
+        "meins": "PC",
+        "matkl": "GA-HSH",
+        "bismt": "",
+        "spart": "01",
+        "brgew": 1,
+        "ntgew": 1,
+        "gewei": "KG",
+        "volum": 0.01,
+        "voleh": "M3",
+        "groes": "",
+        "ean11": "",
+        "mstae": "",
+        "xchpf": false,
+        "createdAt": "2026-11-22T08:33:05.127Z",
+        "createdBy": "SAP_USER",
+        "updatedAt": "2026-11-22T08:33:05.127Z"
+      },
+      "marc": {
+        "OG01": {
+          "werks": "OG01",
+          "ekgrp": "P01",
+          "bstme": "PC",
+          "ekwsl": "Z001",
+          "kautb": false,
+          "webaz": 1,
+          "kordp": false,
+          "dismm": "PD",
+          "dispo": "M01",
+          "minbe": 100,
+          "disls": "EX",
+          "bstmi": 10,
+          "bstma": 1000,
+          "bstfe": 100,
+          "eisbe": 50,
+          "beskz": "F",
+          "plifz": 7,
+          "mtvfp": "02",
+          "prctr": "PC-OG01",
+          "sernp": ""
+        }
+      },
+      "mard": {
+        "OG01-0001": {
+          "werks": "OG01",
+          "lgort": "0001",
+          "lgobe": "Material & Sparts",
+          "lgpbe": "BIN-0001-01",
+          "labst": 0,
+          "insme": 0,
+          "speme": 0,
+          "raube": "01 - Normal Indoor",
+          "tempb": "Ambient",
+          "maxlz": 365,
+          "mhdrz": 90,
+          "mhdhb": 365
+        }
+      },
+      "mbew": {
+        "OG01": {
+          "bwkey": "OG01",
+          "bwtty": "",
+          "bklas": "3030",
+          "vprsv": "V",
+          "verpr": 10000,
+          "stprs": 10000,
+          "peinh": 1,
+          "waers": "IDR",
+          "lbkum": 0,
+          "salk3": 0
+        }
+      },
+      "mvke": {
+        "vkorg": "1000",
+        "vtweg": "10",
+        "dwerk": "OG01",
+        "taxkm": "1",
+        "mtpos": "NORM",
+        "kondm": "01",
+        "tragr": "0001",
+        "ladgr": "0001"
+      },
+      "characteristics": {
+        "CHR_EXC_JENIS": "",
+        "CHR_EXC_KELAS": "",
+        "CHR_EXC_MODEL": "",
+        "CHR_EXC_BUCKET": "",
+        "CHR_EXC_BRAND": "",
+        "CHR_HSH_JENIS": "Sabun / Deterjen / Disinfektan",
+        "CHR_HSH_SPEC": "22",
+        "CHR_HSH_PACK": "Galon",
+        "CHR_HSH_BRAND": "Sunlight"
+      },
+      "industryExtensions": {
+        "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+        "ZZ_API_SPEC": "API 5L PSL2",
+        "ZZ_PRESSURE_CLASS": "Non-Pressure",
+        "ZZ_NACE_SOUR": false,
+        "ZZ_MTC_EN10204": false,
+        "ZZ_CAS_NUMBER": "",
+        "ZZ_HAZARD_CLASS": "Non-Hazardous"
+      }
+    },
     {
       "mara": {
         "matnr": "200000308",
@@ -31952,7 +33044,7 @@
         "OG01": {
           "bwkey": "OG01",
           "bwtty": "Z",
-          "bklas": "3000",
+          "bklas": "3100",
           "vprsv": "V",
           "verpr": 11220000,
           "stprs": 11500000,
@@ -31963,7 +33055,7 @@
           "splitValuations": {
             "LOCAL": {
               "bwtar": "LOCAL",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 10400000,
               "stprs": 10400000,
@@ -31973,7 +33065,7 @@
             },
             "IMPORT": {
               "bwtar": "IMPORT",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 12800000,
               "stprs": 12800000,
@@ -31983,7 +33075,7 @@
             },
             "OLD": {
               "bwtar": "OLD",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 8666667,
               "stprs": 8666667,
@@ -31996,7 +33088,7 @@
         "OG02": {
           "bwkey": "OG02",
           "bwtty": "Z",
-          "bklas": "3000",
+          "bklas": "3100",
           "vprsv": "V",
           "verpr": 12800000,
           "stprs": 12800000,
@@ -32007,7 +33099,7 @@
           "splitValuations": {
             "IMPORT": {
               "bwtar": "IMPORT",
-              "bklas": "3000",
+              "bklas": "3100",
               "vprsv": "V",
               "verpr": 12800000,
               "stprs": 12800000,
@@ -32242,7 +33334,7 @@
         "OG01": {
           "bwkey": "OG01",
           "bwtty": "",
-          "bklas": "3000",
+          "bklas": "3100",
           "vprsv": "V",
           "verpr": 5200,
           "stprs": 5200,
@@ -33023,7 +34115,7 @@
         "TL01": {
           "bwkey": "TL01",
           "bwtty": "",
-          "bklas": "3000",
+          "bklas": "3100",
           "vprsv": "V",
           "verpr": 4250000,
           "stprs": 4250000,
@@ -33568,7 +34660,7 @@
         "WS01": {
           "bwkey": "WS01",
           "bwtty": "",
-          "bklas": "3000",
+          "bklas": "3100",
           "vprsv": "V",
           "verpr": 46500,
           "stprs": 46500,

@@ -1330,7 +1330,7 @@ export function createTemplateMaterialGroups(
         matkl: 'OCTG-PIPE',
         label: 'Seamless Line Pipe & OCTG',
         defaultMtart: 'HAWA',
-        defaultBklas: '3000',
+        defaultBklas: '3100',
         description: 'Pipa saluran migas seamless, casing, dan tubing berstandar API 5L / 5CT.',
         characteristics: [
           { id: 'ch-og-od', charName: 'CHR_PIPE_OD', label: 'Nominal Pipe Size (OD)', dataType: 'select', options: ['4"', '6"', '8"', '10"', '12"', '16"'], required: true, helpText: 'Diameter nominal pipa dalam inci' },
@@ -1871,7 +1871,7 @@ function buildOilGasWorkspace(): TenantWorkspaceData {
         OG01: {
           bwkey: 'OG01',
           bwtty: 'Z',
-          bklas: '3000',
+          bklas: '3100',
           vprsv: 'V',
           verpr: 11220000,
           stprs: 11500000,
@@ -1880,15 +1880,15 @@ function buildOilGasWorkspace(): TenantWorkspaceData {
           lbkum: 100,
           salk3: 1122000000,
           splitValuations: {
-            LOCAL: { bwtar: 'LOCAL', bklas: '3000', vprsv: 'V', verpr: 10400000, stprs: 10400000, peinh: 1, lbkum: 40, salk3: 416000000 },
-            IMPORT: { bwtar: 'IMPORT', bklas: '3000', vprsv: 'V', verpr: 12800000, stprs: 12800000, peinh: 1, lbkum: 45, salk3: 576000000 },
-            OLD: { bwtar: 'OLD', bklas: '3000', vprsv: 'V', verpr: 8666667, stprs: 8666667, peinh: 1, lbkum: 15, salk3: 130000000 },
+            LOCAL: { bwtar: 'LOCAL', bklas: '3100', vprsv: 'V', verpr: 10400000, stprs: 10400000, peinh: 1, lbkum: 40, salk3: 416000000 },
+            IMPORT: { bwtar: 'IMPORT', bklas: '3100', vprsv: 'V', verpr: 12800000, stprs: 12800000, peinh: 1, lbkum: 45, salk3: 576000000 },
+            OLD: { bwtar: 'OLD', bklas: '3100', vprsv: 'V', verpr: 8666667, stprs: 8666667, peinh: 1, lbkum: 15, salk3: 130000000 },
           },
         },
         OG02: {
           bwkey: 'OG02',
           bwtty: 'Z',
-          bklas: '3000',
+          bklas: '3100',
           vprsv: 'V',
           verpr: 12800000,
           stprs: 12800000,
@@ -1897,7 +1897,7 @@ function buildOilGasWorkspace(): TenantWorkspaceData {
           lbkum: 25,
           salk3: 320000000,
           splitValuations: {
-            IMPORT: { bwtar: 'IMPORT', bklas: '3000', vprsv: 'V', verpr: 12800000, stprs: 12800000, peinh: 1, lbkum: 25, salk3: 320000000 },
+            IMPORT: { bwtar: 'IMPORT', bklas: '3100', vprsv: 'V', verpr: 12800000, stprs: 12800000, peinh: 1, lbkum: 25, salk3: 320000000 },
           },
         },
       },
@@ -2080,7 +2080,7 @@ function buildOilGasWorkspace(): TenantWorkspaceData {
         OG01: {
           bwkey: 'OG01',
           bwtty: '',
-          bklas: '3000',
+          bklas: '3100',
           vprsv: 'V',
           verpr: 5200,
           stprs: 5200,
@@ -2522,7 +2522,7 @@ function buildWorkshopWorkspace(): TenantWorkspaceData {
         WS01: {
           bwkey: 'WS01',
           bwtty: '',
-          bklas: '3000',
+          bklas: '3100',
           vprsv: 'V',
           verpr: 46500,
           stprs: 46500,
@@ -3730,7 +3730,7 @@ function buildToolsPpeWorkspace(): TenantWorkspaceData {
         TL01: {
           bwkey: 'TL01',
           bwtty: '',
-          bklas: '3000',
+          bklas: '3100',
           vprsv: 'V',
           verpr: 4250000,
           stprs: 4250000,
@@ -3955,7 +3955,7 @@ export function buildMtCalibrationWorkspace(): TenantWorkspaceData {
 
 export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
   const db: MultiTenantDatabase = {
-    schemaVersion: 17,
+    schemaVersion: 18,
     activeTenantId: TENANT_COMPANIES[0].tenantId,
     tenantCompanies: structuredClone(TENANT_COMPANIES),
     workspaces: {

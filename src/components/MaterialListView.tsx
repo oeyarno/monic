@@ -110,7 +110,7 @@ export function MaterialListView({
     const primaryMbew = selectedPlant !== 'ALL' ? mat.mbew[selectedPlant] : Object.values(mat.mbew)[0];
     const unitPrice = primaryMbew ? (primaryMbew.vprsv === 'V' ? primaryMbew.verpr : primaryMbew.stprs) : 0;
     const priceCtrl = primaryMbew?.vprsv || 'V';
-    const bklas = primaryMbew?.bklas || '3000';
+    const bklas = primaryMbew?.bklas || '3100';
     const waers = primaryMbew?.waers || 'IDR';
     const isBelowRop = minReorder > 0 && stockTotal < minReorder;
     const primaryPlant = plants[0] || Object.keys(mat.marc)[0] || data.plants[0]?.werks || '1000';
@@ -379,7 +379,6 @@ export function MaterialListView({
               { code: '3030', label: '3030 Ops / GA / IT' },
               { code: '3100', label: '3100 Trading / Tools' },
               { code: '3200', label: '3200 Services' },
-              { code: '3000', label: '3000 Raw / Project' },
             ].map((vc) => {
               const count = data.materials.filter((m) =>
                 Object.values(m.mbew).some((mb) => mb.bklas === vc.code)

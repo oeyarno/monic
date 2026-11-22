@@ -28,6 +28,7 @@ import type {
   MaterialTypeCode,
   MovementTypeCode,
   MultiTenantDatabase,
+  PlantDefinition,
   PurchaseOrder,
   PurchaseRequisition,
   SapBootstrapPayload,
@@ -165,7 +166,7 @@ function loadDatabase(): MultiTenantDatabase {
   }
 
   const currentVersion = parsed.schemaVersion;
-  if (currentVersion < 17) {
+  if (currentVersion < 18) {
     try {
       createDatabaseBackup(DB_FILE, `pre-v${currentVersion}`);
     } catch (err) {
@@ -603,6 +604,56 @@ function loadDatabase(): MultiTenantDatabase {
       parsed.schemaVersion = 17;
     }
 
+    if (parsed.schemaVersion < 18) {
+      const now = new Date().toISOString();
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        for (const group of ws.materialGroups || []) {
+          if (group.defaultBklas === '3000') group.defaultBklas = '3100';
+        }
+        for (const material of ws.materials || []) {
+          let changed = false;
+          for (const valuation of Object.values(material.mbew || {})) {
+            if (valuation.bklas === '3000') {
+              valuation.bklas = '3100';
+              changed = true;
+            }
+            for (const split of Object.values(valuation.splitValuations || {})) {
+              if (split?.bklas === '3000') {
+                split.bklas = '3100';
+                changed = true;
+              }
+            }
+          }
+          if (changed) {
+            ws.changeDocuments.unshift({
+              changenr: nextChangeNumber(ws.changeDocuments),
+              objectClass: 'MATERIAL',
+              objectId: material.mara.matnr,
+              tableName: 'MBEW',
+              fieldName: 'BKLAS (Valuation Class)',
+              oldValue: '3000',
+              newValue: '3100',
+              username: 'SYSTEM_MIGRATION',
+              timestamp: now,
+            });
+          }
+        }
+      }
+
+      for (const material of parsed.corporateMaraMaterials || []) {
+        for (const valuation of Object.values(material.mbew || {})) {
+          if (valuation.bklas === '3000') valuation.bklas = '3100';
+          for (const split of Object.values(valuation.splitValuations || {})) {
+            if (split?.bklas === '3000') split.bklas = '3100';
+          }
+        }
+      }
+      parsed.schemaVersion = 18;
+    }
+
     saveDatabase(parsed as MultiTenantDatabase);
   }
 
@@ -969,6 +1020,183 @@ async function startServer() {
     }
     saveDatabase(db);
     return res.json(buildBootstrapPayload(db, db.activeTenantId));
+  });
+
+  // OX10 - Plant and storage-location master data (tenant-scoped)
+  app.post('/api/plants', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const activeCompany = db.tenantCompanies.find((company) => company.tenantId === tenantId);
+    const { werks, name, city, storageLocations } = req.body as Partial<PlantDefinition>;
+    const cleanWerks = String(werks || '').trim().toUpperCase();
+    const cleanName = String(name || '').trim();
+    const cleanCity = String(city || '').trim();
+    const locations = Array.isArray(storageLocations) ? storageLocations : [];
+
+    if (!/^[A-Z0-9]{1,4}$/.test(cleanWerks)) {
+      return res.status(400).json({ error: 'WERKS harus 1-4 karakter alfanumerik.' });
+    }
+    if (!cleanName || !cleanCity) {
+      return res.status(400).json({ error: 'Nama Plant dan kota wajib diisi.' });
+    }
+    if (locations.length === 0) {
+      return res.status(400).json({ error: 'Plant harus memiliki minimal satu Storage Location.' });
+    }
+    const seenLgort = new Set<string>();
+    for (const location of locations) {
+      const lgort = String(location.lgort || '').trim().toUpperCase();
+      if (!/^[A-Z0-9]{1,4}$/.test(lgort) || !String(location.lgobe || '').trim()) {
+        return res.status(400).json({ error: 'Setiap Storage Location harus memiliki kode LGORT (1-4 karakter) dan nama.' });
+      }
+      if (seenLgort.has(lgort)) {
+        return res.status(400).json({ error: `LGORT ${lgort} duplikat pada Plant ${cleanWerks}.` });
+      }
+      seenLgort.add(lgort);
+    }
+    const duplicatePlant = Object.values(db.workspaces).some((ws) =>
+      ws.plants.some((plant) => plant.werks === cleanWerks)
+    );
+    if (duplicatePlant) {
+      return res.status(409).json({ error: `WERKS ${cleanWerks} sudah digunakan.` });
+    }
+
+    const plant: PlantDefinition = {
+      werks: cleanWerks,
+      name: cleanName,
+      city: cleanCity,
+      bukrs: activeCompany?.bukrs || '',
+      storageLocations: locations.map((location) => ({
+        lgort: String(location.lgort).trim().toUpperCase(),
+        lgobe: String(location.lgobe).trim(),
+        type: String(location.type || 'Main Warehouse').trim(),
+      })),
+    };
+    workspace.plants.push(plant);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: `OX10-${cleanWerks}`,
+      tableName: 'T001W / T001L',
+      fieldName: 'CREATE_PLANT',
+      oldValue: '-',
+      newValue: `${cleanName} · ${activeCompany?.bukrs || ''}`,
+      username: 'SAP_USER',
+      timestamp: new Date().toISOString(),
+    });
+    saveDatabase(db);
+    return res.status(201).json({ db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  app.put('/api/plants/:werks', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const cleanWerks = String(req.params.werks || '').trim().toUpperCase();
+    const plantIndex = workspace.plants.findIndex((plant) => plant.werks === cleanWerks);
+    if (plantIndex < 0) return res.status(404).json({ error: `Plant ${cleanWerks} tidak ditemukan.` });
+
+    const currentPlant = workspace.plants[plantIndex];
+    const { name, city, storageLocations } = req.body as Partial<PlantDefinition>;
+    const cleanName = String(name || '').trim();
+    const cleanCity = String(city || '').trim();
+    const locations = Array.isArray(storageLocations) ? storageLocations : [];
+    if (!cleanName || !cleanCity) {
+      return res.status(400).json({ error: 'Nama Plant dan kota wajib diisi.' });
+    }
+    if (locations.length === 0) {
+      return res.status(400).json({ error: 'Plant harus memiliki minimal satu Storage Location.' });
+    }
+    const seenLgort = new Set<string>();
+    for (const location of locations) {
+      const lgort = String(location.lgort || '').trim().toUpperCase();
+      if (!/^[A-Z0-9]{1,4}$/.test(lgort) || !String(location.lgobe || '').trim()) {
+        return res.status(400).json({ error: 'Setiap Storage Location harus memiliki kode LGORT (1-4 karakter) dan nama.' });
+      }
+      if (seenLgort.has(lgort)) {
+        return res.status(400).json({ error: `LGORT ${lgort} duplikat pada Plant ${cleanWerks}.` });
+      }
+      seenLgort.add(lgort);
+    }
+    const removedLgorts = currentPlant.storageLocations
+      .map((location) => location.lgort)
+      .filter((lgort) => !seenLgort.has(lgort));
+    for (const lgort of removedLgorts) {
+      const materialInUse = workspace.materials.find((material) =>
+        Object.values(material.mard).some((storage) => storage.werks === cleanWerks && storage.lgort === lgort)
+      );
+      const prInUse = workspace.purchaseRequisitions.find((pr) => pr.werks === cleanWerks && pr.lgort === lgort);
+      const poInUse = workspace.purchaseOrders.find((po) => po.werks === cleanWerks && po.lgort === lgort);
+      const documentInUse = workspace.materialDocuments.find((document) =>
+        document.werks === cleanWerks && document.lgort === lgort
+      );
+      if (materialInUse || prInUse || poInUse || documentInUse) {
+        return res.status(409).json({
+          error: `Storage Location ${cleanWerks}/${lgort} masih digunakan oleh material atau dokumen; tidak dapat dihapus.`,
+        });
+      }
+    }
+
+    workspace.plants[plantIndex] = {
+      ...currentPlant,
+      name: cleanName,
+      city: cleanCity,
+      storageLocations: locations.map((location) => ({
+        lgort: String(location.lgort).trim().toUpperCase(),
+        lgobe: String(location.lgobe).trim(),
+        type: String(location.type || 'Main Warehouse').trim(),
+      })),
+    };
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: `OX10-${cleanWerks}`,
+      tableName: 'T001W / T001L',
+      fieldName: 'UPDATE_PLANT',
+      oldValue: currentPlant.name,
+      newValue: cleanName,
+      username: 'SAP_USER',
+      timestamp: new Date().toISOString(),
+    });
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
+  });
+
+  app.delete('/api/plants/:werks', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const cleanWerks = String(req.params.werks || '').trim().toUpperCase();
+    const plantIndex = workspace.plants.findIndex((plant) => plant.werks === cleanWerks);
+    if (plantIndex < 0) return res.status(404).json({ error: `Plant ${cleanWerks} tidak ditemukan.` });
+    if (workspace.plants.length <= 1) {
+      return res.status(409).json({ error: 'Tenant harus memiliki minimal satu Plant.' });
+    }
+
+    const material = workspace.materials.find((item) =>
+      Boolean(item.marc[cleanWerks] || item.mbew[cleanWerks]) ||
+      Object.values(item.mard).some((storage) => storage.werks === cleanWerks)
+    );
+    const pr = workspace.purchaseRequisitions.find((item) => item.werks === cleanWerks);
+    const po = workspace.purchaseOrders.find((item) => item.werks === cleanWerks);
+    const document = workspace.materialDocuments.find((item) => item.werks === cleanWerks);
+    if (material || pr || po || document) {
+      return res.status(409).json({
+        error: `Plant ${cleanWerks} masih direferensikan oleh material atau dokumen MM. Hapus extension/referensi terlebih dahulu.`,
+      });
+    }
+
+    const [removed] = workspace.plants.splice(plantIndex, 1);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: `OX10-${cleanWerks}`,
+      tableName: 'T001W / T001L',
+      fieldName: 'DELETE_PLANT',
+      oldValue: removed.name,
+      newValue: 'Deleted',
+      username: 'SAP_USER',
+      timestamp: new Date().toISOString(),
+    });
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
   // Public reset endpoint permanently disabled to protect production database
@@ -1644,7 +1872,7 @@ async function startServer() {
       material.mbew[werks] = {
         bwkey: werks,
         bwtty: fallbackMbew?.bwtty || '',
-        bklas: fallbackMbew?.bklas || '3000',
+        bklas: fallbackMbew?.bklas || '3100',
         vprsv: fallbackMbew?.vprsv || 'V',
         verpr: fallbackMbew?.verpr || 10000,
         stprs: fallbackMbew?.stprs || 10000,

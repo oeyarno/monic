@@ -653,7 +653,7 @@ export function MaterialMasterEditor({
       if (!next.mbew[activeWerks]) {
         next.mbew[activeWerks] = {
           bwkey: activeWerks,
-          bklas: baseMbew?.bklas || '3000',
+          bklas: baseMbew?.bklas || '3100',
           vprsv: baseMbew?.vprsv || 'V',
           verpr: baseMbew?.verpr || 10000,
           stprs: baseMbew?.stprs || 10000,
