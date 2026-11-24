@@ -39,6 +39,7 @@ interface IndustryCustomizingViewProps {
   onCreateMaterialGroup: (group: {
     matkl: string;
     label: string;
+    classificationClass?: string;
     defaultMtart?: MaterialTypeCode;
     defaultBklas?: string;
     description?: string;
@@ -47,6 +48,7 @@ interface IndustryCustomizingViewProps {
     matkl: string,
     group: {
       label: string;
+      classificationClass?: string;
       defaultMtart?: MaterialTypeCode;
       defaultBklas?: string;
       description?: string;
@@ -130,6 +132,7 @@ export function IndustryCustomizingView({
   const [showNewGroupForm, setShowNewGroupForm] = useState(false);
   const [newGroupCode, setNewGroupCode] = useState('');
   const [newGroupLabel, setNewGroupLabel] = useState('');
+  const [newGroupClass, setNewGroupClass] = useState('');
   const [newGroupMtart, setNewGroupMtart] = useState<MaterialTypeCode>('HAWA');
   const [newGroupBklas, setNewGroupBklas] = useState<string>('3100');
   const [newGroupDesc, setNewGroupDesc] = useState('');
@@ -137,6 +140,7 @@ export function IndustryCustomizingView({
   // Edit active Material Group state
   const [editingGroupMatkl, setEditingGroupMatkl] = useState<string | null>(null);
   const [editGroupLabel, setEditGroupLabel] = useState('');
+  const [editGroupClass, setEditGroupClass] = useState('');
   const [editGroupMtart, setEditGroupMtart] = useState<MaterialTypeCode>('HAWA');
   const [editGroupBklas, setEditGroupBklas] = useState<string>('3100');
   const [editGroupDesc, setEditGroupDesc] = useState('');
@@ -197,6 +201,9 @@ export function IndustryCustomizingView({
     (f) => f.industrySector === selectedIndustry
   );
   const activeMaterialGroup = data.materialGroups.find((mg) => mg.matkl === selectedMatkl);
+  const activeValuationClass = VALUATION_CLASSES.find(
+    (valuationClass) => valuationClass.bklas === activeMaterialGroup?.defaultBklas
+  );
 
   const handleRuleChange = (fieldKey: string, nextStatus: FieldStatus) => {
     setRulesDraft((prev) =>
@@ -262,6 +269,7 @@ export function IndustryCustomizingView({
     const res = await onCreateMaterialGroup({
       matkl: cleanCode,
       label: newGroupLabel.trim(),
+      classificationClass: newGroupClass.trim(),
       defaultMtart: newGroupMtart,
       defaultBklas: newGroupBklas,
       description: newGroupDesc.trim(),
@@ -271,10 +279,11 @@ export function IndustryCustomizingView({
       setShowNewGroupForm(false);
       setNewGroupCode('');
       setNewGroupLabel('');
+      setNewGroupClass('');
       setNewGroupDesc('');
       setFeedback({
         type: 'ok',
-        text: `Material Group ${cleanCode} berhasil dibuat pada T023 tenant ${data.activeTenant.bukrs}. Tambahkan Master Characteristic di bawah.`,
+        text: `Material Group ${cleanCode} berhasil dibuat pada T023 tenant ${data.activeTenant.bukrs}. Tetapkan class material type 001, lalu kelola characteristic class di bawah.`,
       });
     } else {
       setFeedback({ type: 'err', text: res.error || 'Gagal membuat Material Group.' });
@@ -309,7 +318,7 @@ export function IndustryCustomizingView({
     if (res.ok) {
       setFeedback({
         type: 'ok',
-        text: `Master Characteristic ${finalName} ditambahkan ke Material Group ${activeMaterialGroup.matkl} dan wajib diisi pada MM01/MM02.`,
+        text: `Characteristic ${finalName} ditambahkan ke Class ${activeMaterialGroup.classificationClass} dan berlaku untuk seluruh Material Group yang menggunakan class tersebut.`,
       });
       setNewCharName('');
       setNewCharLabel('');
@@ -325,6 +334,7 @@ export function IndustryCustomizingView({
     if (!activeMaterialGroup) return;
     setEditingGroupMatkl(activeMaterialGroup.matkl);
     setEditGroupLabel(activeMaterialGroup.label);
+    setEditGroupClass(activeMaterialGroup.classificationClass || '');
     setEditGroupMtart(activeMaterialGroup.defaultMtart || 'HAWA');
     setEditGroupBklas(activeMaterialGroup.defaultBklas || '3100');
     setEditGroupDesc(activeMaterialGroup.description || '');
@@ -337,6 +347,7 @@ export function IndustryCustomizingView({
     setFeedback(null);
     const res = await onUpdateMaterialGroup(editingGroupMatkl, {
       label: editGroupLabel.trim(),
+      classificationClass: editGroupClass.trim(),
       defaultMtart: editGroupMtart,
       defaultBklas: editGroupBklas,
       description: editGroupDesc.trim(),
@@ -447,7 +458,7 @@ export function IndustryCustomizingView({
               SPRO Customizing · OMS9, CI_MARA, Material Group (CT04) &amp; Master UoM (CUNI)
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Konfigurasi aturan field standar (OMS9), append field industri (CI_MARA), Master Characteristic per Material Group (T023 / CT04), serta Master Base Unit of Measure (T006 / CUNI).
+              Konfigurasi aturan field standar (OMS9), append field industri (CI_MARA), penetapan class material (class type 001) pada Material Group, characteristic CT04 di dalam class, serta Master Base Unit of Measure (T006 / CUNI).
             </p>
           </div>
 
@@ -583,18 +594,12 @@ export function IndustryCustomizingView({
           <div className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="text-xs text-slate-600">
-                Material Group aktif untuk tenant{' '}
+                Katalog spreadsheet untuk tenant{' '}
                 <span className="font-mono font-semibold text-slate-900">{data.activeTenant.bukrs}</span>{' '}
-                (<span className="font-mono tabular-nums">{data.materialGroups.length}</span> grup T023)
+                (<span className="font-mono tabular-nums">{data.materialGroups.length}/22</span> Material Group ·{' '}
+                <span className="font-mono tabular-nums">{(data.classificationClasses || []).length}/55</span> Class CL02)
               </div>
-              <button
-                type="button"
-                onClick={() => setShowNewGroupForm((v) => !v)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#0064D9] bg-[#EAF2FD] hover:bg-[#dceafb] rounded-md transition-colors whitespace-nowrap shrink-0"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>{showNewGroupForm ? 'Tutup Form Material Group' : 'Tambah Material Group (T023)'}</span>
-              </button>
+              <span className="text-[11px] text-slate-500">Daftar Material Group dikunci sesuai spreadsheet.</span>
             </div>
 
             {showNewGroupForm && (
@@ -615,7 +620,7 @@ export function IndustryCustomizingView({
                     className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
                   />
                 </div>
-                <div className="md:col-span-3">
+                <div className="md:col-span-2">
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                     Nama Material Group
                   </label>
@@ -627,6 +632,23 @@ export function IndustryCustomizingView({
                     placeholder="mis. Unit - Excavators"
                     className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-md"
                   />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Class Material (Type 001)
+                  </label>
+                  <select
+                    value={newGroupClass}
+                    onChange={(e) => setNewGroupClass(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                  >
+                    <option value="">Pilih Class</option>
+                    {data.classificationClasses?.map((item) => (
+                      <option key={item.className} value={item.className}>
+                        {item.className} · {item.description}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="md:col-span-1">
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
@@ -655,12 +677,12 @@ export function IndustryCustomizingView({
                   >
                     {VALUATION_CLASSES.map((vc) => (
                       <option key={vc.bklas} value={vc.bklas}>
-                        {vc.bklas} — {vc.label}
+                        {vc.bklas} — {vc.label} (GL {vc.glAccount})
                       </option>
                     ))}
                   </select>
                 </div>
-                <div className="md:col-span-3">
+                <div className="md:col-span-2">
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                     Deskripsi Singkat
                   </label>
@@ -686,7 +708,9 @@ export function IndustryCustomizingView({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
               {data.materialGroups.map((mg) => {
                 const isSelected = mg.matkl === selectedMatkl;
-                const reqCount = mg.characteristics.filter((c) => c.required).length;
+                const valuationClass = VALUATION_CLASSES.find(
+                  (item) => item.bklas === mg.defaultBklas
+                );
                 return (
                   <button
                     key={mg.matkl}
@@ -708,14 +732,18 @@ export function IndustryCustomizingView({
                         {mg.defaultBklas ? (
                           <span className="ml-1.5 font-normal text-[11px] text-slate-500">
                             · {mg.defaultBklas}
+                            {valuationClass ? ` → ${valuationClass.glAccount}` : ''}
                           </span>
                         ) : null}
                       </span>
                       <span className="text-[11px] font-mono tabular-nums text-slate-500">
-                        {mg.characteristics.length} char ({reqCount} wajib)
+                        {mg.classNames.length} class
                       </span>
                     </div>
                     <div className="text-xs font-semibold mt-0.5 truncate">{mg.label}</div>
+                    <div className={`mt-1 text-[10px] font-mono ${mg.classificationClass ? 'text-slate-500' : 'text-amber-700'}`}>
+                      {mg.classNames.join(', ') || 'Class belum dipetakan'}
+                    </div>
                   </button>
                 );
               })}
@@ -738,8 +766,21 @@ export function IndustryCustomizingView({
                         <span className="font-mono font-semibold text-slate-800">
                           {activeMaterialGroup.defaultBklas}
                         </span>
+                        {activeValuationClass ? (
+                          <>
+                            {' '}· GL{' '}
+                            <span className="font-mono font-semibold text-slate-800">
+                              {activeValuationClass.glAccount}
+                            </span>
+                            {' '}({activeValuationClass.glAccountName})
+                          </>
+                        ) : null}
                       </>
                     ) : null}{' '}
+                    · Class Type 001{' '}
+                    <span className={`font-mono font-semibold ${activeMaterialGroup.classificationClass ? 'text-slate-800' : 'text-amber-700'}`}>
+                      {activeMaterialGroup.classNames.join(', ') || 'Perlu pemetaan'}
+                    </span>{' '}
                     — {activeMaterialGroup.description}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -754,7 +795,9 @@ export function IndustryCustomizingView({
                     <button
                       type="button"
                       onClick={handleDeleteActiveMaterialGroup}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-md transition-colors whitespace-nowrap"
+                      disabled
+                      title="22 Material Group dari spreadsheet tidak dapat dihapus."
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-400 bg-slate-100 rounded-md whitespace-nowrap cursor-not-allowed"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       <span>Hapus Grup</span>
@@ -774,10 +817,29 @@ export function IndustryCustomizingView({
                       <input
                         type="text"
                         required
+                        readOnly
                         value={editGroupLabel}
-                        onChange={(e) => setEditGroupLabel(e.target.value)}
                         className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-md"
                       />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Class Material (Type 001)
+                      </label>
+                      <select
+                        value={editGroupClass}
+                        onChange={(e) => setEditGroupClass(e.target.value)}
+                        className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md"
+                      >
+                        <option value="">Pilih Class</option>
+                        {data.classificationClasses?.filter((item) =>
+                          activeMaterialGroup.classNames.includes(item.className)
+                        ).map((item) => (
+                          <option key={item.className} value={item.className}>
+                            {item.className} · {item.description}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="md:col-span-1">
                       <label className="block text-[11px] font-semibold text-slate-600 mb-1">
@@ -806,12 +868,12 @@ export function IndustryCustomizingView({
                       >
                         {VALUATION_CLASSES.map((vc) => (
                           <option key={vc.bklas} value={vc.bklas}>
-                            {vc.bklas} — {vc.label}
+                            {vc.bklas} — {vc.label} (GL {vc.glAccount})
                           </option>
                         ))}
                       </select>
                     </div>
-                    <div className="md:col-span-4">
+                    <div className="md:col-span-2">
                       <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                         Deskripsi T023
                       </label>
@@ -1151,7 +1213,7 @@ export function IndustryCustomizingView({
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-[#0064D9]" />
                 <h3 className="text-sm font-semibold text-slate-900">
-                  Tambah Master Characteristic ({activeMaterialGroup.matkl})
+                  Tambah Characteristic ke Class {activeMaterialGroup.classificationClass}
                 </h3>
               </div>
 
@@ -1255,7 +1317,7 @@ export function IndustryCustomizingView({
                 className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] rounded-md transition-colors"
               >
                 <Plus className="w-4 h-4" />
-                <span>Simpan Karakteristik ke {activeMaterialGroup.matkl}</span>
+                <span>Simpan Characteristic ke Class {activeMaterialGroup.classificationClass}</span>
               </button>
             </form>
 
@@ -1263,10 +1325,10 @@ export function IndustryCustomizingView({
               <div className="px-5 py-3.5 border-b border-slate-200 space-y-2">
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900">
-                    Master Characteristic (CT04) — {activeMaterialGroup.matkl} ({activeMaterialGroup.characteristics.length})
+                    Characteristic di dalam Class (Type 001) — {activeMaterialGroup.classificationClass} ({activeMaterialGroup.characteristics.length})
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Urutan karakteristik menjadi acuan penulisan Material Description (Short Name) secara otomatis di MM01/MM02.
+                    Material Group {activeMaterialGroup.matkl} menggunakan class ini. Perubahan characteristic berlaku untuk semua Material Group yang menggunakan class tersebut.
                   </p>
                 </div>
                 {activeMaterialGroup.characteristics.length > 0 && (
@@ -1281,7 +1343,7 @@ export function IndustryCustomizingView({
 
               {activeMaterialGroup.characteristics.length === 0 ? (
                 <div className="p-8 text-center text-xs text-slate-500">
-                  Belum ada Master Characteristic pada Material Group {activeMaterialGroup.matkl}. Tambahkan lewat form di kiri.
+                  Belum ada characteristic pada Class {activeMaterialGroup.classificationClass}. Tambahkan lewat form di kiri.
                 </div>
               ) : (
                 <div className="divide-y divide-slate-200">

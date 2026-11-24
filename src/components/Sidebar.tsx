@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Boxes,
+  BookOpen,
   Building2,
   ClipboardList,
   FileSpreadsheet,
@@ -25,6 +26,7 @@ export type ActiveRoute =
   | 'mmbe'
   | 'oms9'
   | 'ox02'
+  | 'coa'
   | 'cdhdr';
 
 interface SidebarProps {
@@ -89,6 +91,7 @@ export function Sidebar({
       items: [
         { id: 'ox02', tcode: 'OX02', label: 'Perusahaan (Tenant)', icon: Building2, count: tenants.length },
         { id: 'oms9', tcode: 'OMS9', label: 'Kustomisasi Industri', icon: Sliders, count: counts.customFields },
+        { id: 'coa', tcode: 'COA', label: 'Master COA', icon: BookOpen },
         { id: 'cdhdr', tcode: 'CDHDR', label: 'Change Documents', icon: History },
       ],
     },

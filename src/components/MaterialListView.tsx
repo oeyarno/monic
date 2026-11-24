@@ -3,17 +3,22 @@ import * as XLSX from 'xlsx';
 import {
   AlertTriangle,
   ArrowUpRight,
+  BookOpen,
   CheckCircle2,
   ClipboardPlus,
   Download,
+  Pencil,
   Search,
+  Trash2,
   Upload,
   Warehouse,
   XCircle,
 } from 'lucide-react';
+import { VALUATION_CLASSES } from '../types/sap.ts';
 import type {
   IndustrySectorCode,
   MaterialMasterRecord,
+  MaterialSearchDictionaryEntry,
   MaterialTypeCode,
   SapBootstrapPayload,
   ValuationTypeCode,
@@ -27,6 +32,11 @@ interface MaterialListViewProps {
   onOpenStockOverview: (matnr: string) => void;
   onCreateNewMaterial: () => void;
   onImported: (payload: SapBootstrapPayload) => void;
+  onSaveSearchDictionaryEntry: (
+    entry: Pick<MaterialSearchDictionaryEntry, 'keyword' | 'aliases'>,
+    id?: string
+  ) => Promise<{ ok: boolean; error?: string }>;
+  onDeleteSearchDictionaryEntry: (id: string) => Promise<{ ok: boolean; error?: string }>;
 }
 
 export function MaterialListView({
@@ -36,6 +46,8 @@ export function MaterialListView({
   onOpenStockOverview,
   onCreateNewMaterial,
   onImported,
+  onSaveSearchDictionaryEntry,
+  onDeleteSearchDictionaryEntry,
 }: MaterialListViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndustry, setSelectedIndustry] = useState<'ALL' | IndustrySectorCode>('ALL');
@@ -43,12 +55,28 @@ export function MaterialListView({
   const [selectedType, setSelectedType] = useState<'ALL' | MaterialTypeCode>('ALL');
   const [selectedPlant, setSelectedPlant] = useState<'ALL' | string>('ALL');
   const [templateMatkl, setTemplateMatkl] = useState<string>(data.materialGroups[0]?.matkl || '');
+  const [templateClass, setTemplateClass] = useState<string>(
+    data.materialGroups[0]?.classNames[0] || ''
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(false);
   const [importMessage, setImportMessage] = useState<{
     type: 'success' | 'warning' | 'error';
     text: string;
   } | null>(null);
+  const [dictionaryKeyword, setDictionaryKeyword] = useState('');
+  const [dictionaryAliases, setDictionaryAliases] = useState('');
+  const [editingDictionaryId, setEditingDictionaryId] = useState<string | undefined>();
+  const [dictionaryMessage, setDictionaryMessage] = useState<string | null>(null);
+  const [savingDictionary, setSavingDictionary] = useState(false);
+
+  const templateGroup = data.materialGroups.find((group) => group.matkl === templateMatkl);
+  const templateClassOptions = (data.classificationClasses || []).filter((item) =>
+    templateGroup?.classNames.includes(item.className)
+  );
+  const templateClassDefinition = templateClassOptions.find(
+    (item) => item.className === templateClass
+  );
 
   const kpis = useMemo(() => {
     let totalInventoryValue = 0;
@@ -78,6 +106,9 @@ export function MaterialListView({
 
   const filteredMaterials = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
+    const expandedTerms = data.searchDictionary
+      .filter((entry) => entry.aliases.some((alias) => alias.toLowerCase().includes(q)))
+      .map((entry) => entry.keyword.toLowerCase());
     return data.materials.filter((mat) => {
       if (selectedIndustry !== 'ALL' && mat.mara.mbrsh !== selectedIndustry) return false;
       if (selectedType !== 'ALL' && mat.mara.mtart !== selectedType) return false;
@@ -87,14 +118,60 @@ export function MaterialListView({
         if (!hasBklas) return false;
       }
       if (!q) return true;
-      return (
-        mat.mara.matnr.toLowerCase().includes(q) ||
-        mat.mara.maktx.toLowerCase().includes(q) ||
-        mat.mara.matkl.toLowerCase().includes(q) ||
-        mat.mara.bismt.toLowerCase().includes(q)
-      );
+      const fields = [
+        mat.mara.matnr,
+        mat.mara.maktx,
+        mat.mara.matkl,
+        mat.classificationClass || '',
+        mat.mara.bismt,
+      ]
+        .map((field) => field.toLowerCase());
+      return fields.some((field) => field.includes(q)) ||
+        expandedTerms.some((term) => fields.some((field) => field.includes(term)));
     });
-  }, [data.materials, searchQuery, selectedIndustry, selectedBklas, selectedType, selectedPlant]);
+  }, [data.materials, data.searchDictionary, searchQuery, selectedIndustry, selectedBklas, selectedType, selectedPlant]);
+
+  const resetDictionaryForm = () => {
+    setDictionaryKeyword('');
+    setDictionaryAliases('');
+    setEditingDictionaryId(undefined);
+    setDictionaryMessage(null);
+  };
+
+  const saveDictionaryEntry = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const aliases = dictionaryAliases.split(',').map((alias) => alias.trim()).filter(Boolean);
+    if (!dictionaryKeyword.trim() || aliases.length === 0) {
+      setDictionaryMessage('Isi keyword dan minimal satu clue, pisahkan beberapa clue dengan koma.');
+      return;
+    }
+
+    setSavingDictionary(true);
+    const result = await onSaveSearchDictionaryEntry(
+      { keyword: dictionaryKeyword.trim(), aliases },
+      editingDictionaryId
+    );
+    setSavingDictionary(false);
+    if (!result.ok) {
+      setDictionaryMessage(result.error || 'Gagal menyimpan kamus pencarian.');
+      return;
+    }
+    resetDictionaryForm();
+    setDictionaryMessage('Kamus pencarian tersimpan.');
+  };
+
+  const editDictionaryEntry = (entry: MaterialSearchDictionaryEntry) => {
+    setEditingDictionaryId(entry.id);
+    setDictionaryKeyword(entry.keyword);
+    setDictionaryAliases(entry.aliases.join(', '));
+    setDictionaryMessage(null);
+  };
+
+  const deleteDictionaryEntry = async (entry: MaterialSearchDictionaryEntry) => {
+    const result = await onDeleteSearchDictionaryEntry(entry.id);
+    setDictionaryMessage(result.ok ? 'Entri kamus dihapus.' : result.error || 'Gagal menghapus entri kamus.');
+    if (result.ok && editingDictionaryId === entry.id) resetDictionaryForm();
+  };
 
   const getMaterialSummary = (mat: MaterialMasterRecord) => {
     const plants = selectedPlant === 'ALL' ? Object.keys(mat.marc) : [selectedPlant].filter((p) => mat.marc[p]);
@@ -147,29 +224,40 @@ export function MaterialListView({
 
   const downloadTemplate = () => {
     const group = data.materialGroups.find((item) => item.matkl === templateMatkl);
-    if (!group) {
-      setImportMessage({ type: 'error', text: 'Pilih Material Group terlebih dahulu.' });
+    const classDefinition = (data.classificationClasses || []).find(
+      (item) => item.className === templateClass
+    );
+    if (!group || !classDefinition || !group.classNames.includes(templateClass)) {
+      setImportMessage({ type: 'error', text: 'Pilih Material Group dan class yang sesuai terlebih dahulu.' });
       return;
     }
     const headers = [
       'MATNR',
+      'MATKL',
+      'CLASS',
       'MAKTX',
       'MEINS',
       'BISMT',
-      ...group.characteristics
-        .filter((char) => char.required)
-        .map((char) => char.charName),
+      ...classDefinition.characteristics.map((char) => char.charName),
     ];
     const worksheet = XLSX.utils.aoa_to_sheet([
       headers,
-      ['', 'Contoh Nama Material', data.unitsOfMeasure[0]?.msehi || 'EA', 'Kode lama', ...group.characteristics.filter((char) => char.required).map((char) => char.options?.[0] || '')],
+      [
+        '',
+        group.matkl,
+        classDefinition.className,
+        'Contoh Nama Material',
+        data.unitsOfMeasure[0]?.msehi || 'EA',
+        'Kode lama',
+        ...classDefinition.characteristics.map(() => ''),
+      ],
     ]);
     worksheet['!cols'] = headers.map((header) => ({
       wch: Math.max(header.length + 4, 18),
     }));
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Material Master');
-    XLSX.writeFile(workbook, `Template_Material_${group.matkl}.xlsx`);
+    XLSX.writeFile(workbook, `Template_Material_${group.matkl}_${classDefinition.className}.xlsx`);
   };
 
   const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,7 +287,12 @@ export function MaterialListView({
           'Content-Type': 'application/json',
           'X-Tenant-Id': data.activeTenant.tenantId,
         },
-        body: JSON.stringify({ rows, matkl: templateMatkl, username: 'SAP_IMPORT_XLS' }),
+        body: JSON.stringify({
+          rows,
+          matkl: templateMatkl,
+          className: templateClass,
+          username: 'SAP_IMPORT_XLS',
+        }),
       });
       const result = await response.json();
       if (!response.ok && !result.db) {
@@ -292,7 +385,7 @@ export function MaterialListView({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari Material Number (MATNR), Deskripsi (MAKTX), Legacy Code..."
+              placeholder="Cari MATNR, deskripsi, legacy code, atau clue lokal (mis. klahar)..."
               className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#0064D9] focus:bg-white transition-colors"
             />
           </div>
@@ -327,6 +420,90 @@ export function MaterialListView({
             </select>
           </div>
         </div>
+
+        <details className="rounded-md border border-slate-200 bg-slate-50">
+          <summary className="cursor-pointer px-3 py-2.5 text-xs font-semibold text-slate-700 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-slate-500" />
+            Kamus clue pencarian ({data.searchDictionary.length})
+            <span className="font-normal text-slate-500">
+              · contoh: bearing ← klahar
+            </span>
+          </summary>
+          <div className="border-t border-slate-200 p-3 space-y-3">
+            <p className="text-xs text-slate-600">
+              Tambahkan istilah lokal atau sebutan lain. Pencarian clue akan mencari keyword pada nomor, deskripsi, grup, dan kode lama material.
+            </p>
+            <form onSubmit={saveDictionaryEntry} className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_auto_auto] gap-2">
+              <input
+                type="text"
+                value={dictionaryKeyword}
+                onChange={(event) => setDictionaryKeyword(event.target.value)}
+                maxLength={80}
+                placeholder="Keyword material, mis. bearing"
+                aria-label="Keyword material"
+                className="px-3 py-2 text-xs bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+              />
+              <input
+                type="text"
+                value={dictionaryAliases}
+                onChange={(event) => setDictionaryAliases(event.target.value)}
+                maxLength={500}
+                placeholder="Clue / istilah lokal, mis. klahar, laher"
+                aria-label="Clue pencarian, pisahkan dengan koma"
+                className="px-3 py-2 text-xs bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+              />
+              <button
+                type="submit"
+                disabled={savingDictionary}
+                className="px-3 py-2 text-xs font-semibold text-white bg-[#0064D9] hover:bg-[#0052B4] disabled:opacity-50 rounded-md"
+              >
+                {editingDictionaryId ? 'Simpan' : 'Tambah'}
+              </button>
+              {editingDictionaryId && (
+                <button
+                  type="button"
+                  onClick={resetDictionaryForm}
+                  className="px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-md"
+                >
+                  Batal
+                </button>
+              )}
+            </form>
+            {dictionaryMessage && <p className="text-xs text-slate-600">{dictionaryMessage}</p>}
+            {data.searchDictionary.length > 0 ? (
+              <div className="divide-y divide-slate-200 border border-slate-200 rounded-md bg-white">
+                {data.searchDictionary.map((entry) => (
+                  <div key={entry.id} className="flex items-center justify-between gap-3 px-3 py-2">
+                    <div className="min-w-0 text-xs">
+                      <span className="font-semibold text-slate-900">{entry.keyword}</span>
+                      <span className="text-slate-500"> ← {entry.aliases.join(', ')}</span>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => editDictionaryEntry(entry)}
+                        aria-label={`Ubah kamus ${entry.keyword}`}
+                        className="p-1.5 text-slate-500 hover:text-[#0064D9] hover:bg-blue-50 rounded"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void deleteDictionaryEntry(entry)}
+                        aria-label={`Hapus kamus ${entry.keyword}`}
+                        className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500">Belum ada istilah tambahan.</p>
+            )}
+          </div>
+        </details>
 
         {/* Segmented Filter: Industry Sector if >1, otherwise Valuation Class (OMQW) */}
         {data.industrySectors.length > 1 ? (
@@ -373,29 +550,23 @@ export function MaterialListView({
             >
               Semua HAWA ({data.materials.length})
             </button>
-            {[
-              { code: '3500', label: '3500 Unit' },
-              { code: '3040', label: '3040 Spare Parts' },
-              { code: '3030', label: '3030 Ops / GA / IT' },
-              { code: '3100', label: '3100 Trading / Tools' },
-              { code: '3200', label: '3200 Services' },
-            ].map((vc) => {
+            {VALUATION_CLASSES.map((vc) => {
               const count = data.materials.filter((m) =>
-                Object.values(m.mbew).some((mb) => mb.bklas === vc.code)
+                Object.values(m.mbew).some((mb) => mb.bklas === vc.bklas)
               ).length;
               if (count === 0) return null;
               return (
                 <button
-                  key={vc.code}
+                  key={vc.bklas}
                   type="button"
-                  onClick={() => setSelectedBklas(vc.code)}
+                  onClick={() => setSelectedBklas(vc.bklas)}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
-                    selectedBklas === vc.code
+                    selectedBklas === vc.bklas
                       ? 'bg-white text-[#0064D9] shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  {vc.label} ({count})
+                  {vc.bklas} {vc.label} ({count})
                 </button>
               );
             })}
@@ -417,13 +588,30 @@ export function MaterialListView({
           <div className="flex items-center gap-2">
             <select
               value={templateMatkl}
-              onChange={(event) => setTemplateMatkl(event.target.value)}
+              onChange={(event) => {
+                const nextMatkl = event.target.value;
+                const nextGroup = data.materialGroups.find((group) => group.matkl === nextMatkl);
+                setTemplateMatkl(nextMatkl);
+                setTemplateClass(nextGroup?.classNames[0] || '');
+              }}
               aria-label="Material Group untuk template XLS"
               className="max-w-[220px] px-2.5 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-md text-slate-700"
             >
               {data.materialGroups.map((group) => (
                 <option key={group.matkl} value={group.matkl}>
                   {group.matkl} · {group.label}
+                </option>
+              ))}
+            </select>
+            <select
+              value={templateClass}
+              onChange={(event) => setTemplateClass(event.target.value)}
+              aria-label="Class Material untuk template XLS"
+              className="max-w-[260px] px-2.5 py-1.5 text-xs font-mono bg-white border border-slate-200 rounded-md text-slate-700"
+            >
+              {templateClassOptions.map((item) => (
+                <option key={item.className} value={item.className}>
+                  {item.className} · {item.description}
                 </option>
               ))}
             </select>
@@ -504,8 +692,10 @@ export function MaterialListView({
                     data.industrySectors.find((i) => i.mbrsh === mat.mara.mbrsh)?.shortLabel ||
                     mat.mara.mbrsh;
 
-                  const matGroup = (data.materialGroups || []).find((mg) => mg.matkl === mat.mara.matkl);
-                  const charSummary = (matGroup?.characteristics || [])
+                  const classDefinition = (data.classificationClasses || []).find(
+                    (item) => item.className === mat.classificationClass
+                  );
+                  const charSummary = (classDefinition?.characteristics || [])
                     .map((ch) => {
                       const val = mat.characteristics?.[ch.charName];
                       if (val === undefined || val === null || val === '') return null;
@@ -541,6 +731,10 @@ export function MaterialListView({
                           <span>{indName}</span>
                           <span aria-hidden="true">·</span>
                           <span className="font-mono">{mat.mara.matkl}</span>
+                          <span aria-hidden="true">·</span>
+                          <span className="font-mono" title="Class Material CL02, Type 001">
+                            {mat.classificationClass || 'Class belum dipilih'}
+                          </span>
                           {mat.mara.xchpf && (
                             <>
                               <span aria-hidden="true">·</span>

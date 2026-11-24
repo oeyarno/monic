@@ -1,4 +1,18 @@
-import type { MaterialGroupDefinition } from '../types/sap.ts';
+import type {
+  MaterialClassificationClass,
+  MaterialGroupDefinition,
+  MasterCharacteristic,
+} from '../types/sap.ts';
+
+type CharacteristicSource =
+  | MaterialGroupDefinition
+  | MaterialClassificationClass
+  | readonly MasterCharacteristic[];
+
+function getCharacteristics(source: CharacteristicSource | undefined): readonly MasterCharacteristic[] {
+  if (!source) return [];
+  return 'characteristics' in source ? source.characteristics : source;
+}
 
 export function formatCurrency(amount: number, currency = 'IDR'): string {
   if (currency === 'IDR') {
@@ -46,21 +60,23 @@ export function getMaterialStatusLabel(mstae: string): {
 }
 
 export function formatCharacteristicPattern(
-  matGroup: MaterialGroupDefinition | undefined,
+  source: CharacteristicSource | undefined,
   separator = '-'
 ): string {
-  if (!matGroup || matGroup.characteristics.length === 0) return '-';
-  return matGroup.characteristics.map((ch) => ch.label).join(separator);
+  const characteristics = getCharacteristics(source);
+  if (characteristics.length === 0) return '-';
+  return characteristics.map((ch) => ch.label).join(separator);
 }
 
 export function buildMaterialShortDescription(
-  matGroup: MaterialGroupDefinition | undefined,
+  source: CharacteristicSource | undefined,
   characteristics: Record<string, string | number | boolean> | undefined,
   separator = '-'
 ): string {
-  if (!matGroup || !characteristics || matGroup.characteristics.length === 0) return '';
+  const classCharacteristics = getCharacteristics(source);
+  if (!characteristics || classCharacteristics.length === 0) return '';
   const parts: string[] = [];
-  for (const ch of matGroup.characteristics) {
+  for (const ch of classCharacteristics) {
     const raw = characteristics[ch.charName];
     if (raw === undefined || raw === null) continue;
     if (ch.dataType === 'boolean') {

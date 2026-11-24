@@ -18,3 +18,9 @@ View your app in AI Studio: https://ai.studio/apps/5dd04c6a-0df9-4b92-b584-c836c
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Material Classification
+
+The material catalog follows `material gorup class.xlsx`: it contains exactly 22 Material Groups and 55 CL02 classes (class type 001). Each Material Group allows its spreadsheet-defined classes; when creating or changing a material in MM01/MM02, select both the Material Group and one of its classes. CT04 characteristics shown and validated for the material come from that selected class.
+
+The XLS template asks for both MATKL and CLASS and includes the selected class's characteristic columns. Import validates that the class belongs to the selected Material Group. Database schema version 26 migrates legacy groups and material assignments to the spreadsheet catalog after creating a database backup.

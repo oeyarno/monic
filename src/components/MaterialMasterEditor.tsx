@@ -76,6 +76,10 @@ function createEmptyMaterial(
   lgort = data.plants[0]?.storageLocations[0]?.lgort || '0001'
 ): MaterialMasterRecord {
   const defaultGroup = data.materialGroups?.[0];
+  const defaultClassName = defaultGroup?.classNames[0];
+  const defaultClass = data.classificationClasses?.find(
+    (item) => item.className === defaultClassName
+  );
   const mtart: MaterialTypeCode = mtartOverride || defaultGroup?.defaultMtart || 'HAWA';
   const mtDef = data.materialTypes.find((m) => m.mtart === mtart) || data.materialTypes[0];
   const prefix = mtDef.internalNumberPrefix;
@@ -105,8 +109,8 @@ function createEmptyMaterial(
   }
 
   const characteristics: Record<string, string | number | boolean> = {};
-  if (defaultGroup) {
-    for (const ch of defaultGroup.characteristics) {
+  if (defaultClass) {
+    for (const ch of defaultClass.characteristics) {
       if (ch.dataType === 'boolean') {
         characteristics[ch.charName] = false;
       } else {
@@ -204,6 +208,7 @@ function createEmptyMaterial(
       tragr: '0001',
       ladgr: '0001',
     },
+    classificationClass: defaultClassName,
     characteristics,
     industryExtensions: extensions,
   };
@@ -289,8 +294,16 @@ export function MaterialMasterEditor({
     return (data.materialGroups || []).find((mg) => mg.matkl === draft.mara.matkl);
   }, [data.materialGroups, draft.mara.matkl]);
 
+  const activeClassDefinition = useMemo(
+    () =>
+      data.classificationClasses?.find(
+        (item) => item.className === draft.classificationClass
+      ),
+    [data.classificationClasses, draft.classificationClass]
+  );
+
   const charCompletion = useMemo(() => {
-    const chars = activeMaterialGroup?.characteristics || [];
+    const chars = activeClassDefinition?.characteristics || [];
     const requiredChars = chars.filter((c) => c.required && c.dataType !== 'boolean');
     let requiredFilled = 0;
     for (const ch of requiredChars) {
@@ -308,7 +321,7 @@ export function MaterialMasterEditor({
       requiredTotal: requiredChars.length,
       requiredFilled,
     };
-  }, [activeMaterialGroup, draft.characteristics]);
+  }, [activeClassDefinition, draft.characteristics]);
 
   const oms9Summary = useMemo(() => {
     let requiredCount = 0;
@@ -340,21 +353,25 @@ export function MaterialMasterEditor({
 
   const handleMaterialGroupChange = (newMatkl: string) => {
     const mg = (data.materialGroups || []).find((g) => g.matkl === newMatkl);
+    const className = mg?.classNames[0];
+    const classDefinition = data.classificationClasses?.find(
+      (item) => item.className === className
+    );
     setDraft((prev) => {
       const nextChars: Record<string, string | number | boolean> = { ...(prev.characteristics || {}) };
-      if (mg) {
-        for (const ch of mg.characteristics) {
+      if (classDefinition) {
+        for (const ch of classDefinition.characteristics) {
           if (nextChars[ch.charName] === undefined) {
             nextChars[ch.charName] = ch.dataType === 'boolean' ? false : '';
           }
         }
       }
       const nextMaktx = autoShortDesc
-        ? buildMaterialShortDescription(mg, nextChars)
+        ? buildMaterialShortDescription(classDefinition, nextChars)
         : prev.mara.maktx;
 
       let nextMbew = prev.mbew;
-      if (mode === 'create' && mg?.defaultBklas && prev.mbew[activeWerks]) {
+      if (mg?.defaultBklas && prev.mbew[activeWerks]) {
         const curMbew = prev.mbew[activeWerks];
         const updatedSplits = curMbew.splitValuations
           ? Object.fromEntries(
@@ -377,8 +394,34 @@ export function MaterialMasterEditor({
       return {
         ...prev,
         mara: { ...prev.mara, matkl: newMatkl, maktx: nextMaktx },
+        classificationClass: className,
         characteristics: nextChars,
         mbew: nextMbew,
+      };
+    });
+  };
+
+  const handleClassificationClassChange = (className: string) => {
+    const classDefinition = data.classificationClasses?.find(
+      (item) => item.className === className
+    );
+    setDraft((prev) => {
+      const nextChars = { ...(prev.characteristics || {}) };
+      for (const ch of classDefinition?.characteristics || []) {
+        if (nextChars[ch.charName] === undefined) {
+          nextChars[ch.charName] = ch.dataType === 'boolean' ? false : '';
+        }
+      }
+      return {
+        ...prev,
+        classificationClass: className,
+        characteristics: nextChars,
+        mara: {
+          ...prev.mara,
+          maktx: autoShortDesc
+            ? buildMaterialShortDescription(classDefinition, nextChars)
+            : prev.mara.maktx,
+        },
       };
     });
   };
@@ -386,9 +429,11 @@ export function MaterialMasterEditor({
   const updateCharacteristicValue = (charName: string, val: string | number | boolean) => {
     setDraft((prev) => {
       const nextChars = { ...(prev.characteristics || {}), [charName]: val };
-      const mg = (data.materialGroups || []).find((g) => g.matkl === prev.mara.matkl);
+      const classDefinition = data.classificationClasses?.find(
+        (item) => item.className === prev.classificationClass
+      );
       const nextMaktx = autoShortDesc
-        ? buildMaterialShortDescription(mg, nextChars)
+        ? buildMaterialShortDescription(classDefinition, nextChars)
         : prev.mara.maktx;
       return {
         ...prev,
@@ -875,19 +920,19 @@ export function MaterialMasterEditor({
   };
 
   const generatedShortDescPreview = useMemo(() => {
-    return buildMaterialShortDescription(activeMaterialGroup, draft.characteristics);
-  }, [activeMaterialGroup, draft.characteristics]);
+    return buildMaterialShortDescription(activeClassDefinition, draft.characteristics);
+  }, [activeClassDefinition, draft.characteristics]);
 
   const renderCharacteristicSection = (standalone = false) => (
     <div className={standalone ? 'space-y-5' : 'mt-6 pt-6 border-t border-slate-200 space-y-4'}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-slate-900">
-            Karakteristik Material sesuai Master Characteristic (CT04 · {draft.mara.matkl})
+            Karakteristik Material dari Class Type 001 ({draft.classificationClass || 'Belum dipilih'})
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             {activeMaterialGroup
-              ? `${activeMaterialGroup.label} — Format Short Name: ${formatCharacteristicPattern(activeMaterialGroup)}`
+              ? `${activeMaterialGroup.label} — Format Short Name: ${formatCharacteristicPattern(activeClassDefinition)}`
               : 'Material Group belum terdaftar pada Master Characteristic (CT04).'}
           </p>
         </div>
@@ -912,12 +957,12 @@ export function MaterialMasterEditor({
         </div>
       </div>
 
-      {activeMaterialGroup && activeMaterialGroup.characteristics.length > 0 && (
+      {activeClassDefinition && activeClassDefinition.characteristics.length > 0 && (
         <div className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-md flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
           <div className="min-w-0">
-            <span className="text-slate-500">Preview Short Name (Urutan #1–#{activeMaterialGroup.characteristics.length}): </span>
+            <span className="text-slate-500">Preview Short Name (Urutan #1–#{activeClassDefinition.characteristics.length}): </span>
             <span className="font-mono font-semibold text-slate-900">
-              {generatedShortDescPreview || formatCharacteristicPattern(activeMaterialGroup)}
+              {generatedShortDescPreview || formatCharacteristicPattern(activeClassDefinition)}
             </span>
           </div>
           {!isReadOnly && generatedShortDescPreview && draft.mara.maktx !== generatedShortDescPreview && (
@@ -932,13 +977,13 @@ export function MaterialMasterEditor({
         </div>
       )}
 
-      {!activeMaterialGroup || activeMaterialGroup.characteristics.length === 0 ? (
+      {!activeClassDefinition || activeClassDefinition.characteristics.length === 0 ? (
         <div className="p-4 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-500">
-          Belum ada Master Characteristic yang didefinisikan untuk Material Group {draft.mara.matkl}.
+          Pilih class CL02 untuk menampilkan characteristic yang sesuai.
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {activeMaterialGroup.characteristics.map((ch, idx) => renderCharacteristicInput(ch, idx))}
+          {activeClassDefinition.characteristics.map((ch, idx) => renderCharacteristicInput(ch, idx))}
         </div>
       )}
     </div>
@@ -1326,7 +1371,7 @@ export function MaterialMasterEditor({
                     setAutoShortDesc(false);
                     updateMara('maktx', e.target.value);
                   }}
-                  placeholder={`Otomatis mengikuti format: ${formatCharacteristicPattern(activeMaterialGroup)}`}
+                  placeholder={`Otomatis mengikuti format: ${formatCharacteristicPattern(activeClassDefinition)}`}
                   className={`w-full px-3 py-2 text-sm border border-slate-200 rounded-md text-slate-900 focus:outline-none focus:border-[#0064D9] ${
                     isReadOnly
                       ? 'bg-slate-100'
@@ -1339,7 +1384,7 @@ export function MaterialMasterEditor({
                   <span>
                     Acuan CT04 ({draft.mara.matkl}):{' '}
                     <span className="font-mono text-slate-700">
-                      {formatCharacteristicPattern(activeMaterialGroup)}
+                      {formatCharacteristicPattern(activeClassDefinition)}
                     </span>
                   </span>
                   <span className="font-mono tabular-nums">
@@ -1383,6 +1428,29 @@ export function MaterialMasterEditor({
                   {!(data.materialGroups || []).some((mg) => mg.matkl === draft.mara.matkl) && (
                     <option value={draft.mara.matkl}>{draft.mara.matkl} (Unregistered)</option>
                   )}
+                </select>
+              </div>
+
+              <div>
+                {renderFieldLabel('Class Material (CL02 Type 001)', 'MARA-CLASSIFICATION', 'required')}
+                <select
+                  required
+                  disabled={isReadOnly || !activeMaterialGroup}
+                  value={draft.classificationClass || ''}
+                  onChange={(e) => handleClassificationClassChange(e.target.value)}
+                  className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
+                >
+                  <option value="">-- Pilih class --</option>
+                  {(activeMaterialGroup?.classNames || []).map((className) => {
+                    const classDefinition = data.classificationClasses?.find(
+                      (item) => item.className === className
+                    );
+                    return (
+                      <option key={className} value={className}>
+                        {className}{classDefinition ? ` — ${classDefinition.description}` : ''}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -1942,7 +2010,7 @@ export function MaterialMasterEditor({
                     >
                       {VALUATION_CLASSES.map((vc) => (
                         <option key={vc.bklas} value={vc.bklas}>
-                          {vc.bklas} — {vc.label} (GL {vc.glAccount})
+                          {vc.bklas} — {vc.label} (GL {vc.glAccount} · {vc.glAccountName})
                         </option>
                       ))}
                     </select>

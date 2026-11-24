@@ -1,0 +1,8729 @@
+{
+  "sourceFile": "coa vdi.xlsx",
+  "sourceRows": 2338,
+  "uniqueAccountCodes": 1305,
+  "uniqueEntries": 1744,
+  "ambiguousAccountCodes": 315,
+  "accounts": [
+    {
+      "accountNumber": "1301.02",
+      "level": 2,
+      "name": "Pinjaman Pihak ke - 3 Rajawali"
+    },
+    {
+      "accountNumber": "1100000",
+      "level": 2,
+      "name": "Aktiva Lancar"
+    },
+    {
+      "accountNumber": "1110000",
+      "level": 3,
+      "name": "Kas & Bank"
+    },
+    {
+      "accountNumber": "1110100",
+      "level": 4,
+      "name": "Kas"
+    },
+    {
+      "accountNumber": "1110101",
+      "level": 5,
+      "name": "Kas Kecil Pekanbaru"
+    },
+    {
+      "accountNumber": "1110101",
+      "level": 5,
+      "name": "Kas Kecil PKU BNI"
+    },
+    {
+      "accountNumber": "1110101",
+      "level": 5,
+      "name": "Kas kecil"
+    },
+    {
+      "accountNumber": "1110102",
+      "level": 5,
+      "name": "Kas Kecil Duri"
+    },
+    {
+      "accountNumber": "1110102",
+      "level": 5,
+      "name": "Kas Kecil PKU Tunai"
+    },
+    {
+      "accountNumber": "1110102",
+      "level": 5,
+      "name": "Kas Besar"
+    },
+    {
+      "accountNumber": "1110103",
+      "level": 5,
+      "name": "Kas Kecil BKL"
+    },
+    {
+      "accountNumber": "1110103",
+      "level": 5,
+      "name": "Kas Kecil Medan"
+    },
+    {
+      "accountNumber": "1110103",
+      "level": 5,
+      "name": "Kas Kecil Kerinci"
+    },
+    {
+      "accountNumber": "1110103",
+      "level": 5,
+      "name": "Kas Kecil Duri BNI"
+    },
+    {
+      "accountNumber": "1110104",
+      "level": 5,
+      "name": "Kas Kecil Balikpapan (Pertamina)"
+    },
+    {
+      "accountNumber": "1110104",
+      "level": 5,
+      "name": "Kas Kecil Duri Tunai"
+    },
+    {
+      "accountNumber": "1110104",
+      "level": 5,
+      "name": "Kas Kecil Bayas"
+    },
+    {
+      "accountNumber": "1110105",
+      "level": 5,
+      "name": "Kas Kecil Balikpapan (Hyundai)"
+    },
+    {
+      "accountNumber": "1110105",
+      "level": 5,
+      "name": "Kas Kecil Jepry Ramadhan"
+    },
+    {
+      "accountNumber": "1110105",
+      "level": 5,
+      "name": "Kas Kecil Cerenti"
+    },
+    {
+      "accountNumber": "1110106",
+      "level": 5,
+      "name": "Kas Kecil Elnusa Pendopo"
+    },
+    {
+      "accountNumber": "1110106",
+      "level": 5,
+      "name": "Kas Kecil Balikpapan"
+    },
+    {
+      "accountNumber": "1110106",
+      "level": 5,
+      "name": "Kas Kecil Jepry Ramadhan"
+    },
+    {
+      "accountNumber": "1110107",
+      "level": 5,
+      "name": "Kas Kecil So Prabumulih"
+    },
+    {
+      "accountNumber": "1110107",
+      "level": 5,
+      "name": "Kas Kecil Sebakis"
+    },
+    {
+      "accountNumber": "1110108",
+      "level": 5,
+      "name": "Kas Kecil TEP"
+    },
+    {
+      "accountNumber": "1110108",
+      "level": 5,
+      "name": "Kas Kecil Pontianak"
+    },
+    {
+      "accountNumber": "1110109",
+      "level": 5,
+      "name": "Kas Kecil Elnusa Prabumulih"
+    },
+    {
+      "accountNumber": "1110109",
+      "level": 5,
+      "name": "Kas Kecil Lubuk Jambi"
+    },
+    {
+      "accountNumber": "1110110",
+      "level": 5,
+      "name": "Kas Kecil Exxon"
+    },
+    {
+      "accountNumber": "1110110",
+      "level": 5,
+      "name": "Kas Kecil Alas Kusuma"
+    },
+    {
+      "accountNumber": "1110111",
+      "level": 5,
+      "name": "Kas Kecil Jakarta"
+    },
+    {
+      "accountNumber": "1110111",
+      "level": 5,
+      "name": "Kas Kecil Segati"
+    },
+    {
+      "accountNumber": "1110112",
+      "level": 5,
+      "name": "Kas Kecil BP"
+    },
+    {
+      "accountNumber": "1110112",
+      "level": 5,
+      "name": "Kas Kecil Sebakung"
+    },
+    {
+      "accountNumber": "1110113",
+      "level": 5,
+      "name": "Kas Kecil RAPP"
+    },
+    {
+      "accountNumber": "1110113",
+      "level": 5,
+      "name": "Kas Kecil Rental SBA"
+    },
+    {
+      "accountNumber": "1110114",
+      "level": 5,
+      "name": "Kas Kecil Muara Badak"
+    },
+    {
+      "accountNumber": "1110114",
+      "level": 5,
+      "name": "Kas Kecil Senoni"
+    },
+    {
+      "accountNumber": "1110115",
+      "level": 5,
+      "name": "Kas VI Group"
+    },
+    {
+      "accountNumber": "1110115",
+      "level": 5,
+      "name": "Kas Kecil Rental LV"
+    },
+    {
+      "accountNumber": "1110116",
+      "level": 5,
+      "name": "Kas Kecil BP Jakarta"
+    },
+    {
+      "accountNumber": "1110116",
+      "level": 5,
+      "name": "Kas Kecil Tarakan"
+    },
+    {
+      "accountNumber": "1110117",
+      "level": 5,
+      "name": "Kas Kecil Koto Boyo"
+    },
+    {
+      "accountNumber": "1110117",
+      "level": 5,
+      "name": "Kas Non PPN"
+    },
+    {
+      "accountNumber": "1110118",
+      "level": 5,
+      "name": "Kas Kecil Batam"
+    },
+    {
+      "accountNumber": "1110200",
+      "level": 4,
+      "name": "Bank"
+    },
+    {
+      "accountNumber": "1110201",
+      "level": 5,
+      "name": "Mandiri 8783"
+    },
+    {
+      "accountNumber": "1110201",
+      "level": 5,
+      "name": "Mandiri 6887"
+    },
+    {
+      "accountNumber": "1110201",
+      "level": 5,
+      "name": "Bank Mandiri 6060"
+    },
+    {
+      "accountNumber": "1110201",
+      "level": 5,
+      "name": "Mandiri 3642"
+    },
+    {
+      "accountNumber": "1110202",
+      "level": 5,
+      "name": "Mandiri 8173"
+    },
+    {
+      "accountNumber": "1110202",
+      "level": 5,
+      "name": "Bank BRI 1309"
+    },
+    {
+      "accountNumber": "1110202",
+      "level": 5,
+      "name": "BNI 2640"
+    },
+    {
+      "accountNumber": "1110202",
+      "level": 5,
+      "name": "Mandiri Transindo -9700"
+    },
+    {
+      "accountNumber": "1110203",
+      "level": 5,
+      "name": "Bank BRI 7305"
+    },
+    {
+      "accountNumber": "1110203",
+      "level": 5,
+      "name": "BCA 4585"
+    },
+    {
+      "accountNumber": "1110203",
+      "level": 5,
+      "name": "Mandiri 0307"
+    },
+    {
+      "accountNumber": "1110203",
+      "level": 5,
+      "name": "BNI 9991"
+    },
+    {
+      "accountNumber": "1110204",
+      "level": 5,
+      "name": "OCBC 7370"
+    },
+    {
+      "accountNumber": "1110204",
+      "level": 5,
+      "name": "Deposito"
+    },
+    {
+      "accountNumber": "1110204",
+      "level": 5,
+      "name": "Mandiri 0508"
+    },
+    {
+      "accountNumber": "1110205",
+      "level": 5,
+      "name": "Bank BRI 4301"
+    },
+    {
+      "accountNumber": "1110205",
+      "level": 5,
+      "name": "Mandiri Escrow"
+    },
+    {
+      "accountNumber": "1110205",
+      "level": 5,
+      "name": "BNI Sherly 8887"
+    },
+    {
+      "accountNumber": "1110205",
+      "level": 5,
+      "name": "Mandiri 0011"
+    },
+    {
+      "accountNumber": "1110206",
+      "level": 5,
+      "name": "Bank Panin - 90999"
+    },
+    {
+      "accountNumber": "1110206",
+      "level": 5,
+      "name": "Bank BCA 8889"
+    },
+    {
+      "accountNumber": "1110206",
+      "level": 5,
+      "name": "Mandiri Roji 8909"
+    },
+    {
+      "accountNumber": "1110206",
+      "level": 5,
+      "name": "Mandiri 2222"
+    },
+    {
+      "accountNumber": "1110207",
+      "level": 5,
+      "name": "Bank BCA - 0697"
+    },
+    {
+      "accountNumber": "1110207",
+      "level": 5,
+      "name": "Bank Danamon"
+    },
+    {
+      "accountNumber": "1110207",
+      "level": 5,
+      "name": "Mandiri Sherly 3649"
+    },
+    {
+      "accountNumber": "1110207",
+      "level": 5,
+      "name": "BRI 3304"
+    },
+    {
+      "accountNumber": "1110208",
+      "level": 5,
+      "name": "Bank Tabungan Negara"
+    },
+    {
+      "accountNumber": "1110208",
+      "level": 5,
+      "name": "Bank Panin"
+    },
+    {
+      "accountNumber": "1110208",
+      "level": 5,
+      "name": "BNI 9378"
+    },
+    {
+      "accountNumber": "1110209",
+      "level": 5,
+      "name": "Mandiri 1080024185721"
+    },
+    {
+      "accountNumber": "1110209",
+      "level": 5,
+      "name": "Exim Bank"
+    },
+    {
+      "accountNumber": "1110210",
+      "level": 5,
+      "name": "Mandiri 1080088002200"
+    },
+    {
+      "accountNumber": "1110210",
+      "level": 5,
+      "name": "BCA 8551"
+    },
+    {
+      "accountNumber": "1110211",
+      "level": 5,
+      "name": "Mandiri 1080000003641"
+    },
+    {
+      "accountNumber": "1110211",
+      "level": 5,
+      "name": "Permata 7381"
+    },
+    {
+      "accountNumber": "1110211",
+      "level": 5,
+      "name": "Bank Panin 1977"
+    },
+    {
+      "accountNumber": "1110212",
+      "level": 5,
+      "name": "BNI 6964"
+    },
+    {
+      "accountNumber": "1110212",
+      "level": 5,
+      "name": "Mandiri 1080095009990"
+    },
+    {
+      "accountNumber": "1110213",
+      "level": 5,
+      "name": "Panin 8818"
+    },
+    {
+      "accountNumber": "1110213",
+      "level": 5,
+      "name": "BRI 177401000023305"
+    },
+    {
+      "accountNumber": "1110214",
+      "level": 5,
+      "name": "BNI 2030"
+    },
+    {
+      "accountNumber": "1110214",
+      "level": 5,
+      "name": "BCA Syariah 0509595955"
+    },
+    {
+      "accountNumber": "1110216",
+      "level": 5,
+      "name": "Bank Mandiri Escrow 5011"
+    },
+    {
+      "accountNumber": "1110217",
+      "level": 5,
+      "name": "Bank BWS 0024"
+    },
+    {
+      "accountNumber": "1110218",
+      "level": 5,
+      "name": "Bank BNI 9998"
+    },
+    {
+      "accountNumber": "1110219",
+      "level": 5,
+      "name": "Bank Permata 8989"
+    },
+    {
+      "accountNumber": "1110221",
+      "level": 5,
+      "name": "BNI 8072 Escrow"
+    },
+    {
+      "accountNumber": "1110222",
+      "level": 5,
+      "name": "BNI 02"
+    },
+    {
+      "accountNumber": "1110223",
+      "level": 5,
+      "name": "BRI 5307"
+    },
+    {
+      "accountNumber": "1110224",
+      "level": 5,
+      "name": "Mandiri 0559"
+    },
+    {
+      "accountNumber": "1110230",
+      "level": 5,
+      "name": "Danamon 2389"
+    },
+    {
+      "accountNumber": "1110231",
+      "level": 5,
+      "name": "Danamon 7580"
+    },
+    {
+      "accountNumber": "1110235",
+      "level": 5,
+      "name": "BTPN 1794"
+    },
+    {
+      "accountNumber": "1110240",
+      "level": 5,
+      "name": "BCA Syariah 9458"
+    },
+    {
+      "accountNumber": "1110245",
+      "level": 5,
+      "name": "WOORI 0068"
+    },
+    {
+      "accountNumber": "1110246",
+      "level": 5,
+      "name": "BNI 1686 escrow"
+    },
+    {
+      "accountNumber": "1110247",
+      "level": 5,
+      "name": "BRK Syariah 2867"
+    },
+    {
+      "accountNumber": "1110290",
+      "level": 5,
+      "name": "Rekening Deposito"
+    },
+    {
+      "accountNumber": "1110298",
+      "level": 5,
+      "name": "Kas Besar Coal Koto Boyo"
+    },
+    {
+      "accountNumber": "1110299",
+      "level": 5,
+      "name": "Rek Penampung Leasing"
+    },
+    {
+      "accountNumber": "1110300",
+      "level": 4,
+      "name": "Pos Silang"
+    },
+    {
+      "accountNumber": "1110301",
+      "level": 5,
+      "name": "Kas ke Kas"
+    },
+    {
+      "accountNumber": "1110301",
+      "level": 5,
+      "name": "Kas Bank Transfer(Post Silang)"
+    },
+    {
+      "accountNumber": "1110302",
+      "level": 5,
+      "name": "Pos Silang Kas ke Bank"
+    },
+    {
+      "accountNumber": "1110302",
+      "level": 5,
+      "name": "Kas ke Bank"
+    },
+    {
+      "accountNumber": "1110302",
+      "level": 5,
+      "name": "Post Sementara (Hutang Biaya)"
+    },
+    {
+      "accountNumber": "1110303",
+      "level": 5,
+      "name": "Pos Silang Bank ke Bank"
+    },
+    {
+      "accountNumber": "1110303",
+      "level": 5,
+      "name": "Bank ke Bank"
+    },
+    {
+      "accountNumber": "1110303",
+      "level": 5,
+      "name": "Post Sementara"
+    },
+    {
+      "accountNumber": "1110304",
+      "level": 5,
+      "name": "Pos Silang Leasing"
+    },
+    {
+      "accountNumber": "1120000",
+      "level": 3,
+      "name": "Piutang Usaha"
+    },
+    {
+      "accountNumber": "1120100",
+      "level": 4,
+      "name": "Piutang Usaha"
+    },
+    {
+      "accountNumber": "1120101",
+      "level": 5,
+      "name": "Piutang Usaha Customer"
+    },
+    {
+      "accountNumber": "1120101",
+      "level": 5,
+      "name": "Piutang Usaha"
+    },
+    {
+      "accountNumber": "1120101",
+      "level": 5,
+      "name": "Piutang Usaha Costumer"
+    },
+    {
+      "accountNumber": "1120200",
+      "level": 4,
+      "name": "Piutang Progress"
+    },
+    {
+      "accountNumber": "1120200",
+      "level": 4,
+      "name": "Piutang Accrual"
+    },
+    {
+      "accountNumber": "1120201",
+      "level": 5,
+      "name": "Piutang Progress Customer"
+    },
+    {
+      "accountNumber": "1120201",
+      "level": 5,
+      "name": "Piutang Accrual"
+    },
+    {
+      "accountNumber": "1130000",
+      "level": 3,
+      "name": "Piutang Lain-lain"
+    },
+    {
+      "accountNumber": "1130100",
+      "level": 4,
+      "name": "Pinjaman Group"
+    },
+    {
+      "accountNumber": "1130100",
+      "level": 4,
+      "name": "Piutang Pemborong"
+    },
+    {
+      "accountNumber": "1130101",
+      "level": 5,
+      "name": "Harimba"
+    },
+    {
+      "accountNumber": "1130101",
+      "level": 5,
+      "name": "Pinjaman Sementara VDI"
+    },
+    {
+      "accountNumber": "1130101",
+      "level": 5,
+      "name": "Piutang Pemborong - Ali (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130101",
+      "level": 5,
+      "name": "Vadhana International"
+    },
+    {
+      "accountNumber": "1130102",
+      "level": 5,
+      "name": "Multiteraindo"
+    },
+    {
+      "accountNumber": "1130102",
+      "level": 5,
+      "name": "Profita Abadi"
+    },
+    {
+      "accountNumber": "1130102",
+      "level": 5,
+      "name": "VDI Group"
+    },
+    {
+      "accountNumber": "1130102",
+      "level": 5,
+      "name": "Piutang Pemborong - Sagala (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130103",
+      "level": 5,
+      "name": "Profita Abadi"
+    },
+    {
+      "accountNumber": "1130103",
+      "level": 5,
+      "name": "Hasta International"
+    },
+    {
+      "accountNumber": "1130103",
+      "level": 5,
+      "name": "Pinjaman Sementara MT"
+    },
+    {
+      "accountNumber": "1130103",
+      "level": 5,
+      "name": "Piutang Pemborong - Sien (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130104",
+      "level": 5,
+      "name": "Hamac Group"
+    },
+    {
+      "accountNumber": "1130104",
+      "level": 5,
+      "name": "Harimba"
+    },
+    {
+      "accountNumber": "1130104",
+      "level": 5,
+      "name": "MT Group"
+    },
+    {
+      "accountNumber": "1130104",
+      "level": 5,
+      "name": "Piutang Pemborong - Musri (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130105",
+      "level": 5,
+      "name": "Halisafe"
+    },
+    {
+      "accountNumber": "1130105",
+      "level": 5,
+      "name": "Pinjaman Sementara Hasta"
+    },
+    {
+      "accountNumber": "1130105",
+      "level": 5,
+      "name": "Piutang Pemborong - Rusli (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130106",
+      "level": 5,
+      "name": "Pinjaman Sementara HRI"
+    },
+    {
+      "accountNumber": "1130106",
+      "level": 5,
+      "name": "Piutang Pemborong - Rahmad (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130106",
+      "level": 5,
+      "name": "HRI - Pengalihan Deviden"
+    },
+    {
+      "accountNumber": "1130107",
+      "level": 5,
+      "name": "Vikon Otto Benua"
+    },
+    {
+      "accountNumber": "1130107",
+      "level": 5,
+      "name": "Pinjaman Lain-lain"
+    },
+    {
+      "accountNumber": "1130107",
+      "level": 5,
+      "name": "Piutang Pemborong - Mulyadi (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130108",
+      "level": 5,
+      "name": "PA - Pengalihan Penjualan Non PPN"
+    },
+    {
+      "accountNumber": "1130108",
+      "level": 5,
+      "name": "Pinjaman Semnetara Vikon"
+    },
+    {
+      "accountNumber": "1130108",
+      "level": 5,
+      "name": "Piutang Pemborong - Syafruddin (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130109",
+      "level": 5,
+      "name": "Pinjaman Sementara PA"
+    },
+    {
+      "accountNumber": "1130109",
+      "level": 5,
+      "name": "Pengalihan Penjualan Material"
+    },
+    {
+      "accountNumber": "1130109",
+      "level": 5,
+      "name": "Piutang Pemborong - Jamahari Johan (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130110",
+      "level": 5,
+      "name": "Piutang Pemborong - Hamid/Roni (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130110",
+      "level": 5,
+      "name": "HRI-Pemakaian Material"
+    },
+    {
+      "accountNumber": "1130111",
+      "level": 5,
+      "name": "Piutang Pemborong - M. Sunardi (Chainsaw) Jambi"
+    },
+    {
+      "accountNumber": "1130112",
+      "level": 5,
+      "name": "Piutang Pemborong - R. Turen"
+    },
+    {
+      "accountNumber": "1130113",
+      "level": 5,
+      "name": "Piutang Pemborong - PT. SJP"
+    },
+    {
+      "accountNumber": "1130114",
+      "level": 5,
+      "name": "Piutang Pemborong - Gultom (Chainsaw) Jambi"
+    },
+    {
+      "accountNumber": "1130115",
+      "level": 5,
+      "name": "Piutang Pemborong (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130116",
+      "level": 5,
+      "name": "Reclas Pinjaman Pemborong (Chainsaw)"
+    },
+    {
+      "accountNumber": "1130200",
+      "level": 4,
+      "name": "Pinjaman Operasional"
+    },
+    {
+      "accountNumber": "1130201",
+      "level": 5,
+      "name": "Pinjaman Operasional"
+    },
+    {
+      "accountNumber": "1130300",
+      "level": 4,
+      "name": "Pinjaman Karyawan"
+    },
+    {
+      "accountNumber": "1130301",
+      "level": 5,
+      "name": "Pinjaman Karyawan"
+    },
+    {
+      "accountNumber": "1130302",
+      "level": 5,
+      "name": "Pinjaman Karyawan BKL"
+    },
+    {
+      "accountNumber": "1130303",
+      "level": 5,
+      "name": "Pinjaman Karyawan BERAU"
+    },
+    {
+      "accountNumber": "1130400",
+      "level": 4,
+      "name": "Pinjaman Sementara"
+    },
+    {
+      "accountNumber": "1130401",
+      "level": 5,
+      "name": "Rudi Hartono"
+    },
+    {
+      "accountNumber": "1130402",
+      "level": 5,
+      "name": "Sherly Tan"
+    },
+    {
+      "accountNumber": "1130403",
+      "level": 5,
+      "name": "Santun Sihombing"
+    },
+    {
+      "accountNumber": "1130403",
+      "level": 5,
+      "name": "Jenny"
+    },
+    {
+      "accountNumber": "1130403",
+      "level": 5,
+      "name": "Sherly Tan 3 ruko arifin ahmad"
+    },
+    {
+      "accountNumber": "1130404",
+      "level": 5,
+      "name": "Pinjaman Lainnya Sementara"
+    },
+    {
+      "accountNumber": "1130404",
+      "level": 2,
+      "name": "Sherly Tan 3 unit ruko duri"
+    },
+    {
+      "accountNumber": "1130404",
+      "level": 5,
+      "name": "Pinjaman Sementara"
+    },
+    {
+      "accountNumber": "1130405",
+      "level": 5,
+      "name": "Sherly Tan 3 Rumah Uni Garden"
+    },
+    {
+      "accountNumber": "1130405",
+      "level": 2,
+      "name": "Persedian transmital"
+    },
+    {
+      "accountNumber": "1130405",
+      "level": 5,
+      "name": "Pinjaman Bayu Artha Cipta (Asiana)"
+    },
+    {
+      "accountNumber": "1130408",
+      "level": 5,
+      "name": "Pinjaman Semnetara Vikon"
+    },
+    {
+      "accountNumber": "1130409",
+      "level": 5,
+      "name": "Pinjaman Sherly Apartemen Batam"
+    },
+    {
+      "accountNumber": "1130500",
+      "level": 4,
+      "name": "Jaminan"
+    },
+    {
+      "accountNumber": "1130501",
+      "level": 5,
+      "name": "Jaminan Garansi Bank"
+    },
+    {
+      "accountNumber": "1130502",
+      "level": 5,
+      "name": "Jaminan Sewe Rumah"
+    },
+    {
+      "accountNumber": "1130600",
+      "level": 4,
+      "name": "Piutang Lainnya"
+    },
+    {
+      "accountNumber": "1130601",
+      "level": 5,
+      "name": "Piutang Uang Makan BKL"
+    },
+    {
+      "accountNumber": "1130602",
+      "level": 5,
+      "name": "Piutang Lainnya Umum"
+    },
+    {
+      "accountNumber": "1130700",
+      "level": 4,
+      "name": "Piutang Pemegang Saham"
+    },
+    {
+      "accountNumber": "1130701",
+      "level": 5,
+      "name": "Piutang Pemegang Saham (Rudi)"
+    },
+    {
+      "accountNumber": "1130702",
+      "level": 5,
+      "name": "Piutang Pemegang Saham (Hendry Novianto)"
+    },
+    {
+      "accountNumber": "1130703",
+      "level": 5,
+      "name": "Piutang Pemegang Saham (Edy Effendi)"
+    },
+    {
+      "accountNumber": "1140000",
+      "level": 3,
+      "name": "Persediaan"
+    },
+    {
+      "accountNumber": "1140100",
+      "level": 4,
+      "name": "Persediaan Barang"
+    },
+    {
+      "accountNumber": "1140101",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Pekanbaru"
+    },
+    {
+      "accountNumber": "1140101",
+      "level": 5,
+      "name": "Gudang Pekanbaru"
+    },
+    {
+      "accountNumber": "1140101",
+      "level": 5,
+      "name": "Persediaan barang duri"
+    },
+    {
+      "accountNumber": "1140101",
+      "level": 5,
+      "name": "Persediaan Barang Bayas"
+    },
+    {
+      "accountNumber": "1140102",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Duri"
+    },
+    {
+      "accountNumber": "1140102",
+      "level": 5,
+      "name": "Gudang Duri"
+    },
+    {
+      "accountNumber": "1140102",
+      "level": 5,
+      "name": "Persediaan dalam proses"
+    },
+    {
+      "accountNumber": "1140102",
+      "level": 5,
+      "name": "Persediaan Barang BPN Transit"
+    },
+    {
+      "accountNumber": "1140103",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Jambi"
+    },
+    {
+      "accountNumber": "1140103",
+      "level": 5,
+      "name": "Persediaan barang rental"
+    },
+    {
+      "accountNumber": "1140103",
+      "level": 5,
+      "name": "Persediaan Barang Kerinci"
+    },
+    {
+      "accountNumber": "1140104",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Balikpapan"
+    },
+    {
+      "accountNumber": "1140104",
+      "level": 5,
+      "name": "Persediaan Barang Jambi"
+    },
+    {
+      "accountNumber": "1140104",
+      "level": 5,
+      "name": "Persediaan barang Pku"
+    },
+    {
+      "accountNumber": "1140105",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Rangau KM-3"
+    },
+    {
+      "accountNumber": "1140105",
+      "level": 5,
+      "name": "Persediaan Barang Balikpapan"
+    },
+    {
+      "accountNumber": "1140105",
+      "level": 5,
+      "name": "Gudang Transmital"
+    },
+    {
+      "accountNumber": "1140106",
+      "level": 5,
+      "name": "Persediaan barang Jakarta"
+    },
+    {
+      "accountNumber": "1140106",
+      "level": 5,
+      "name": "Persediaan Barang Cerenti"
+    },
+    {
+      "accountNumber": "1140106",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Coal KB"
+    },
+    {
+      "accountNumber": "1140107",
+      "level": 4,
+      "name": "Persediaan Gudang Opname"
+    },
+    {
+      "accountNumber": "1140107",
+      "level": 5,
+      "name": "Persediaan Barang PKU"
+    },
+    {
+      "accountNumber": "1140107",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Minas"
+    },
+    {
+      "accountNumber": "1140108",
+      "level": 5,
+      "name": "Gudang Transmital"
+    },
+    {
+      "accountNumber": "1140108",
+      "level": 4,
+      "name": "Persedian barang tembilahan"
+    },
+    {
+      "accountNumber": "1140109",
+      "level": 5,
+      "name": "Persediaan Gudang Opname"
+    },
+    {
+      "accountNumber": "1140110",
+      "level": 5,
+      "name": "Persediaan Barang AHL"
+    },
+    {
+      "accountNumber": "1140111",
+      "level": 5,
+      "name": "Persediaan Barang Lubuk Jambi"
+    },
+    {
+      "accountNumber": "1140112",
+      "level": 5,
+      "name": "Persediaan Barang Pontianak"
+    },
+    {
+      "accountNumber": "1140113",
+      "level": 5,
+      "name": "Persediaan Barang Sebakung"
+    },
+    {
+      "accountNumber": "1140114",
+      "level": 5,
+      "name": "Persediaan Barang Segati"
+    },
+    {
+      "accountNumber": "1140115",
+      "level": 5,
+      "name": "Persediaan Barang Senoni"
+    },
+    {
+      "accountNumber": "1140116",
+      "level": 5,
+      "name": "Persediaan Barang Cilong"
+    },
+    {
+      "accountNumber": "1140117",
+      "level": 5,
+      "name": "Persediaan Barang Duri"
+    },
+    {
+      "accountNumber": "1140197",
+      "level": 5,
+      "name": "Persediaan Sementara (Asset)"
+    },
+    {
+      "accountNumber": "1140198",
+      "level": 5,
+      "name": "Persediaan Gudang Opname"
+    },
+    {
+      "accountNumber": "1140199",
+      "level": 5,
+      "name": "Persediaan Barang Gudang Transmital"
+    },
+    {
+      "accountNumber": "1140199",
+      "level": 5,
+      "name": "Persediaan Sementara (Asset)"
+    },
+    {
+      "accountNumber": "1140200",
+      "level": 4,
+      "name": "Persediaan BBM"
+    },
+    {
+      "accountNumber": "1140201",
+      "level": 5,
+      "name": "Persediaan BBM Gudang Pekanbaru"
+    },
+    {
+      "accountNumber": "1140201",
+      "level": 5,
+      "name": "Persediaan Solar"
+    },
+    {
+      "accountNumber": "1140202",
+      "level": 5,
+      "name": "Persediaan BBM Gudang Duri"
+    },
+    {
+      "accountNumber": "1140202",
+      "level": 5,
+      "name": "Persediaan Pertalite"
+    },
+    {
+      "accountNumber": "1140203",
+      "level": 5,
+      "name": "Persediaan BBM Gudang Jambi"
+    },
+    {
+      "accountNumber": "1140203",
+      "level": 5,
+      "name": "Persediaan BBM Cerenti"
+    },
+    {
+      "accountNumber": "1140204",
+      "level": 5,
+      "name": "Persediaan BBM Gudang (Persiapan Monic)"
+    },
+    {
+      "accountNumber": "1140204",
+      "level": 5,
+      "name": "Persediaan BBM Lubuk Jambi"
+    },
+    {
+      "accountNumber": "1140205",
+      "level": 5,
+      "name": "Persediaan BBM Senoni"
+    },
+    {
+      "accountNumber": "1140205",
+      "level": 5,
+      "name": "Persediaan BBM Gudang Minas"
+    },
+    {
+      "accountNumber": "1140206",
+      "level": 5,
+      "name": "Persediaan BBM Sebakis"
+    },
+    {
+      "accountNumber": "1140207",
+      "level": 5,
+      "name": "Persediaan BBM Sembakung"
+    },
+    {
+      "accountNumber": "1140208",
+      "level": 5,
+      "name": "Persediaan BBM Monic"
+    },
+    {
+      "accountNumber": "1140209",
+      "level": 5,
+      "name": "Persediaan BBM Backcharge"
+    },
+    {
+      "accountNumber": "1140299",
+      "level": 5,
+      "name": "Persediaan BBM Gudang Opname"
+    },
+    {
+      "accountNumber": "1150000",
+      "level": 3,
+      "name": "Uang Muka Pajak"
+    },
+    {
+      "accountNumber": "1150100",
+      "level": 4,
+      "name": "Uang Muka Pajak"
+    },
+    {
+      "accountNumber": "1150101",
+      "level": 5,
+      "name": "PPh Pasal 22"
+    },
+    {
+      "accountNumber": "1150101",
+      "level": 5,
+      "name": "PPh Ps 22"
+    },
+    {
+      "accountNumber": "1150101",
+      "level": 5,
+      "name": "PPh 15"
+    },
+    {
+      "accountNumber": "1150102",
+      "level": 5,
+      "name": "PPh Pasal 23"
+    },
+    {
+      "accountNumber": "1150102",
+      "level": 5,
+      "name": "PPh Ps 23"
+    },
+    {
+      "accountNumber": "1150102",
+      "level": 5,
+      "name": "PPh 22"
+    },
+    {
+      "accountNumber": "1150103",
+      "level": 5,
+      "name": "PPh Pasal 25"
+    },
+    {
+      "accountNumber": "1150103",
+      "level": 5,
+      "name": "PPh Ps 25"
+    },
+    {
+      "accountNumber": "1150103",
+      "level": 5,
+      "name": "PPh 23"
+    },
+    {
+      "accountNumber": "1150104",
+      "level": 5,
+      "name": "PPh Final 4 Ayat 2"
+    },
+    {
+      "accountNumber": "1150104",
+      "level": 5,
+      "name": "Restitusi PPn"
+    },
+    {
+      "accountNumber": "1150104",
+      "level": 5,
+      "name": "PPh 25"
+    },
+    {
+      "accountNumber": "1150105",
+      "level": 5,
+      "name": "Restitusi Pajak"
+    },
+    {
+      "accountNumber": "1150105",
+      "level": 5,
+      "name": "Restitusi PPn"
+    },
+    {
+      "accountNumber": "1150105",
+      "level": 5,
+      "name": "PPh Ps 21"
+    },
+    {
+      "accountNumber": "1150106",
+      "level": 5,
+      "name": "PPN Lebih Bayar"
+    },
+    {
+      "accountNumber": "1160000",
+      "level": 3,
+      "name": "Uang Muka Biaya"
+    },
+    {
+      "accountNumber": "1160100",
+      "level": 4,
+      "name": "Uang Muka Biaya"
+    },
+    {
+      "accountNumber": "1160101",
+      "level": 5,
+      "name": "Uang Muka Biaya Sewa"
+    },
+    {
+      "accountNumber": "1160101",
+      "level": 5,
+      "name": "Sewa"
+    },
+    {
+      "accountNumber": "1160102",
+      "level": 5,
+      "name": "Uang Muka Biaya Asuransi"
+    },
+    {
+      "accountNumber": "1160102",
+      "level": 5,
+      "name": "Asuransi"
+    },
+    {
+      "accountNumber": "1160103",
+      "level": 5,
+      "name": "Uang Muka Biaya THR"
+    },
+    {
+      "accountNumber": "1160103",
+      "level": 5,
+      "name": "THR"
+    },
+    {
+      "accountNumber": "1160103",
+      "level": 5,
+      "name": "Uang Muka Biaya Pajak Kendaraan"
+    },
+    {
+      "accountNumber": "1160104",
+      "level": 5,
+      "name": "Uang Muka Biaya Loan, Lease, BG"
+    },
+    {
+      "accountNumber": "1160104",
+      "level": 5,
+      "name": "Loan, Lease, BG"
+    },
+    {
+      "accountNumber": "1160104",
+      "level": 5,
+      "name": "Pajak Kendaraan"
+    },
+    {
+      "accountNumber": "1160105",
+      "level": 5,
+      "name": "Uang Muka Biaya Pajak Kendaraan"
+    },
+    {
+      "accountNumber": "1160105",
+      "level": 5,
+      "name": "Pajak Kendaraan"
+    },
+    {
+      "accountNumber": "1160105",
+      "level": 5,
+      "name": "Other"
+    },
+    {
+      "accountNumber": "1160106",
+      "level": 5,
+      "name": "Uang Muka Biaya Other"
+    },
+    {
+      "accountNumber": "1160106",
+      "level": 5,
+      "name": "Training"
+    },
+    {
+      "accountNumber": "1160107",
+      "level": 5,
+      "name": "Provisi"
+    },
+    {
+      "accountNumber": "1160108",
+      "level": 5,
+      "name": "Jasa"
+    },
+    {
+      "accountNumber": "1160109",
+      "level": 5,
+      "name": "Sewa Mobil"
+    },
+    {
+      "accountNumber": "1160110",
+      "level": 5,
+      "name": "Perpanjangan Sertifikat"
+    },
+    {
+      "accountNumber": "1160111",
+      "level": 5,
+      "name": "Pemb. Isotop"
+    },
+    {
+      "accountNumber": "1160112",
+      "level": 5,
+      "name": "Other"
+    },
+    {
+      "accountNumber": "1170000",
+      "level": 3,
+      "name": "DP Pembelian"
+    },
+    {
+      "accountNumber": "1170100",
+      "level": 4,
+      "name": "DP Pembelian"
+    },
+    {
+      "accountNumber": "1170101",
+      "level": 5,
+      "name": "DP Pembelian"
+    },
+    {
+      "accountNumber": "1170102",
+      "level": 5,
+      "name": "DP Pembelian Lainnya"
+    },
+    {
+      "accountNumber": "1180000",
+      "level": 3,
+      "name": "Deposito"
+    },
+    {
+      "accountNumber": "1180000",
+      "level": 3,
+      "name": "Aktiva Lancar Lainnya"
+    },
+    {
+      "accountNumber": "1180100",
+      "level": 4,
+      "name": "Deposito BBM"
+    },
+    {
+      "accountNumber": "1180100",
+      "level": 4,
+      "name": "Aktiva Lancar Lainnya"
+    },
+    {
+      "accountNumber": "1180101",
+      "level": 5,
+      "name": "Deposito BBM Rangau"
+    },
+    {
+      "accountNumber": "1180101",
+      "level": 5,
+      "name": "Deposito BBM"
+    },
+    {
+      "accountNumber": "1180101",
+      "level": 5,
+      "name": "Aktiva Lancar Lainnya"
+    },
+    {
+      "accountNumber": "1180102",
+      "level": 5,
+      "name": "Deposito BBM Petko"
+    },
+    {
+      "accountNumber": "1180103",
+      "level": 5,
+      "name": "Deposito BBM Minas"
+    },
+    {
+      "accountNumber": "1180104",
+      "level": 5,
+      "name": "Deposito BBM Bangko"
+    },
+    {
+      "accountNumber": "1180105",
+      "level": 5,
+      "name": "Deposito BBM KM-11"
+    },
+    {
+      "accountNumber": "1180200",
+      "level": 4,
+      "name": "Deposit Project"
+    },
+    {
+      "accountNumber": "1180201",
+      "level": 5,
+      "name": "Deposit Project/Cash Collateral"
+    },
+    {
+      "accountNumber": "1180201",
+      "level": 5,
+      "name": "Deposit Project"
+    },
+    {
+      "accountNumber": "1190000",
+      "level": 3,
+      "name": "Aktiva Lancar Lainnya"
+    },
+    {
+      "accountNumber": "1190100",
+      "level": 4,
+      "name": "Aktiva Lancar Lainnya"
+    },
+    {
+      "accountNumber": "1190101",
+      "level": 5,
+      "name": "Aktiva Lancar Lainnya"
+    },
+    {
+      "accountNumber": "1200000",
+      "level": 2,
+      "name": "Investasi Jangka Panjang"
+    },
+    {
+      "accountNumber": "1210000",
+      "level": 3,
+      "name": "Investasi Jangka Panjang"
+    },
+    {
+      "accountNumber": "1210100",
+      "level": 4,
+      "name": "Investasi Jangka Panjang"
+    },
+    {
+      "accountNumber": "1210101",
+      "level": 5,
+      "name": "Investasi BPR"
+    },
+    {
+      "accountNumber": "1210101",
+      "level": 5,
+      "name": "Investasi Jangka Panjang"
+    },
+    {
+      "accountNumber": "1210102",
+      "level": 5,
+      "name": "Investasi Hamac"
+    },
+    {
+      "accountNumber": "1210103",
+      "level": 5,
+      "name": "Investasi Survival Matrix"
+    },
+    {
+      "accountNumber": "1210104",
+      "level": 5,
+      "name": "Investasi JJV"
+    },
+    {
+      "accountNumber": "1210105",
+      "level": 5,
+      "name": "Investasi SKS"
+    },
+    {
+      "accountNumber": "1210106",
+      "level": 5,
+      "name": "Investasi Chaniago GM"
+    },
+    {
+      "accountNumber": "1210107",
+      "level": 5,
+      "name": "Investasi Urban Enviromental"
+    },
+    {
+      "accountNumber": "1210108",
+      "level": 5,
+      "name": "Investasi RMES 1"
+    },
+    {
+      "accountNumber": "1210109",
+      "level": 5,
+      "name": "Investasi RMES 2"
+    },
+    {
+      "accountNumber": "1210110",
+      "level": 5,
+      "name": "Investasi Hasil Rimba Indonesia"
+    },
+    {
+      "accountNumber": "1300000",
+      "level": 2,
+      "name": "Aktiva Tetap"
+    },
+    {
+      "accountNumber": "1310000",
+      "level": 3,
+      "name": "Aktiva Tetap Tidak Bergerak"
+    },
+    {
+      "accountNumber": "1310100",
+      "level": 4,
+      "name": "Tanah"
+    },
+    {
+      "accountNumber": "1310101",
+      "level": 5,
+      "name": "Tanah KM-8 Duri"
+    },
+    {
+      "accountNumber": "1310101",
+      "level": 5,
+      "name": "Tanah Duri"
+    },
+    {
+      "accountNumber": "1310101",
+      "level": 5,
+      "name": "Tanah & Bangunan"
+    },
+    {
+      "accountNumber": "1310101",
+      "level": 5,
+      "name": "Tanah"
+    },
+    {
+      "accountNumber": "1310102",
+      "level": 5,
+      "name": "Tanah Jambi"
+    },
+    {
+      "accountNumber": "1310103",
+      "level": 5,
+      "name": "Tanah Palembang"
+    },
+    {
+      "accountNumber": "1310104",
+      "level": 5,
+      "name": "Tanah"
+    },
+    {
+      "accountNumber": "1310200",
+      "level": 4,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "1310201",
+      "level": 5,
+      "name": "Bangunan KM-8 Duri"
+    },
+    {
+      "accountNumber": "1310201",
+      "level": 5,
+      "name": "Bangunan Duri"
+    },
+    {
+      "accountNumber": "1310201",
+      "level": 5,
+      "name": "Gedung"
+    },
+    {
+      "accountNumber": "1310202",
+      "level": 5,
+      "name": "Bangunan Jambi"
+    },
+    {
+      "accountNumber": "1310203",
+      "level": 5,
+      "name": "Bangunan Palembang"
+    },
+    {
+      "accountNumber": "1310204",
+      "level": 5,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "1320000",
+      "level": 3,
+      "name": "Aktiva Tetap Bergerak"
+    },
+    {
+      "accountNumber": "1320100",
+      "level": 4,
+      "name": "Kendaraan"
+    },
+    {
+      "accountNumber": "1320101",
+      "level": 5,
+      "name": "Kendaraan LV"
+    },
+    {
+      "accountNumber": "1320101",
+      "level": 5,
+      "name": "Kendaraan"
+    },
+    {
+      "accountNumber": "1320102",
+      "level": 5,
+      "name": "Kendaraan HV"
+    },
+    {
+      "accountNumber": "1320103",
+      "level": 5,
+      "name": "Kendaraan HE"
+    },
+    {
+      "accountNumber": "1320200",
+      "level": 4,
+      "name": "Mesin-Mesin"
+    },
+    {
+      "accountNumber": "1320200",
+      "level": 4,
+      "name": "Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "1320201",
+      "level": 5,
+      "name": "Welding Machine"
+    },
+    {
+      "accountNumber": "1320201",
+      "level": 5,
+      "name": "Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "1320201",
+      "level": 5,
+      "name": "Mesin"
+    },
+    {
+      "accountNumber": "1320202",
+      "level": 5,
+      "name": "Genset dan Mesin-mesin Lainnya"
+    },
+    {
+      "accountNumber": "1320202",
+      "level": 5,
+      "name": "Genset"
+    },
+    {
+      "accountNumber": "1320202",
+      "level": 5,
+      "name": "Mesin & Peralatan (Chainsaw)"
+    },
+    {
+      "accountNumber": "1320300",
+      "level": 4,
+      "name": "Peralatan"
+    },
+    {
+      "accountNumber": "1320300",
+      "level": 4,
+      "name": "Inventaris"
+    },
+    {
+      "accountNumber": "1320301",
+      "level": 5,
+      "name": "Peralatan"
+    },
+    {
+      "accountNumber": "1320301",
+      "level": 5,
+      "name": "Inventaris"
+    },
+    {
+      "accountNumber": "1320301",
+      "level": 5,
+      "name": "Inventaris Kantor"
+    },
+    {
+      "accountNumber": "1320400",
+      "level": 4,
+      "name": "Inventaris"
+    },
+    {
+      "accountNumber": "1320400",
+      "level": 4,
+      "name": "Renovasi & Instalasi"
+    },
+    {
+      "accountNumber": "1320401",
+      "level": 5,
+      "name": "Inventaris"
+    },
+    {
+      "accountNumber": "1320401",
+      "level": 5,
+      "name": "Renovasi & Instalasi"
+    },
+    {
+      "accountNumber": "1320500",
+      "level": 4,
+      "name": "Akm Penyusutan Aktiva Bergerak"
+    },
+    {
+      "accountNumber": "1320500",
+      "level": 4,
+      "name": "Equipment Mess"
+    },
+    {
+      "accountNumber": "1320500",
+      "level": 4,
+      "name": "Renovasi dan Instalasi"
+    },
+    {
+      "accountNumber": "1320501",
+      "level": 5,
+      "name": "Akm Penyusutan Kendaraan"
+    },
+    {
+      "accountNumber": "1320501",
+      "level": 5,
+      "name": "Equipment Mess"
+    },
+    {
+      "accountNumber": "1320501",
+      "level": 5,
+      "name": "Renovasi dan Instalasi"
+    },
+    {
+      "accountNumber": "1320502",
+      "level": 5,
+      "name": "Akm Penyusutan Mesin-Mesin"
+    },
+    {
+      "accountNumber": "1320503",
+      "level": 5,
+      "name": "Akm Penyusutan Peralatan"
+    },
+    {
+      "accountNumber": "1320504",
+      "level": 5,
+      "name": "Akm Penyusutan Inventaris"
+    },
+    {
+      "accountNumber": "1320505",
+      "level": 5,
+      "name": "Akm Penyusutan Bangunan"
+    },
+    {
+      "accountNumber": "1320506",
+      "level": 5,
+      "name": "Akm Penyusutan Aktiva Lainnya"
+    },
+    {
+      "accountNumber": "1320600",
+      "level": 4,
+      "name": "Aktiva Lainnya"
+    },
+    {
+      "accountNumber": "1320600",
+      "level": 4,
+      "name": "Equipment Mess"
+    },
+    {
+      "accountNumber": "1320601",
+      "level": 5,
+      "name": "Renovasi & Instalasi"
+    },
+    {
+      "accountNumber": "1320601",
+      "level": 5,
+      "name": "Equipment Mess"
+    },
+    {
+      "accountNumber": "1320602",
+      "level": 5,
+      "name": "Equipment Mess/Rumah"
+    },
+    {
+      "accountNumber": "1320603",
+      "level": 5,
+      "name": "Equipment Scafloding"
+    },
+    {
+      "accountNumber": "1320604",
+      "level": 5,
+      "name": "CIP KM8 Kantor dan Workshop"
+    },
+    {
+      "accountNumber": "1320605",
+      "level": 5,
+      "name": "CIP Workshop BKL"
+    },
+    {
+      "accountNumber": "1320606",
+      "level": 5,
+      "name": "CIP Asset Lainnya"
+    },
+    {
+      "accountNumber": "1320700",
+      "level": 4,
+      "name": "Equipment Car"
+    },
+    {
+      "accountNumber": "1320701",
+      "level": 5,
+      "name": "Equipment Car"
+    },
+    {
+      "accountNumber": "1320800",
+      "level": 4,
+      "name": "By. Organisasi"
+    },
+    {
+      "accountNumber": "1320801",
+      "level": 5,
+      "name": "By. Organisasi"
+    },
+    {
+      "accountNumber": "1330000",
+      "level": 3,
+      "name": "Aktiva Tetap Lainnya"
+    },
+    {
+      "accountNumber": "1330100",
+      "level": 4,
+      "name": "Aktiva Tetap Lainnya"
+    },
+    {
+      "accountNumber": "1330101",
+      "level": 5,
+      "name": "Aktiva Tetap Lainnya"
+    },
+    {
+      "accountNumber": "1330200",
+      "level": 4,
+      "name": "Construction In Progress"
+    },
+    {
+      "accountNumber": "1330201",
+      "level": 5,
+      "name": "Material - CIP BYS"
+    },
+    {
+      "accountNumber": "1330202",
+      "level": 5,
+      "name": "Upah Pekerja - CIP BYS"
+    },
+    {
+      "accountNumber": "1330203",
+      "level": 5,
+      "name": "Material - CIP JMB"
+    },
+    {
+      "accountNumber": "1330204",
+      "level": 5,
+      "name": "Upah Pekerja - CIP JMB"
+    },
+    {
+      "accountNumber": "1330205",
+      "level": 5,
+      "name": "Material - CIP CER"
+    },
+    {
+      "accountNumber": "1330206",
+      "level": 5,
+      "name": "Upah Pekerja - CIP CER"
+    },
+    {
+      "accountNumber": "1330207",
+      "level": 5,
+      "name": "Lainnya - CIP"
+    },
+    {
+      "accountNumber": "1330300",
+      "level": 4,
+      "name": "Biaya Pra Operasi"
+    },
+    {
+      "accountNumber": "1330301",
+      "level": 5,
+      "name": "Biaya Pra Operasi"
+    },
+    {
+      "accountNumber": "1330302",
+      "level": 5,
+      "name": "Amortisasi Biaya Pra Operasi"
+    },
+    {
+      "accountNumber": "1330308",
+      "level": 5,
+      "name": "Upah Pekerja - CIP IHM"
+    },
+    {
+      "accountNumber": "1330309",
+      "level": 5,
+      "name": "Material - CIP Segati"
+    },
+    {
+      "accountNumber": "1330310",
+      "level": 5,
+      "name": "Upah Pekerja - CIP Segati"
+    },
+    {
+      "accountNumber": "1330311",
+      "level": 5,
+      "name": "Material - CIP Lubuk Jambi"
+    },
+    {
+      "accountNumber": "1330312",
+      "level": 5,
+      "name": "Upah Pekerja - CIP Lubuk Jambi"
+    },
+    {
+      "accountNumber": "1330313",
+      "level": 5,
+      "name": "Material - CIP IHM RENT"
+    },
+    {
+      "accountNumber": "1330314",
+      "level": 5,
+      "name": "Upah Pekerja - CIP IHM RENT"
+    },
+    {
+      "accountNumber": "1330315",
+      "level": 5,
+      "name": "Material - CIP AHL"
+    },
+    {
+      "accountNumber": "1330316",
+      "level": 5,
+      "name": "Upah Pekerja - CIP AHL"
+    },
+    {
+      "accountNumber": "1330317",
+      "level": 5,
+      "name": "Material - CIP Pontianak"
+    },
+    {
+      "accountNumber": "1330318",
+      "level": 5,
+      "name": "Upah Pekerja - CIP Pontianak"
+    },
+    {
+      "accountNumber": "1400000",
+      "level": 2,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1400000",
+      "level": 2,
+      "name": "Akum. Peny. Aktiva Tetap"
+    },
+    {
+      "accountNumber": "1400000",
+      "level": 2,
+      "name": "Akumulasi Penyusutan"
+    },
+    {
+      "accountNumber": "1410000",
+      "level": 3,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410000",
+      "level": 3,
+      "name": "AP Aktiva Tetap Tidak Bergerak"
+    },
+    {
+      "accountNumber": "1410000",
+      "level": 3,
+      "name": "Akumulasi Penyusutan Aktiva Tetap"
+    },
+    {
+      "accountNumber": "1410001",
+      "level": 3,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410100",
+      "level": 4,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410100",
+      "level": 4,
+      "name": "AP Tanah"
+    },
+    {
+      "accountNumber": "1410100",
+      "level": 4,
+      "name": "Akumulasi Penyusutan Aktiva Tetap Tidak Bergerak"
+    },
+    {
+      "accountNumber": "1410101",
+      "level": 5,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410101",
+      "level": 5,
+      "name": "AP Tanah & Bangunan"
+    },
+    {
+      "accountNumber": "1410101",
+      "level": 5,
+      "name": "Akumulasi Penyusutan Gedung"
+    },
+    {
+      "accountNumber": "1410102",
+      "level": 4,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410104",
+      "level": 5,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410200",
+      "level": 4,
+      "name": "Akm Penyusutan Aktiva Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410200",
+      "level": 4,
+      "name": "Akumulasi Penyusutan Aktiva Tetap Bergerak"
+    },
+    {
+      "accountNumber": "1410201",
+      "level": 5,
+      "name": "Akm Penyusutan Aktiva Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1410201",
+      "level": 5,
+      "name": "Akumulasi Penyusutan Kendaraan"
+    },
+    {
+      "accountNumber": "1410202",
+      "level": 5,
+      "name": "Akumulasi Penyusutan Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "1410203",
+      "level": 5,
+      "name": "Akumulasi Penyusutan Inventaris Kantor"
+    },
+    {
+      "accountNumber": "1420000",
+      "level": 3,
+      "name": "AP Aktiva Tetap Bergerak"
+    },
+    {
+      "accountNumber": "1420100",
+      "level": 4,
+      "name": "AP Kendaraan"
+    },
+    {
+      "accountNumber": "1420101",
+      "level": 5,
+      "name": "AP Kendaraan"
+    },
+    {
+      "accountNumber": "1420200",
+      "level": 4,
+      "name": "AP Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "1420201",
+      "level": 5,
+      "name": "AP Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "1420300",
+      "level": 4,
+      "name": "AP Inventaris"
+    },
+    {
+      "accountNumber": "1420301",
+      "level": 5,
+      "name": "AP Inventaris"
+    },
+    {
+      "accountNumber": "1420400",
+      "level": 4,
+      "name": "AP Renovasi & Instalasi"
+    },
+    {
+      "accountNumber": "1420401",
+      "level": 5,
+      "name": "AP Renovasi & Instalasi"
+    },
+    {
+      "accountNumber": "1420500",
+      "level": 4,
+      "name": "AP Equipment Mess"
+    },
+    {
+      "accountNumber": "1420501",
+      "level": 5,
+      "name": "AP Equipment Mess"
+    },
+    {
+      "accountNumber": "1500000",
+      "level": 2,
+      "name": "Pos Silang Leasing"
+    },
+    {
+      "accountNumber": "1500000",
+      "level": 2,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1510000",
+      "level": 3,
+      "name": "Pos Silang Leasing"
+    },
+    {
+      "accountNumber": "1510000",
+      "level": 3,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1510100",
+      "level": 4,
+      "name": "Pos Silang Leasing"
+    },
+    {
+      "accountNumber": "1510100",
+      "level": 4,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1510101",
+      "level": 5,
+      "name": "Pos Silang Leasing"
+    },
+    {
+      "accountNumber": "1510101",
+      "level": 5,
+      "name": "Aktiva Tetap Tidak Berwujud"
+    },
+    {
+      "accountNumber": "1510102",
+      "level": 5,
+      "name": "Upping Harga Unit"
+    },
+    {
+      "accountNumber": "1610100",
+      "level": 4,
+      "name": "Temporary Pos"
+    },
+    {
+      "accountNumber": "1610101",
+      "level": 5,
+      "name": "Temporary Pos"
+    },
+    {
+      "accountNumber": "2100000",
+      "level": 2,
+      "name": "Hutang Lancar"
+    },
+    {
+      "accountNumber": "2110000",
+      "level": 3,
+      "name": "Hutang Supplier"
+    },
+    {
+      "accountNumber": "2110000",
+      "level": 3,
+      "name": "Hutang Usaha"
+    },
+    {
+      "accountNumber": "2110100",
+      "level": 4,
+      "name": "Supplier Umum"
+    },
+    {
+      "accountNumber": "2110100",
+      "level": 4,
+      "name": "Hutang Usaha"
+    },
+    {
+      "accountNumber": "2110101",
+      "level": 5,
+      "name": "Supplier"
+    },
+    {
+      "accountNumber": "2110101",
+      "level": 5,
+      "name": "Hutang Supplier IDR"
+    },
+    {
+      "accountNumber": "2110101",
+      "level": 5,
+      "name": "Hutang Usaha"
+    },
+    {
+      "accountNumber": "2110102",
+      "level": 5,
+      "name": "Advance Sales IDR"
+    },
+    {
+      "accountNumber": "2110200",
+      "level": 4,
+      "name": "DP Supplier Umum"
+    },
+    {
+      "accountNumber": "2110201",
+      "level": 5,
+      "name": "DP Supplier Umum"
+    },
+    {
+      "accountNumber": "2110300",
+      "level": 4,
+      "name": "Accrual Supplier Umum"
+    },
+    {
+      "accountNumber": "2110300",
+      "level": 4,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "2110301",
+      "level": 5,
+      "name": "Accrual Supplier Umum"
+    },
+    {
+      "accountNumber": "2110301",
+      "level": 5,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "2110302",
+      "level": 4,
+      "name": "Hutang Usaha"
+    },
+    {
+      "accountNumber": "2110302",
+      "level": 5,
+      "name": "Pencairan Leasing yg Belum FAT"
+    },
+    {
+      "accountNumber": "2110303",
+      "level": 4,
+      "name": "Retur"
+    },
+    {
+      "accountNumber": "2110304",
+      "level": 4,
+      "name": "Hutang Supplier"
+    },
+    {
+      "accountNumber": "2110305",
+      "level": 4,
+      "name": "Hutang Accrual"
+    },
+    {
+      "accountNumber": "2110307",
+      "level": 5,
+      "name": "Retur Transmital"
+    },
+    {
+      "accountNumber": "2110400",
+      "level": 4,
+      "name": "Return"
+    },
+    {
+      "accountNumber": "2110400",
+      "level": 4,
+      "name": "Return Transmital"
+    },
+    {
+      "accountNumber": "2110401",
+      "level": 5,
+      "name": "Return Transmital"
+    },
+    {
+      "accountNumber": "2110500",
+      "level": 4,
+      "name": "Supplier Umum - Lama"
+    },
+    {
+      "accountNumber": "2110501",
+      "level": 5,
+      "name": "Supplier - Lama"
+    },
+    {
+      "accountNumber": "2110600",
+      "level": 4,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "2110601",
+      "level": 5,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "2120000",
+      "level": 3,
+      "name": "Pihak ke-3"
+    },
+    {
+      "accountNumber": "2120100",
+      "level": 4,
+      "name": "Hutang Leasing"
+    },
+    {
+      "accountNumber": "2120101",
+      "level": 5,
+      "name": "Mandiri Tunas Finance"
+    },
+    {
+      "accountNumber": "2120101",
+      "level": 5,
+      "name": "Hutang Leasing"
+    },
+    {
+      "accountNumber": "2120102",
+      "level": 5,
+      "name": "Adira Finance"
+    },
+    {
+      "accountNumber": "2120103",
+      "level": 5,
+      "name": "Dipo Star Finance"
+    },
+    {
+      "accountNumber": "2120104",
+      "level": 5,
+      "name": "SMFL Finance"
+    },
+    {
+      "accountNumber": "2120105",
+      "level": 5,
+      "name": "IMFI Finance"
+    },
+    {
+      "accountNumber": "2120106",
+      "level": 5,
+      "name": "Clipan Finance"
+    },
+    {
+      "accountNumber": "2120107",
+      "level": 5,
+      "name": "SAN Finance"
+    },
+    {
+      "accountNumber": "2120108",
+      "level": 5,
+      "name": "Astra Sedaya Finance"
+    },
+    {
+      "accountNumber": "2120109",
+      "level": 5,
+      "name": "Mandiri Utama Finance"
+    },
+    {
+      "accountNumber": "2120110",
+      "level": 5,
+      "name": "KDB Tifa Finance"
+    },
+    {
+      "accountNumber": "2120111",
+      "level": 5,
+      "name": "Maybank Finance"
+    },
+    {
+      "accountNumber": "2120112",
+      "level": 5,
+      "name": "Shinhan Indo Finance"
+    },
+    {
+      "accountNumber": "2120113",
+      "level": 5,
+      "name": "KB Plus Finance"
+    },
+    {
+      "accountNumber": "2120114",
+      "level": 5,
+      "name": "BCA Finance"
+    },
+    {
+      "accountNumber": "2120115",
+      "level": 5,
+      "name": "Komatsu Astra Finance"
+    },
+    {
+      "accountNumber": "2120116",
+      "level": 5,
+      "name": "BTPN Finance"
+    },
+    {
+      "accountNumber": "2120117",
+      "level": 5,
+      "name": "BCA Syariah Finance"
+    },
+    {
+      "accountNumber": "2120118",
+      "level": 5,
+      "name": "BWS Finance"
+    },
+    {
+      "accountNumber": "2120119",
+      "level": 5,
+      "name": "BOT Finance"
+    },
+    {
+      "accountNumber": "2120120",
+      "level": 5,
+      "name": "Clemont Finance"
+    },
+    {
+      "accountNumber": "2120121",
+      "level": 5,
+      "name": "Toyota Astra Financial Service"
+    },
+    {
+      "accountNumber": "2120122",
+      "level": 5,
+      "name": "IFS Capital Indonesia"
+    },
+    {
+      "accountNumber": "2120123",
+      "level": 5,
+      "name": "SGMW Finance (wuling)"
+    },
+    {
+      "accountNumber": "2120124",
+      "level": 5,
+      "name": "Chailease Finance Indonesia"
+    },
+    {
+      "accountNumber": "2120125",
+      "level": 5,
+      "name": "Buana Finance"
+    },
+    {
+      "accountNumber": "2120200",
+      "level": 4,
+      "name": "Hutang Bank"
+    },
+    {
+      "accountNumber": "2120201",
+      "level": 5,
+      "name": "Exim Bank"
+    },
+    {
+      "accountNumber": "2120201",
+      "level": 5,
+      "name": "Mandiri"
+    },
+    {
+      "accountNumber": "2120202",
+      "level": 5,
+      "name": "Mandiri"
+    },
+    {
+      "accountNumber": "2120202",
+      "level": 5,
+      "name": "BNI"
+    },
+    {
+      "accountNumber": "2120203",
+      "level": 5,
+      "name": "BCA"
+    },
+    {
+      "accountNumber": "2120300",
+      "level": 4,
+      "name": "Hutang Group"
+    },
+    {
+      "accountNumber": "2120300",
+      "level": 4,
+      "name": "Hutang Afiliasi"
+    },
+    {
+      "accountNumber": "2120301",
+      "level": 5,
+      "name": "Harimba"
+    },
+    {
+      "accountNumber": "2120301",
+      "level": 5,
+      "name": "Vadhana International"
+    },
+    {
+      "accountNumber": "2120301",
+      "level": 5,
+      "name": "Hutang ke Sherly Tan"
+    },
+    {
+      "accountNumber": "2120302",
+      "level": 5,
+      "name": "Multiteraindo"
+    },
+    {
+      "accountNumber": "2120302",
+      "level": 5,
+      "name": "Profita Abadi"
+    },
+    {
+      "accountNumber": "2120302",
+      "level": 5,
+      "name": "Vadhana International"
+    },
+    {
+      "accountNumber": "2120303",
+      "level": 5,
+      "name": "Profita Abadi"
+    },
+    {
+      "accountNumber": "2120303",
+      "level": 5,
+      "name": "Hasta International"
+    },
+    {
+      "accountNumber": "2120303",
+      "level": 5,
+      "name": "Hutang ke Rudi Hartono"
+    },
+    {
+      "accountNumber": "2120304",
+      "level": 5,
+      "name": "Hamac"
+    },
+    {
+      "accountNumber": "2120304",
+      "level": 5,
+      "name": "Harimba"
+    },
+    {
+      "accountNumber": "2120304",
+      "level": 5,
+      "name": "Hutang Pihak ke 3"
+    },
+    {
+      "accountNumber": "2120305",
+      "level": 5,
+      "name": "Vikon Otto Benua"
+    },
+    {
+      "accountNumber": "2120305",
+      "level": 5,
+      "name": "Profita Abadi"
+    },
+    {
+      "accountNumber": "2120306",
+      "level": 5,
+      "name": "Profita Abadi - KMK BCAS"
+    },
+    {
+      "accountNumber": "2120306",
+      "level": 5,
+      "name": "Multi Teraindo"
+    },
+    {
+      "accountNumber": "2120307",
+      "level": 5,
+      "name": "Hutang ke Handianto"
+    },
+    {
+      "accountNumber": "2120307",
+      "level": 5,
+      "name": "Rajawali Emas Ancora Lestari"
+    },
+    {
+      "accountNumber": "2120308",
+      "level": 5,
+      "name": "Hutang ke Edy Effendi"
+    },
+    {
+      "accountNumber": "2120309",
+      "level": 5,
+      "name": "Hutang ke Jeni"
+    },
+    {
+      "accountNumber": "2120400",
+      "level": 4,
+      "name": "Hutang lainnya"
+    },
+    {
+      "accountNumber": "2120400",
+      "level": 4,
+      "name": "Hutang Pembiayaan Lainnya"
+    },
+    {
+      "accountNumber": "2120401",
+      "level": 5,
+      "name": "Hutang Pembelian Belum Ditagih"
+    },
+    {
+      "accountNumber": "2120401",
+      "level": 5,
+      "name": "Hutang Kredit Plus"
+    },
+    {
+      "accountNumber": "2120402",
+      "level": 5,
+      "name": "Hutang Buana Finance"
+    },
+    {
+      "accountNumber": "2120402",
+      "level": 5,
+      "name": "Uang Muka Penjualan"
+    },
+    {
+      "accountNumber": "2120403",
+      "level": 5,
+      "name": "RAPP (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120403",
+      "level": 5,
+      "name": "Hutang BNI Financing"
+    },
+    {
+      "accountNumber": "2120404",
+      "level": 5,
+      "name": "PKS (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120404",
+      "level": 5,
+      "name": "BNI KMK CCC"
+    },
+    {
+      "accountNumber": "2120405",
+      "level": 5,
+      "name": "SRL (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120406",
+      "level": 5,
+      "name": "WKS (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120407",
+      "level": 5,
+      "name": "RHM (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120408",
+      "level": 5,
+      "name": "IHM (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120409",
+      "level": 5,
+      "name": "AHL (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120410",
+      "level": 5,
+      "name": "MWP (Pemakaian BBM & Material)"
+    },
+    {
+      "accountNumber": "2120411",
+      "level": 5,
+      "name": "VDI - Sewa Kendaraan & Alat Berat"
+    },
+    {
+      "accountNumber": "2120500",
+      "level": 4,
+      "name": "Hutang Pihak ke-3 Lainnya"
+    },
+    {
+      "accountNumber": "2120501",
+      "level": 5,
+      "name": "Hutang ke Haryanto"
+    },
+    {
+      "accountNumber": "2120502",
+      "level": 5,
+      "name": "Hutang ke William"
+    },
+    {
+      "accountNumber": "2120503",
+      "level": 5,
+      "name": "Hutang ke Hailiong"
+    },
+    {
+      "accountNumber": "2120504",
+      "level": 5,
+      "name": "Hutang ke Baja Prima Rejeki"
+    },
+    {
+      "accountNumber": "2120505",
+      "level": 5,
+      "name": "Hutang ke Ardi Roberto"
+    },
+    {
+      "accountNumber": "2120506",
+      "level": 5,
+      "name": "Hutang ke Siulan"
+    },
+    {
+      "accountNumber": "2120507",
+      "level": 5,
+      "name": "Hutang ke Roji"
+    },
+    {
+      "accountNumber": "2120508",
+      "level": 5,
+      "name": "Hutang ke Handianto"
+    },
+    {
+      "accountNumber": "2120509",
+      "level": 5,
+      "name": "Hutang ke Supri Yanti"
+    },
+    {
+      "accountNumber": "2120510",
+      "level": 5,
+      "name": "Hutang ke Edy Effendi"
+    },
+    {
+      "accountNumber": "2120511",
+      "level": 5,
+      "name": "Hutang ke WGM"
+    },
+    {
+      "accountNumber": "2120512",
+      "level": 5,
+      "name": "Hutang ke Tini"
+    },
+    {
+      "accountNumber": "2120513",
+      "level": 5,
+      "name": "Hutang ke Jenny"
+    },
+    {
+      "accountNumber": "2120514",
+      "level": 5,
+      "name": "Hutang ke Santun Sihombing"
+    },
+    {
+      "accountNumber": "2120515",
+      "level": 5,
+      "name": "Hutang ke Wilson"
+    },
+    {
+      "accountNumber": "2120516",
+      "level": 5,
+      "name": "Hutang ke Miki Tantowitrisno"
+    },
+    {
+      "accountNumber": "2120517",
+      "level": 5,
+      "name": "Hutang ke Betty"
+    },
+    {
+      "accountNumber": "2120518",
+      "level": 5,
+      "name": "Hutang ke GTN"
+    },
+    {
+      "accountNumber": "2120519",
+      "level": 5,
+      "name": "Hutang ke Rudi Hartono"
+    },
+    {
+      "accountNumber": "2120520",
+      "level": 5,
+      "name": "Hutang ke Halisafe"
+    },
+    {
+      "accountNumber": "2120521",
+      "level": 5,
+      "name": "Hutang ke Sherly Tan"
+    },
+    {
+      "accountNumber": "2120522",
+      "level": 5,
+      "name": "Hutang ke RBMS"
+    },
+    {
+      "accountNumber": "2120523",
+      "level": 5,
+      "name": "Hutang Pihak ke-3 Lainnya"
+    },
+    {
+      "accountNumber": "2120524",
+      "level": 5,
+      "name": "Hutang Biaya Lainnya"
+    },
+    {
+      "accountNumber": "2130000",
+      "level": 3,
+      "name": "Hutang Biaya"
+    },
+    {
+      "accountNumber": "2130100",
+      "level": 4,
+      "name": "Hutang Biaya"
+    },
+    {
+      "accountNumber": "2130101",
+      "level": 5,
+      "name": "Hutang Gaji"
+    },
+    {
+      "accountNumber": "2130102",
+      "level": 5,
+      "name": "Hutang BPJS Kesehatan"
+    },
+    {
+      "accountNumber": "2130102",
+      "level": 5,
+      "name": "XXX Hutang BPJS Kesehatan"
+    },
+    {
+      "accountNumber": "2130102",
+      "level": 5,
+      "name": "Hutang Cadangan THR"
+    },
+    {
+      "accountNumber": "2130103",
+      "level": 5,
+      "name": "Hutang BPJS Ketenagakerjaan"
+    },
+    {
+      "accountNumber": "2130103",
+      "level": 5,
+      "name": "Hutang Biaya"
+    },
+    {
+      "accountNumber": "2130104",
+      "level": 5,
+      "name": "Hutang THR,Santunan,Cuti"
+    },
+    {
+      "accountNumber": "2130104",
+      "level": 5,
+      "name": "Hutang BPJS"
+    },
+    {
+      "accountNumber": "2130105",
+      "level": 5,
+      "name": "Hutang Gaji Cash"
+    },
+    {
+      "accountNumber": "2130105",
+      "level": 5,
+      "name": "Hutang Koperasi"
+    },
+    {
+      "accountNumber": "2130105",
+      "level": 5,
+      "name": "Hutang Gaji Pemborong Chainsaw"
+    },
+    {
+      "accountNumber": "2130106",
+      "level": 5,
+      "name": "Hutang Koperasi"
+    },
+    {
+      "accountNumber": "2130106",
+      "level": 5,
+      "name": "Koperasi Bersatu Kita Maju"
+    },
+    {
+      "accountNumber": "2130106",
+      "level": 4,
+      "name": "Hutang accrual"
+    },
+    {
+      "accountNumber": "2130107",
+      "level": 5,
+      "name": "Hutang accrual"
+    },
+    {
+      "accountNumber": "2130107",
+      "level": 5,
+      "name": "Potongan Keterlambatan"
+    },
+    {
+      "accountNumber": "2130107",
+      "level": 5,
+      "name": "Hutang Gaji Kas"
+    },
+    {
+      "accountNumber": "2130108",
+      "level": 5,
+      "name": "Comday"
+    },
+    {
+      "accountNumber": "2130108",
+      "level": 5,
+      "name": "Hutang THR yang Dibayarkan"
+    },
+    {
+      "accountNumber": "2130109",
+      "level": 5,
+      "name": "Mandah"
+    },
+    {
+      "accountNumber": "2130109",
+      "level": 5,
+      "name": "Hutang Gaji Cash BKL"
+    },
+    {
+      "accountNumber": "2130110",
+      "level": 5,
+      "name": "Hutang Biaya"
+    },
+    {
+      "accountNumber": "2130110",
+      "level": 5,
+      "name": "Hutang Denda/Pinalti"
+    },
+    {
+      "accountNumber": "2130111",
+      "level": 5,
+      "name": "Hutang BPJS Kesehatan"
+    },
+    {
+      "accountNumber": "2130200",
+      "level": 4,
+      "name": "Hutang Pajak"
+    },
+    {
+      "accountNumber": "2130201",
+      "level": 5,
+      "name": "PPh Pasal 21"
+    },
+    {
+      "accountNumber": "2130201",
+      "level": 5,
+      "name": "Hutang PPH 21"
+    },
+    {
+      "accountNumber": "2130202",
+      "level": 5,
+      "name": "PPh Pasal 23"
+    },
+    {
+      "accountNumber": "2130202",
+      "level": 5,
+      "name": "PPH Pasal 23"
+    },
+    {
+      "accountNumber": "2130203",
+      "level": 5,
+      "name": "PPh Pasal 25"
+    },
+    {
+      "accountNumber": "2130204",
+      "level": 5,
+      "name": "PPh Pasal 29"
+    },
+    {
+      "accountNumber": "2130205",
+      "level": 5,
+      "name": "PPh Final"
+    },
+    {
+      "accountNumber": "2130206",
+      "level": 5,
+      "name": "PPn Keluaran Non Pemungut"
+    },
+    {
+      "accountNumber": "2130206",
+      "level": 5,
+      "name": "PPh Pasal 4(2)"
+    },
+    {
+      "accountNumber": "2130206",
+      "level": 5,
+      "name": "PPh Final Transindo"
+    },
+    {
+      "accountNumber": "2130207",
+      "level": 5,
+      "name": "PPn Keluaran Pemungut"
+    },
+    {
+      "accountNumber": "2130207",
+      "level": 5,
+      "name": "PPh Pasal 21 Tenaga Ahli"
+    },
+    {
+      "accountNumber": "2130208",
+      "level": 5,
+      "name": "PPn Masukan"
+    },
+    {
+      "accountNumber": "2130208",
+      "level": 5,
+      "name": "Hutang Investasi ke Vadhana International"
+    },
+    {
+      "accountNumber": "2130209",
+      "level": 5,
+      "name": "PPN Dibayar"
+    },
+    {
+      "accountNumber": "2130209",
+      "level": 5,
+      "name": "PPh 21 Tenaga Ahli"
+    },
+    {
+      "accountNumber": "2130209",
+      "level": 2,
+      "name": "PPN Dibayar"
+    },
+    {
+      "accountNumber": "2130209",
+      "level": 5,
+      "name": "PPN Keluaran"
+    },
+    {
+      "accountNumber": "2130210",
+      "level": 5,
+      "name": "PPN dibayar"
+    },
+    {
+      "accountNumber": "2130210",
+      "level": 5,
+      "name": "PPn Keluaran Non Pemungut"
+    },
+    {
+      "accountNumber": "2130210",
+      "level": 5,
+      "name": "PPN Masukan"
+    },
+    {
+      "accountNumber": "2130211",
+      "level": 5,
+      "name": "PBBKB"
+    },
+    {
+      "accountNumber": "2130211",
+      "level": 5,
+      "name": "PPN Dibayar"
+    },
+    {
+      "accountNumber": "2130212",
+      "level": 5,
+      "name": "PPN Pemungut"
+    },
+    {
+      "accountNumber": "2130212",
+      "level": 5,
+      "name": "PPN Keluaran Dibebaskan (07)"
+    },
+    {
+      "accountNumber": "2130213",
+      "level": 5,
+      "name": "PPh Pasal 21"
+    },
+    {
+      "accountNumber": "2130301",
+      "level": 6,
+      "name": "TAMBAHAN BPJS"
+    },
+    {
+      "accountNumber": "2140000",
+      "level": 3,
+      "name": "Hutang Pajak"
+    },
+    {
+      "accountNumber": "2140100",
+      "level": 4,
+      "name": "Hutang PPN"
+    },
+    {
+      "accountNumber": "2140101",
+      "level": 5,
+      "name": "Hutang PPN Keluaran"
+    },
+    {
+      "accountNumber": "2140102",
+      "level": 5,
+      "name": "Hutang PPN Masukan"
+    },
+    {
+      "accountNumber": "2140103",
+      "level": 5,
+      "name": "Hutang PPN Masukan (Outstanding)"
+    },
+    {
+      "accountNumber": "2140104",
+      "level": 5,
+      "name": "PPN Kurang Bayar"
+    },
+    {
+      "accountNumber": "2140200",
+      "level": 4,
+      "name": "Hutang PPh Pasal 21"
+    },
+    {
+      "accountNumber": "2140201",
+      "level": 5,
+      "name": "Hutang PPh Pasal 21"
+    },
+    {
+      "accountNumber": "2140202",
+      "level": 5,
+      "name": "Hutang PPh Pasal 21 Tenaga Ahli"
+    },
+    {
+      "accountNumber": "2140300",
+      "level": 4,
+      "name": "Hutang PPh Pasal 22"
+    },
+    {
+      "accountNumber": "2140301",
+      "level": 5,
+      "name": "Hutang PPh Pasal 22"
+    },
+    {
+      "accountNumber": "2140400",
+      "level": 4,
+      "name": "Hutang PPh Pasal 23"
+    },
+    {
+      "accountNumber": "2140401",
+      "level": 5,
+      "name": "Hutang PPh Pasal 23"
+    },
+    {
+      "accountNumber": "2140500",
+      "level": 4,
+      "name": "Hutang PPh 4 (2)"
+    },
+    {
+      "accountNumber": "2140501",
+      "level": 5,
+      "name": "Hutang PPh 4 (2)"
+    },
+    {
+      "accountNumber": "2140600",
+      "level": 4,
+      "name": "Hutang PPh Pasal 15"
+    },
+    {
+      "accountNumber": "2140601",
+      "level": 5,
+      "name": "Hutang PPh Pasal 15"
+    },
+    {
+      "accountNumber": "2190000",
+      "level": 3,
+      "name": "Afiliasi"
+    },
+    {
+      "accountNumber": "2190100",
+      "level": 4,
+      "name": "Afiliasi"
+    },
+    {
+      "accountNumber": "2190101",
+      "level": 5,
+      "name": "Afiliasi"
+    },
+    {
+      "accountNumber": "2200000",
+      "level": 2,
+      "name": "Hutang Jangka Panjang"
+    },
+    {
+      "accountNumber": "2220000",
+      "level": 3,
+      "name": "Hutang Jangka Panjang"
+    },
+    {
+      "accountNumber": "2220100",
+      "level": 4,
+      "name": "Hutang Leasing"
+    },
+    {
+      "accountNumber": "2220101",
+      "level": 5,
+      "name": "Mandiri Tunas Finance"
+    },
+    {
+      "accountNumber": "2220101",
+      "level": 5,
+      "name": "Hutang Leasing"
+    },
+    {
+      "accountNumber": "2220101",
+      "level": 5,
+      "name": "Buana Finance"
+    },
+    {
+      "accountNumber": "2220102",
+      "level": 5,
+      "name": "Adira Finance"
+    },
+    {
+      "accountNumber": "2220102",
+      "level": 5,
+      "name": "Dipo Star Finance"
+    },
+    {
+      "accountNumber": "2220103",
+      "level": 5,
+      "name": "Toyota Astra Finance"
+    },
+    {
+      "accountNumber": "2220104",
+      "level": 5,
+      "name": "Surya Artha Nusantara Finance"
+    },
+    {
+      "accountNumber": "2220105",
+      "level": 5,
+      "name": "Chandra Sakti Utama Leasing, PT"
+    },
+    {
+      "accountNumber": "2220106",
+      "level": 5,
+      "name": "Trust Finance"
+    },
+    {
+      "accountNumber": "2220107",
+      "level": 5,
+      "name": "Clipan Finance"
+    },
+    {
+      "accountNumber": "2220108",
+      "level": 5,
+      "name": "BFI Finance"
+    },
+    {
+      "accountNumber": "2220109",
+      "level": 5,
+      "name": "Komatsu Astra Finance"
+    },
+    {
+      "accountNumber": "2220110",
+      "level": 5,
+      "name": "SMFL"
+    },
+    {
+      "accountNumber": "2220111",
+      "level": 5,
+      "name": "Mandiri Tunas Finance"
+    },
+    {
+      "accountNumber": "2220112",
+      "level": 5,
+      "name": "CAT Finance"
+    },
+    {
+      "accountNumber": "2220113",
+      "level": 5,
+      "name": "Astra Sedaya Finance (ACC)"
+    },
+    {
+      "accountNumber": "2220114",
+      "level": 5,
+      "name": "Bank Woori Saudara"
+    },
+    {
+      "accountNumber": "2220115",
+      "level": 5,
+      "name": "Maybank Finance"
+    },
+    {
+      "accountNumber": "2220116",
+      "level": 5,
+      "name": "Hexa Finance"
+    },
+    {
+      "accountNumber": "2220117",
+      "level": 5,
+      "name": "BOT Finance"
+    },
+    {
+      "accountNumber": "2220200",
+      "level": 4,
+      "name": "Hutang Bank"
+    },
+    {
+      "accountNumber": "2220201",
+      "level": 5,
+      "name": "Exim Bank"
+    },
+    {
+      "accountNumber": "2220201",
+      "level": 5,
+      "name": "Hutang Bank"
+    },
+    {
+      "accountNumber": "2220201",
+      "level": 5,
+      "name": "BRI"
+    },
+    {
+      "accountNumber": "2220202",
+      "level": 5,
+      "name": "Mandiri"
+    },
+    {
+      "accountNumber": "2220202",
+      "level": 2,
+      "name": "Return"
+    },
+    {
+      "accountNumber": "2220202",
+      "level": 5,
+      "name": "Bank Negara Indonesia (BNI)"
+    },
+    {
+      "accountNumber": "2220203",
+      "level": 5,
+      "name": "BCA"
+    },
+    {
+      "accountNumber": "2220300",
+      "level": 4,
+      "name": "Hutang Sumatera Riang Lestari"
+    },
+    {
+      "accountNumber": "2220300",
+      "level": 4,
+      "name": "Return"
+    },
+    {
+      "accountNumber": "2220301",
+      "level": 5,
+      "name": "Hutang Sumatera Riang Lestari"
+    },
+    {
+      "accountNumber": "2220301",
+      "level": 5,
+      "name": "Return Transmital"
+    },
+    {
+      "accountNumber": "2300000",
+      "level": 2,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "2330000",
+      "level": 3,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "2330100",
+      "level": 4,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "2330101",
+      "level": 5,
+      "name": "DP Penjualan"
+    },
+    {
+      "accountNumber": "3100000",
+      "level": 2,
+      "name": "Modal"
+    },
+    {
+      "accountNumber": "3110000",
+      "level": 3,
+      "name": "Modal"
+    },
+    {
+      "accountNumber": "3110100",
+      "level": 4,
+      "name": "Modal"
+    },
+    {
+      "accountNumber": "3110101",
+      "level": 5,
+      "name": "Modal disetor"
+    },
+    {
+      "accountNumber": "3110101",
+      "level": 5,
+      "name": "Modal Rudi Hartono"
+    },
+    {
+      "accountNumber": "3110102",
+      "level": 5,
+      "name": "Modal Lainnya"
+    },
+    {
+      "accountNumber": "3110102",
+      "level": 5,
+      "name": "Modal Hendry Novianto"
+    },
+    {
+      "accountNumber": "3110103",
+      "level": 5,
+      "name": "Modal Edy Effendi"
+    },
+    {
+      "accountNumber": "3110103",
+      "level": 5,
+      "name": "Modal Rimba Hasil Alam"
+    },
+    {
+      "accountNumber": "3110104",
+      "level": 5,
+      "name": "Modal PT. Vadhana International"
+    },
+    {
+      "accountNumber": "3110200",
+      "level": 4,
+      "name": "Deviden"
+    },
+    {
+      "accountNumber": "3110201",
+      "level": 5,
+      "name": "Deviden"
+    },
+    {
+      "accountNumber": "3110300",
+      "level": 4,
+      "name": "Laba"
+    },
+    {
+      "accountNumber": "3110301",
+      "level": 5,
+      "name": "Laba ditahan"
+    },
+    {
+      "accountNumber": "3110302",
+      "level": 5,
+      "name": "Laba tahun berjalan"
+    },
+    {
+      "accountNumber": "3110302",
+      "level": 5,
+      "name": "Laba Tahun Berjalan"
+    },
+    {
+      "accountNumber": "3110303",
+      "level": 5,
+      "name": "Koreksi Laba ditahan"
+    },
+    {
+      "accountNumber": "3120000",
+      "level": 3,
+      "name": "Opening Balance"
+    },
+    {
+      "accountNumber": "3120100",
+      "level": 4,
+      "name": "Opening Balance"
+    },
+    {
+      "accountNumber": "3120101",
+      "level": 5,
+      "name": "Opening Balance"
+    },
+    {
+      "accountNumber": "3200000",
+      "level": 2,
+      "name": "OPENING BALANCE EQUITY"
+    },
+    {
+      "accountNumber": "4100000",
+      "level": 2,
+      "name": "Pendapatan"
+    },
+    {
+      "accountNumber": "4100000",
+      "level": 2,
+      "name": "Sales"
+    },
+    {
+      "accountNumber": "4110000",
+      "level": 3,
+      "name": "Pendapatan"
+    },
+    {
+      "accountNumber": "4110000",
+      "level": 3,
+      "name": "Sales"
+    },
+    {
+      "accountNumber": "4110100",
+      "level": 4,
+      "name": "Pendapatan Barang"
+    },
+    {
+      "accountNumber": "4110100",
+      "level": 4,
+      "name": "Pendapatan Jasa"
+    },
+    {
+      "accountNumber": "4110100",
+      "level": 4,
+      "name": "IDR-Sales"
+    },
+    {
+      "accountNumber": "4110101",
+      "level": 5,
+      "name": "Pendapatan Jasa-Invoice"
+    },
+    {
+      "accountNumber": "4110101",
+      "level": 5,
+      "name": "Pendapatan Barang"
+    },
+    {
+      "accountNumber": "4110101",
+      "level": 5,
+      "name": "Pendapatan - Invoice"
+    },
+    {
+      "accountNumber": "4110102",
+      "level": 5,
+      "name": "Pendapatan Jasa-Progress"
+    },
+    {
+      "accountNumber": "4110102",
+      "level": 5,
+      "name": "Pendapatan - Progress"
+    },
+    {
+      "accountNumber": "4110110",
+      "level": 5,
+      "name": "IDR-Sales Kredit"
+    },
+    {
+      "accountNumber": "4110115",
+      "level": 5,
+      "name": "IDR-Sales Tunai"
+    },
+    {
+      "accountNumber": "4110200",
+      "level": 4,
+      "name": "Pendapatan Kalibrasi"
+    },
+    {
+      "accountNumber": "4110200",
+      "level": 4,
+      "name": "Pendapatan Rental"
+    },
+    {
+      "accountNumber": "4110200",
+      "level": 4,
+      "name": "Pendapatan Lainnya"
+    },
+    {
+      "accountNumber": "4110200",
+      "level": 4,
+      "name": "IDR-Sales Discount"
+    },
+    {
+      "accountNumber": "4110201",
+      "level": 5,
+      "name": "Pendapatan Rental-Invoice"
+    },
+    {
+      "accountNumber": "4110201",
+      "level": 5,
+      "name": "Pendapatan Kalibrasi"
+    },
+    {
+      "accountNumber": "4110201",
+      "level": 5,
+      "name": "Retur Penjualan"
+    },
+    {
+      "accountNumber": "4110202",
+      "level": 5,
+      "name": "Pendapatan Rental-Progress"
+    },
+    {
+      "accountNumber": "4110202",
+      "level": 5,
+      "name": "Potongan Penjualan"
+    },
+    {
+      "accountNumber": "4110203",
+      "level": 5,
+      "name": "Sales Term Discount IDR"
+    },
+    {
+      "accountNumber": "4110204",
+      "level": 5,
+      "name": "Retur Pembelian"
+    },
+    {
+      "accountNumber": "4110210",
+      "level": 5,
+      "name": "IDR-Sales Discount"
+    },
+    {
+      "accountNumber": "4110300",
+      "level": 4,
+      "name": "Pendapatan Refill"
+    },
+    {
+      "accountNumber": "4110301",
+      "level": 5,
+      "name": "Pendapatan Refill"
+    },
+    {
+      "accountNumber": "4110400",
+      "level": 4,
+      "name": "Pendapatan Rental"
+    },
+    {
+      "accountNumber": "4110401",
+      "level": 5,
+      "name": "Pendapatan Rental"
+    },
+    {
+      "accountNumber": "4110500",
+      "level": 4,
+      "name": "Pendapatan Umum"
+    },
+    {
+      "accountNumber": "4110501",
+      "level": 5,
+      "name": "Pendapatan Umum"
+    },
+    {
+      "accountNumber": "4200000",
+      "level": 2,
+      "name": "Sales Discount"
+    },
+    {
+      "accountNumber": "4210000",
+      "level": 3,
+      "name": "Sales Discount"
+    },
+    {
+      "accountNumber": "4210100",
+      "level": 4,
+      "name": "Sales Discount"
+    },
+    {
+      "accountNumber": "4210101",
+      "level": 5,
+      "name": "Sales Discount"
+    },
+    {
+      "accountNumber": "5100000",
+      "level": 2,
+      "name": "Tenaga Kerja"
+    },
+    {
+      "accountNumber": "5100000",
+      "level": 2,
+      "name": "Cost Of Sales"
+    },
+    {
+      "accountNumber": "5100000",
+      "level": 2,
+      "name": "BEBAN GAJI"
+    },
+    {
+      "accountNumber": "5100000",
+      "level": 2,
+      "name": "Biaya Langsung"
+    },
+    {
+      "accountNumber": "5110000",
+      "level": 3,
+      "name": "Gaji Bulanan"
+    },
+    {
+      "accountNumber": "5110000",
+      "level": 3,
+      "name": "Cost Of Sales"
+    },
+    {
+      "accountNumber": "5110000",
+      "level": 3,
+      "name": "Man Power"
+    },
+    {
+      "accountNumber": "5110100",
+      "level": 4,
+      "name": "Gaji Pokok"
+    },
+    {
+      "accountNumber": "5110100",
+      "level": 4,
+      "name": "Cost Of Sales"
+    },
+    {
+      "accountNumber": "5110100",
+      "level": 4,
+      "name": "Biaya Gaji Man Power"
+    },
+    {
+      "accountNumber": "5110101",
+      "level": 5,
+      "name": "Gaji Pokok"
+    },
+    {
+      "accountNumber": "5110101",
+      "level": 5,
+      "name": "HPP Barang"
+    },
+    {
+      "accountNumber": "5110101",
+      "level": 5,
+      "name": "Beban Gaji-Gapok"
+    },
+    {
+      "accountNumber": "5110102",
+      "level": 5,
+      "name": "Material Workshop/Racun Api"
+    },
+    {
+      "accountNumber": "5110102",
+      "level": 5,
+      "name": "Beban Uang Makan"
+    },
+    {
+      "accountNumber": "5110103",
+      "level": 5,
+      "name": "Material Gas Detector"
+    },
+    {
+      "accountNumber": "5110104",
+      "level": 5,
+      "name": "HPP Kalibrasi"
+    },
+    {
+      "accountNumber": "5110111",
+      "level": 5,
+      "name": "By. Gaji - Pokok"
+    },
+    {
+      "accountNumber": "5110112",
+      "level": 5,
+      "name": "By. Gaji - Jabatan"
+    },
+    {
+      "accountNumber": "5110113",
+      "level": 5,
+      "name": "By. Gaji - Makan"
+    },
+    {
+      "accountNumber": "5110114",
+      "level": 5,
+      "name": "By. Gaji - Transport"
+    },
+    {
+      "accountNumber": "5110115",
+      "level": 5,
+      "name": "By. Gaji - Denda"
+    },
+    {
+      "accountNumber": "5110116",
+      "level": 5,
+      "name": "By. Gaji - Other"
+    },
+    {
+      "accountNumber": "5110117",
+      "level": 5,
+      "name": "By. Gaji - Kehadiran"
+    },
+    {
+      "accountNumber": "5110118",
+      "level": 5,
+      "name": "By. Gaji - OT"
+    },
+    {
+      "accountNumber": "5110121",
+      "level": 5,
+      "name": "By. THR & Bonus Tahunan"
+    },
+    {
+      "accountNumber": "5110122",
+      "level": 5,
+      "name": "By. Bonus Performance"
+    },
+    {
+      "accountNumber": "5110130",
+      "level": 5,
+      "name": "By. Pesangon"
+    },
+    {
+      "accountNumber": "5110131",
+      "level": 5,
+      "name": "By. Investment Fund"
+    },
+    {
+      "accountNumber": "5110141",
+      "level": 5,
+      "name": "By. Komisi Sales"
+    },
+    {
+      "accountNumber": "5110151",
+      "level": 5,
+      "name": "By. PPh 21"
+    },
+    {
+      "accountNumber": "5110161",
+      "level": 5,
+      "name": "By. BPJS Tenaga Kerja"
+    },
+    {
+      "accountNumber": "5110162",
+      "level": 5,
+      "name": "By. BPJS Kesehatan"
+    },
+    {
+      "accountNumber": "5110163",
+      "level": 5,
+      "name": "By. Jaminan Pensiun"
+    },
+    {
+      "accountNumber": "5110181",
+      "level": 5,
+      "name": "By. Pengobatan"
+    },
+    {
+      "accountNumber": "5110200",
+      "level": 4,
+      "name": "Tunjangan Tetap"
+    },
+    {
+      "accountNumber": "5110200",
+      "level": 4,
+      "name": "Biaya Lain Man Power"
+    },
+    {
+      "accountNumber": "5110201",
+      "level": 5,
+      "name": "Tunjangan Jabatan"
+    },
+    {
+      "accountNumber": "5110201",
+      "level": 5,
+      "name": "Beban Gaji-Tunjangan Tetap"
+    },
+    {
+      "accountNumber": "5110201",
+      "level": 5,
+      "name": "By. Training & Pendidikan"
+    },
+    {
+      "accountNumber": "5110202",
+      "level": 5,
+      "name": "Tunjangan Makan"
+    },
+    {
+      "accountNumber": "5110203",
+      "level": 5,
+      "name": "Tunjangan Kehadiran"
+    },
+    {
+      "accountNumber": "5110204",
+      "level": 5,
+      "name": "Tunjangan Transport"
+    },
+    {
+      "accountNumber": "5110205",
+      "level": 5,
+      "name": "Tunjangan Proyek"
+    },
+    {
+      "accountNumber": "5110211",
+      "level": 5,
+      "name": "By. Seragam & Badge"
+    },
+    {
+      "accountNumber": "5110221",
+      "level": 5,
+      "name": "By. Rekreasi & Tour"
+    },
+    {
+      "accountNumber": "5110231",
+      "level": 5,
+      "name": "By. Karyawan Magang"
+    },
+    {
+      "accountNumber": "5110241",
+      "level": 5,
+      "name": "Man Power Sub Kontrak"
+    },
+    {
+      "accountNumber": "5110251",
+      "level": 5,
+      "name": "By. Medical Check Up"
+    },
+    {
+      "accountNumber": "5110300",
+      "level": 4,
+      "name": "Tunjangan Tidak Tetap"
+    },
+    {
+      "accountNumber": "5110301",
+      "level": 5,
+      "name": "Tunjangan Makan"
+    },
+    {
+      "accountNumber": "5110301",
+      "level": 5,
+      "name": "Beban Gaji-Tunjangan Tidak Tetap"
+    },
+    {
+      "accountNumber": "5110302",
+      "level": 5,
+      "name": "Tunjangan Kehadiran"
+    },
+    {
+      "accountNumber": "5110303",
+      "level": 5,
+      "name": "Tunjangan Transport"
+    },
+    {
+      "accountNumber": "5110304",
+      "level": 5,
+      "name": "Tunjangan Proyek"
+    },
+    {
+      "accountNumber": "5110305",
+      "level": 5,
+      "name": "Tunjangan Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5110306",
+      "level": 5,
+      "name": "Tunjangan Tonase"
+    },
+    {
+      "accountNumber": "5110307",
+      "level": 5,
+      "name": "Rapel Gaji dan Lainnya"
+    },
+    {
+      "accountNumber": "5110308",
+      "level": 5,
+      "name": "Tunjangan PPh 21"
+    },
+    {
+      "accountNumber": "5110309",
+      "level": 5,
+      "name": "XXX"
+    },
+    {
+      "accountNumber": "5110399",
+      "level": 5,
+      "name": "Tunjangan Lainnya"
+    },
+    {
+      "accountNumber": "5110400",
+      "level": 4,
+      "name": "Lembur"
+    },
+    {
+      "accountNumber": "5110401",
+      "level": 5,
+      "name": "Lembur Regular"
+    },
+    {
+      "accountNumber": "5110401",
+      "level": 4,
+      "name": "Premi Shift"
+    },
+    {
+      "accountNumber": "5110402",
+      "level": 5,
+      "name": "Lembur Non Regular"
+    },
+    {
+      "accountNumber": "5110500",
+      "level": 4,
+      "name": "Oncall & Mandah"
+    },
+    {
+      "accountNumber": "5110501",
+      "level": 5,
+      "name": "Oncall"
+    },
+    {
+      "accountNumber": "5110502",
+      "level": 5,
+      "name": "Mandah"
+    },
+    {
+      "accountNumber": "5110600",
+      "level": 4,
+      "name": "BPJS"
+    },
+    {
+      "accountNumber": "5110601",
+      "level": 5,
+      "name": "BPJS Kesehatan"
+    },
+    {
+      "accountNumber": "5110601",
+      "level": 5,
+      "name": "Beban BPJS TK"
+    },
+    {
+      "accountNumber": "5110602",
+      "level": 5,
+      "name": "BPJS Tenagakerja"
+    },
+    {
+      "accountNumber": "5110602",
+      "level": 5,
+      "name": "Beban BPJS KES"
+    },
+    {
+      "accountNumber": "5110700",
+      "level": 4,
+      "name": "Insentif"
+    },
+    {
+      "accountNumber": "5110701",
+      "level": 5,
+      "name": "Insentif Proyek"
+    },
+    {
+      "accountNumber": "5110701",
+      "level": 5,
+      "name": "Beban Uang Tonase Supir"
+    },
+    {
+      "accountNumber": "5110702",
+      "level": 5,
+      "name": "Insentif Produksi"
+    },
+    {
+      "accountNumber": "5110702",
+      "level": 5,
+      "name": "Beban Insentif"
+    },
+    {
+      "accountNumber": "5110703",
+      "level": 5,
+      "name": "Insentif Lainnya"
+    },
+    {
+      "accountNumber": "5110800",
+      "level": 5,
+      "name": "Beban Uang Jalan Supir"
+    },
+    {
+      "accountNumber": "5110900",
+      "level": 5,
+      "name": "Beban Pemborong"
+    },
+    {
+      "accountNumber": "5119900",
+      "level": 4,
+      "name": "Tunjangan Lainnya"
+    },
+    {
+      "accountNumber": "5119901",
+      "level": 5,
+      "name": "Tunjangan Lain-lain"
+    },
+    {
+      "accountNumber": "5120000",
+      "level": 3,
+      "name": "Gaji Harian"
+    },
+    {
+      "accountNumber": "5120000",
+      "level": 3,
+      "name": "Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5120000",
+      "level": 3,
+      "name": "Gaji Harian & Borongan"
+    },
+    {
+      "accountNumber": "5120100",
+      "level": 4,
+      "name": "Gaji Harian"
+    },
+    {
+      "accountNumber": "5120100",
+      "level": 4,
+      "name": "Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5120100",
+      "level": 4,
+      "name": "Gaji Harian & Borongan"
+    },
+    {
+      "accountNumber": "5120101",
+      "level": 5,
+      "name": "Gaji Harian"
+    },
+    {
+      "accountNumber": "5120101",
+      "level": 5,
+      "name": "Gaji Karyawan Harian"
+    },
+    {
+      "accountNumber": "5120102",
+      "level": 5,
+      "name": "Tunjangan Makan Harian"
+    },
+    {
+      "accountNumber": "5120102",
+      "level": 5,
+      "name": "Gaji Karyawan Magang"
+    },
+    {
+      "accountNumber": "5120103",
+      "level": 5,
+      "name": "Gaji Karyawan Magang"
+    },
+    {
+      "accountNumber": "5120103",
+      "level": 5,
+      "name": "Gaji Harian Keamanan"
+    },
+    {
+      "accountNumber": "5120104",
+      "level": 5,
+      "name": "Gaji Harian Keamanan"
+    },
+    {
+      "accountNumber": "5120104",
+      "level": 5,
+      "name": "Gaji Karyawan Borongan"
+    },
+    {
+      "accountNumber": "5120105",
+      "level": 5,
+      "name": "Gaji Karyawan Borongan (Pinj Chainsaw)"
+    },
+    {
+      "accountNumber": "5120110",
+      "level": 5,
+      "name": "By. Tiket Pesawat"
+    },
+    {
+      "accountNumber": "5120120",
+      "level": 5,
+      "name": "By. Uang Saku / Mandah"
+    },
+    {
+      "accountNumber": "5120121",
+      "level": 5,
+      "name": "By. Comday"
+    },
+    {
+      "accountNumber": "5120122",
+      "level": 5,
+      "name": "By. Extra Puding"
+    },
+    {
+      "accountNumber": "5120123",
+      "level": 5,
+      "name": "By. Hotel"
+    },
+    {
+      "accountNumber": "5120124",
+      "level": 5,
+      "name": "By. Transportasi / Grab"
+    },
+    {
+      "accountNumber": "5120130",
+      "level": 5,
+      "name": "By. Telekomunikasi"
+    },
+    {
+      "accountNumber": "5120190",
+      "level": 5,
+      "name": "By. Others"
+    },
+    {
+      "accountNumber": "5130000",
+      "level": 3,
+      "name": "THR, Bonus, Santunan, Cuti"
+    },
+    {
+      "accountNumber": "5130000",
+      "level": 3,
+      "name": "Biaya Kendaraan"
+    },
+    {
+      "accountNumber": "5130100",
+      "level": 4,
+      "name": "THR, Bonus, Santunan, Cuti"
+    },
+    {
+      "accountNumber": "5130100",
+      "level": 4,
+      "name": "Biaya Kendaraan"
+    },
+    {
+      "accountNumber": "5130101",
+      "level": 5,
+      "name": "THR"
+    },
+    {
+      "accountNumber": "5130101",
+      "level": 5,
+      "name": "Beban THR & Bonus"
+    },
+    {
+      "accountNumber": "5130102",
+      "level": 5,
+      "name": "Bonus"
+    },
+    {
+      "accountNumber": "5130102",
+      "level": 5,
+      "name": "Beban Cadangan THR"
+    },
+    {
+      "accountNumber": "5130103",
+      "level": 5,
+      "name": "Santunan"
+    },
+    {
+      "accountNumber": "5130104",
+      "level": 5,
+      "name": "Cuti"
+    },
+    {
+      "accountNumber": "5130105",
+      "level": 5,
+      "name": "Pengganti Cuti"
+    },
+    {
+      "accountNumber": "5130106",
+      "level": 5,
+      "name": "Pesangon"
+    },
+    {
+      "accountNumber": "5130111",
+      "level": 5,
+      "name": "By. BBM"
+    },
+    {
+      "accountNumber": "5130112",
+      "level": 5,
+      "name": "By. Parkir & Tol"
+    },
+    {
+      "accountNumber": "5130113",
+      "level": 5,
+      "name": "By. R & M Mobil"
+    },
+    {
+      "accountNumber": "5130114",
+      "level": 5,
+      "name": "By. Keur"
+    },
+    {
+      "accountNumber": "5130115",
+      "level": 5,
+      "name": "By. Pajak STNK"
+    },
+    {
+      "accountNumber": "5130141",
+      "level": 5,
+      "name": "By. Sewa"
+    },
+    {
+      "accountNumber": "5130151",
+      "level": 5,
+      "name": "By. Asuransi"
+    },
+    {
+      "accountNumber": "5130161",
+      "level": 5,
+      "name": "By. Legal"
+    },
+    {
+      "accountNumber": "5140000",
+      "level": 3,
+      "name": "Training/Pelatihan"
+    },
+    {
+      "accountNumber": "5140000",
+      "level": 3,
+      "name": "Biaya Pembelian Jasa"
+    },
+    {
+      "accountNumber": "5140100",
+      "level": 4,
+      "name": "Training/Pelatihan"
+    },
+    {
+      "accountNumber": "5140100",
+      "level": 4,
+      "name": "Biaya Pembelian Jasa"
+    },
+    {
+      "accountNumber": "5140101",
+      "level": 5,
+      "name": "Training/Pelatihan"
+    },
+    {
+      "accountNumber": "5140110",
+      "level": 5,
+      "name": "By. Jasa Sertifikat"
+    },
+    {
+      "accountNumber": "5140120",
+      "level": 5,
+      "name": "By. Jasa Uji Lab"
+    },
+    {
+      "accountNumber": "5140130",
+      "level": 5,
+      "name": "By. Jasa Kalibrasi Alat"
+    },
+    {
+      "accountNumber": "5140140",
+      "level": 5,
+      "name": "By. Jasa Surveyor"
+    },
+    {
+      "accountNumber": "5140150",
+      "level": 5,
+      "name": "By. Jasa Radiography"
+    },
+    {
+      "accountNumber": "5140160",
+      "level": 5,
+      "name": "By. Jasa Soil Test"
+    },
+    {
+      "accountNumber": "5140170",
+      "level": 5,
+      "name": "By. Sub Contractor"
+    },
+    {
+      "accountNumber": "5140180",
+      "level": 5,
+      "name": "By. Perijinan Zat Radioaktif"
+    },
+    {
+      "accountNumber": "5140190",
+      "level": 5,
+      "name": "By. Jasa Analisa"
+    },
+    {
+      "accountNumber": "5140191",
+      "level": 5,
+      "name": "By. Jasa Assesment"
+    },
+    {
+      "accountNumber": "5140199",
+      "level": 5,
+      "name": "By. Jasa Lainnya"
+    },
+    {
+      "accountNumber": "5150000",
+      "level": 3,
+      "name": "Biaya Lain-Lain"
+    },
+    {
+      "accountNumber": "5150100",
+      "level": 4,
+      "name": "Biaya Mobilisasi"
+    },
+    {
+      "accountNumber": "5150110",
+      "level": 5,
+      "name": "By. Mobilisasi Man Power"
+    },
+    {
+      "accountNumber": "5150111",
+      "level": 5,
+      "name": "By. Mobilisasi Alat"
+    },
+    {
+      "accountNumber": "5150200",
+      "level": 4,
+      "name": "Biaya Lainnya"
+    },
+    {
+      "accountNumber": "5150210",
+      "level": 5,
+      "name": "By. Consumable"
+    },
+    {
+      "accountNumber": "5150211",
+      "level": 5,
+      "name": "By. Film"
+    },
+    {
+      "accountNumber": "5150220",
+      "level": 5,
+      "name": "By. Tools"
+    },
+    {
+      "accountNumber": "5150230",
+      "level": 5,
+      "name": "By. Akomodasi Proyek"
+    },
+    {
+      "accountNumber": "5150240",
+      "level": 5,
+      "name": "By. Konsumsi"
+    },
+    {
+      "accountNumber": "5150250",
+      "level": 5,
+      "name": "By. Sewa Kamar"
+    },
+    {
+      "accountNumber": "5150260",
+      "level": 5,
+      "name": "By. Sewa Lain-Lain"
+    },
+    {
+      "accountNumber": "5150261",
+      "level": 5,
+      "name": "By. Keamanan & Kebersihan"
+    },
+    {
+      "accountNumber": "5160000",
+      "level": 3,
+      "name": "Biaya Utility"
+    },
+    {
+      "accountNumber": "5160100",
+      "level": 4,
+      "name": "Biaya Utility"
+    },
+    {
+      "accountNumber": "5160110",
+      "level": 5,
+      "name": "By. Perlengkapan"
+    },
+    {
+      "accountNumber": "5160180",
+      "level": 5,
+      "name": "By. Keperluan Kantor"
+    },
+    {
+      "accountNumber": "5160181",
+      "level": 5,
+      "name": "By. Stationery / Alat Tulis"
+    },
+    {
+      "accountNumber": "5160200",
+      "level": 4,
+      "name": "Biaya Komisi dan Fee"
+    },
+    {
+      "accountNumber": "5160201",
+      "level": 5,
+      "name": "By. Komisi dan Fee"
+    },
+    {
+      "accountNumber": "5200000",
+      "level": 2,
+      "name": "Material"
+    },
+    {
+      "accountNumber": "5200000",
+      "level": 2,
+      "name": "Kendaraan, Mesin Peralatan dan BBM"
+    },
+    {
+      "accountNumber": "5210000",
+      "level": 3,
+      "name": "Material"
+    },
+    {
+      "accountNumber": "5210000",
+      "level": 3,
+      "name": "Kendaraan"
+    },
+    {
+      "accountNumber": "5210100",
+      "level": 4,
+      "name": "Material"
+    },
+    {
+      "accountNumber": "5210100",
+      "level": 4,
+      "name": "Delivery Expenses"
+    },
+    {
+      "accountNumber": "5210100",
+      "level": 4,
+      "name": "Depresiasi Kendaraan"
+    },
+    {
+      "accountNumber": "5210101",
+      "level": 5,
+      "name": "PPE"
+    },
+    {
+      "accountNumber": "5210101",
+      "level": 5,
+      "name": "Ongkos Angkut Pembelian"
+    },
+    {
+      "accountNumber": "5210101",
+      "level": 5,
+      "name": "Beban Penyusutan Kendaraan"
+    },
+    {
+      "accountNumber": "5210102",
+      "level": 5,
+      "name": "Tools"
+    },
+    {
+      "accountNumber": "5210102",
+      "level": 5,
+      "name": "Bea Masuk"
+    },
+    {
+      "accountNumber": "5210103",
+      "level": 5,
+      "name": "Part"
+    },
+    {
+      "accountNumber": "5210103",
+      "level": 5,
+      "name": "Diskon Pembelian"
+    },
+    {
+      "accountNumber": "5210103",
+      "level": 5,
+      "name": "PPh 22 Impor"
+    },
+    {
+      "accountNumber": "5210104",
+      "level": 5,
+      "name": "Consumable"
+    },
+    {
+      "accountNumber": "5210104",
+      "level": 5,
+      "name": "Freight, Ins, Doc Custom"
+    },
+    {
+      "accountNumber": "5210200",
+      "level": 4,
+      "name": "Repair & Maintenance"
+    },
+    {
+      "accountNumber": "5210201",
+      "level": 5,
+      "name": "Beban Perbaikan & Perawatan Kendaraan"
+    },
+    {
+      "accountNumber": "5210202",
+      "level": 5,
+      "name": "Beban Sparepart Alat Berat"
+    },
+    {
+      "accountNumber": "5210203",
+      "level": 5,
+      "name": "Beban Ban"
+    },
+    {
+      "accountNumber": "5210204",
+      "level": 5,
+      "name": "Beban Accessories & Perlengkapan Kendaraan"
+    },
+    {
+      "accountNumber": "5210205",
+      "level": 5,
+      "name": "Beban Cuci Kendaraan"
+    },
+    {
+      "accountNumber": "5210206",
+      "level": 5,
+      "name": "Beban Hose Alat Berat"
+    },
+    {
+      "accountNumber": "5210300",
+      "level": 4,
+      "name": "BBM Kendaraan"
+    },
+    {
+      "accountNumber": "5210301",
+      "level": 5,
+      "name": "Beban BBM Kendaraan"
+    },
+    {
+      "accountNumber": "5210302",
+      "level": 5,
+      "name": "Beban BBM Alat Berat"
+    },
+    {
+      "accountNumber": "5210400",
+      "level": 4,
+      "name": "Legalitas Kendaraan"
+    },
+    {
+      "accountNumber": "5210401",
+      "level": 5,
+      "name": "Beban Legal Kendaraan"
+    },
+    {
+      "accountNumber": "5210500",
+      "level": 4,
+      "name": "Asuransi Kendaraan"
+    },
+    {
+      "accountNumber": "5210501",
+      "level": 5,
+      "name": "Beban Asuransi Kendaraan"
+    },
+    {
+      "accountNumber": "5210600",
+      "level": 4,
+      "name": "Kendaraan Lainnya"
+    },
+    {
+      "accountNumber": "5210601",
+      "level": 5,
+      "name": "Beban Sewa Kendaraan"
+    },
+    {
+      "accountNumber": "5210602",
+      "level": 5,
+      "name": "Beban Mobilisasi Kendaraan"
+    },
+    {
+      "accountNumber": "5210603",
+      "level": 5,
+      "name": "Beban GPS Kendaraan"
+    },
+    {
+      "accountNumber": "5220000",
+      "level": 3,
+      "name": "xxx"
+    },
+    {
+      "accountNumber": "5220000",
+      "level": 3,
+      "name": "Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5220100",
+      "level": 4,
+      "name": "xxx"
+    },
+    {
+      "accountNumber": "5220100",
+      "level": 4,
+      "name": "Deresiasi Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5220101",
+      "level": 5,
+      "name": "xxx"
+    },
+    {
+      "accountNumber": "5220101",
+      "level": 5,
+      "name": "Beban Penyusutan Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "5220200",
+      "level": 4,
+      "name": "BBM Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5220201",
+      "level": 5,
+      "name": "Beban BBM Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "5220300",
+      "level": 4,
+      "name": "Repair & Maintenance Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5220301",
+      "level": 5,
+      "name": "Beban Perbaikan Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "5220302",
+      "level": 5,
+      "name": "Beban Lainnya Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "5230000",
+      "level": 3,
+      "name": "Inventaris"
+    },
+    {
+      "accountNumber": "5230100",
+      "level": 4,
+      "name": "Depresiasi Inventaris"
+    },
+    {
+      "accountNumber": "5230101",
+      "level": 5,
+      "name": "Beban Penyusutan Inventaris Kantor"
+    },
+    {
+      "accountNumber": "5240000",
+      "level": 3,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "5240100",
+      "level": 4,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "5240101",
+      "level": 5,
+      "name": "Beban Penyusutan Gedung"
+    },
+    {
+      "accountNumber": "5250000",
+      "level": 3,
+      "name": "Utiliti"
+    },
+    {
+      "accountNumber": "5250100",
+      "level": 4,
+      "name": "Biaya Utiliti"
+    },
+    {
+      "accountNumber": "5250101",
+      "level": 5,
+      "name": "Beban Perlengkapan Mess"
+    },
+    {
+      "accountNumber": "5250102",
+      "level": 5,
+      "name": "Beban Material PPE"
+    },
+    {
+      "accountNumber": "5250103",
+      "level": 5,
+      "name": "Beban Material Consumable"
+    },
+    {
+      "accountNumber": "5250104",
+      "level": 5,
+      "name": "Beban Perbaikan dan Perawatan Mess"
+    },
+    {
+      "accountNumber": "5260000",
+      "level": 3,
+      "name": "Operasional Lainnya"
+    },
+    {
+      "accountNumber": "5260100",
+      "level": 4,
+      "name": "Operasional Lainnya"
+    },
+    {
+      "accountNumber": "5260101",
+      "level": 5,
+      "name": "Beban Pos & Pengiriman"
+    },
+    {
+      "accountNumber": "5260102",
+      "level": 5,
+      "name": "Beban Perjalanan"
+    },
+    {
+      "accountNumber": "5260103",
+      "level": 5,
+      "name": "Beban Sosial & Sumbangan"
+    },
+    {
+      "accountNumber": "5260104",
+      "level": 5,
+      "name": "Beban Legal & Izin"
+    },
+    {
+      "accountNumber": "5260105",
+      "level": 5,
+      "name": "Beban Iuran & Retribusi"
+    },
+    {
+      "accountNumber": "5260106",
+      "level": 5,
+      "name": "Beban Domain & Hosting"
+    },
+    {
+      "accountNumber": "5260107",
+      "level": 5,
+      "name": "Beban Perobatan"
+    },
+    {
+      "accountNumber": "5260108",
+      "level": 5,
+      "name": "Beban Laundry"
+    },
+    {
+      "accountNumber": "5260109",
+      "level": 5,
+      "name": "Beban Entertainment"
+    },
+    {
+      "accountNumber": "5260110",
+      "level": 5,
+      "name": "Beban Pakaian Seragam"
+    },
+    {
+      "accountNumber": "5260111",
+      "level": 5,
+      "name": "Beban Operasional Lainnya"
+    },
+    {
+      "accountNumber": "5260112",
+      "level": 5,
+      "name": "Beban Pinalty"
+    },
+    {
+      "accountNumber": "5260113",
+      "level": 5,
+      "name": "Beban Urus Tilang"
+    },
+    {
+      "accountNumber": "5260114",
+      "level": 5,
+      "name": "Beban Konsumsi"
+    },
+    {
+      "accountNumber": "5260115",
+      "level": 5,
+      "name": "Beban Tenaga Ahli dan Konsultan"
+    },
+    {
+      "accountNumber": "5260116",
+      "level": 5,
+      "name": "Beban Training dan Pelatihan"
+    },
+    {
+      "accountNumber": "5260117",
+      "level": 5,
+      "name": "Beban Keterlambatan/Kedisplinan"
+    },
+    {
+      "accountNumber": "5260118",
+      "level": 5,
+      "name": "Adm Lainnya Pembulatan"
+    },
+    {
+      "accountNumber": "5270000",
+      "level": 2,
+      "name": "Beban Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5271000",
+      "level": 3,
+      "name": "Beban Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5271001",
+      "level": 5,
+      "name": "Beban Tiket Pesawat"
+    },
+    {
+      "accountNumber": "5271002",
+      "level": 5,
+      "name": "Beban Travel/Grab/Taxi"
+    },
+    {
+      "accountNumber": "5271003",
+      "level": 5,
+      "name": "Beban Konsumsi Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5271004",
+      "level": 5,
+      "name": "Beban Entertaint Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5271100",
+      "level": 4,
+      "name": "Beban Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "5300000",
+      "level": 2,
+      "name": "Kendaraan, Mesin Peralatan dan Inventaris"
+    },
+    {
+      "accountNumber": "5310000",
+      "level": 3,
+      "name": "Kendaraan"
+    },
+    {
+      "accountNumber": "5310100",
+      "level": 4,
+      "name": "Depresiasi Kendaraan"
+    },
+    {
+      "accountNumber": "5310101",
+      "level": 5,
+      "name": "Depresiasi LV"
+    },
+    {
+      "accountNumber": "5310102",
+      "level": 5,
+      "name": "Depresiasi HV"
+    },
+    {
+      "accountNumber": "5310103",
+      "level": 5,
+      "name": "Depresiasi HE"
+    },
+    {
+      "accountNumber": "5310200",
+      "level": 4,
+      "name": "Repair Maintenance LV"
+    },
+    {
+      "accountNumber": "5310201",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan LV"
+    },
+    {
+      "accountNumber": "5310202",
+      "level": 5,
+      "name": "Spare Part LV"
+    },
+    {
+      "accountNumber": "5310203",
+      "level": 5,
+      "name": "Ban LV"
+    },
+    {
+      "accountNumber": "5310204",
+      "level": 5,
+      "name": "Cuci Kendaraan LV"
+    },
+    {
+      "accountNumber": "5310205",
+      "level": 5,
+      "name": "Tempel & Bongkar Pasang Ban LV"
+    },
+    {
+      "accountNumber": "5310300",
+      "level": 4,
+      "name": "Repair Maintenance HV"
+    },
+    {
+      "accountNumber": "5310301",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan HV"
+    },
+    {
+      "accountNumber": "5310302",
+      "level": 5,
+      "name": "Spare Part HV"
+    },
+    {
+      "accountNumber": "5310303",
+      "level": 5,
+      "name": "Ban HV"
+    },
+    {
+      "accountNumber": "5310304",
+      "level": 5,
+      "name": "Cuci Kendaraan HV"
+    },
+    {
+      "accountNumber": "5310305",
+      "level": 5,
+      "name": "Tempel & Bongkar Pasang Ban HV"
+    },
+    {
+      "accountNumber": "5310400",
+      "level": 4,
+      "name": "Repair Maintenance HE"
+    },
+    {
+      "accountNumber": "5310401",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan HE"
+    },
+    {
+      "accountNumber": "5310402",
+      "level": 5,
+      "name": "Spare Part HE"
+    },
+    {
+      "accountNumber": "5310403",
+      "level": 5,
+      "name": "Ban HE"
+    },
+    {
+      "accountNumber": "5310404",
+      "level": 5,
+      "name": "Cuci Kendaraan HE"
+    },
+    {
+      "accountNumber": "5310405",
+      "level": 5,
+      "name": "Tempel & Bongkar Pasang Ban HE"
+    },
+    {
+      "accountNumber": "5310500",
+      "level": 4,
+      "name": "BBM Kendaraan"
+    },
+    {
+      "accountNumber": "5310501",
+      "level": 5,
+      "name": "BBM LV"
+    },
+    {
+      "accountNumber": "5310502",
+      "level": 5,
+      "name": "BBM HV"
+    },
+    {
+      "accountNumber": "5310503",
+      "level": 5,
+      "name": "BBM HE"
+    },
+    {
+      "accountNumber": "5310504",
+      "level": 5,
+      "name": "BBM Lainnya"
+    },
+    {
+      "accountNumber": "5310505",
+      "level": 5,
+      "name": "BEV Kendaraan Listrik"
+    },
+    {
+      "accountNumber": "5310600",
+      "level": 4,
+      "name": "Legalitas Kendaraan"
+    },
+    {
+      "accountNumber": "5310601",
+      "level": 5,
+      "name": "Pajak STNK LV"
+    },
+    {
+      "accountNumber": "5310602",
+      "level": 5,
+      "name": "Pajak STNK HV"
+    },
+    {
+      "accountNumber": "5310603",
+      "level": 5,
+      "name": "Pajak STNK HE"
+    },
+    {
+      "accountNumber": "5310604",
+      "level": 5,
+      "name": "KIR LV"
+    },
+    {
+      "accountNumber": "5310605",
+      "level": 5,
+      "name": "KIR HV"
+    },
+    {
+      "accountNumber": "5310606",
+      "level": 5,
+      "name": "KIR HE"
+    },
+    {
+      "accountNumber": "5310607",
+      "level": 5,
+      "name": "Legal Lainnya LV"
+    },
+    {
+      "accountNumber": "5310608",
+      "level": 5,
+      "name": "Legal Lainnya HV"
+    },
+    {
+      "accountNumber": "5310609",
+      "level": 5,
+      "name": "Legal Lainnya HE"
+    },
+    {
+      "accountNumber": "5310610",
+      "level": 5,
+      "name": "Pajak & KIR Kendaraan External"
+    },
+    {
+      "accountNumber": "5310700",
+      "level": 3,
+      "name": "Asuransi Kendaraan"
+    },
+    {
+      "accountNumber": "5310701",
+      "level": 5,
+      "name": "Asuransi LV"
+    },
+    {
+      "accountNumber": "5310702",
+      "level": 5,
+      "name": "Asuransi HV"
+    },
+    {
+      "accountNumber": "5310703",
+      "level": 5,
+      "name": "Asuransi HE"
+    },
+    {
+      "accountNumber": "5310800",
+      "level": 4,
+      "name": "Kendaraan Lainnya"
+    },
+    {
+      "accountNumber": "5310801",
+      "level": 5,
+      "name": "GPS Kendaraan"
+    },
+    {
+      "accountNumber": "5310802",
+      "level": 5,
+      "name": "Jasa Raharja"
+    },
+    {
+      "accountNumber": "5310803",
+      "level": 5,
+      "name": "Cek Fisik Kendaraan"
+    },
+    {
+      "accountNumber": "5310804",
+      "level": 5,
+      "name": "Balancing & Sporing"
+    },
+    {
+      "accountNumber": "5320000",
+      "level": 3,
+      "name": "Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5320100",
+      "level": 4,
+      "name": "Depresiasi Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5320101",
+      "level": 5,
+      "name": "Depresiasi Welding Machine"
+    },
+    {
+      "accountNumber": "5320102",
+      "level": 5,
+      "name": "Depresiasi Mesin Genset"
+    },
+    {
+      "accountNumber": "5320103",
+      "level": 5,
+      "name": "Depresiasi Peralatan"
+    },
+    {
+      "accountNumber": "5320200",
+      "level": 4,
+      "name": "BBM Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5320201",
+      "level": 5,
+      "name": "BBM Welding Machine"
+    },
+    {
+      "accountNumber": "5320202",
+      "level": 5,
+      "name": "BBM Mesin Genset"
+    },
+    {
+      "accountNumber": "5320203",
+      "level": 5,
+      "name": "BBM Peralatan"
+    },
+    {
+      "accountNumber": "5320300",
+      "level": 4,
+      "name": "Repair & Maintenance Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "5320301",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan Welding Machine"
+    },
+    {
+      "accountNumber": "5320302",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan Mesin Genset"
+    },
+    {
+      "accountNumber": "5320303",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan Peralatan"
+    },
+    {
+      "accountNumber": "5320304",
+      "level": 5,
+      "name": "Spare Part Welding Machine"
+    },
+    {
+      "accountNumber": "5320305",
+      "level": 5,
+      "name": "Spare Part Mesin Genset"
+    },
+    {
+      "accountNumber": "5320306",
+      "level": 5,
+      "name": "Spare Part Peralatan"
+    },
+    {
+      "accountNumber": "5330000",
+      "level": 3,
+      "name": "Inventaris"
+    },
+    {
+      "accountNumber": "5330100",
+      "level": 4,
+      "name": "Depresiasi Inventaris"
+    },
+    {
+      "accountNumber": "5330101",
+      "level": 5,
+      "name": "Depresiasi Inventaris"
+    },
+    {
+      "accountNumber": "5330200",
+      "level": 4,
+      "name": "Repair & Maintenance Inventaris"
+    },
+    {
+      "accountNumber": "5330201",
+      "level": 5,
+      "name": "Repair & Maintenance Inventaris"
+    },
+    {
+      "accountNumber": "5330202",
+      "level": 5,
+      "name": "Spare Part Inventaris"
+    },
+    {
+      "accountNumber": "5340000",
+      "level": 3,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "5340100",
+      "level": 4,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "5340101",
+      "level": 5,
+      "name": "Depresiasi Bangunan"
+    },
+    {
+      "accountNumber": "5340102",
+      "level": 5,
+      "name": "Repair & Maintenance Bangunan"
+    },
+    {
+      "accountNumber": "5340103",
+      "level": 5,
+      "name": "Izin & Legalitas Bangunan"
+    },
+    {
+      "accountNumber": "5340104",
+      "level": 5,
+      "name": "Asuransi Gedung & Bangunan"
+    },
+    {
+      "accountNumber": "5400000",
+      "level": 2,
+      "name": "Other"
+    },
+    {
+      "accountNumber": "5410000",
+      "level": 3,
+      "name": "Pembelian Jasa"
+    },
+    {
+      "accountNumber": "5410100",
+      "level": 4,
+      "name": "Pembelian Jasa"
+    },
+    {
+      "accountNumber": "5410101",
+      "level": 5,
+      "name": "Sewa Kendaraan/Peralatan"
+    },
+    {
+      "accountNumber": "5410102",
+      "level": 5,
+      "name": "Sewa Bangunan/Kantor/Mess"
+    },
+    {
+      "accountNumber": "5410103",
+      "level": 5,
+      "name": "Pembelian Jasa / Subcon"
+    },
+    {
+      "accountNumber": "5420000",
+      "level": 3,
+      "name": "Asuransi dan Provisi"
+    },
+    {
+      "accountNumber": "5420100",
+      "level": 4,
+      "name": "Asuransi dan Provisi"
+    },
+    {
+      "accountNumber": "5420101",
+      "level": 5,
+      "name": "Asuransi CGL"
+    },
+    {
+      "accountNumber": "5420102",
+      "level": 5,
+      "name": "Provisi Proyek"
+    },
+    {
+      "accountNumber": "5420199",
+      "level": 5,
+      "name": "Asuransi Lainnya"
+    },
+    {
+      "accountNumber": "5430000",
+      "level": 3,
+      "name": "Finance"
+    },
+    {
+      "accountNumber": "5430100",
+      "level": 4,
+      "name": "Biaya Finance"
+    },
+    {
+      "accountNumber": "5430101",
+      "level": 5,
+      "name": "Adm Bank"
+    },
+    {
+      "accountNumber": "5430102",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Leasing"
+    },
+    {
+      "accountNumber": "5430103",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Leaseback"
+    },
+    {
+      "accountNumber": "5430104",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Pinjaman Bank"
+    },
+    {
+      "accountNumber": "5430105",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Percepatan Pencairan AR"
+    },
+    {
+      "accountNumber": "5430106",
+      "level": 5,
+      "name": "Bunga Pinjaman Pihak ke-3"
+    },
+    {
+      "accountNumber": "5430107",
+      "level": 5,
+      "name": "Adm Buku Cek dan Materai"
+    },
+    {
+      "accountNumber": "5430108",
+      "level": 5,
+      "name": "Garansi Bank"
+    },
+    {
+      "accountNumber": "5430109",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Pembiayaan Lainnya"
+    },
+    {
+      "accountNumber": "5430110",
+      "level": 5,
+      "name": "Pinalty/Denda Project"
+    },
+    {
+      "accountNumber": "5430111",
+      "level": 5,
+      "name": "Bunga Leasing Material"
+    },
+    {
+      "accountNumber": "5440000",
+      "level": 3,
+      "name": "Traveling"
+    },
+    {
+      "accountNumber": "5440100",
+      "level": 4,
+      "name": "Traveling"
+    },
+    {
+      "accountNumber": "5440101",
+      "level": 5,
+      "name": "Tiket Pesawat"
+    },
+    {
+      "accountNumber": "5440102",
+      "level": 5,
+      "name": "Travel/Kendaraan Darat"
+    },
+    {
+      "accountNumber": "5440103",
+      "level": 5,
+      "name": "Penginapan"
+    },
+    {
+      "accountNumber": "5440104",
+      "level": 5,
+      "name": "Tiket Kapal"
+    },
+    {
+      "accountNumber": "5450000",
+      "level": 3,
+      "name": "Mobilisasi/Pengiriman"
+    },
+    {
+      "accountNumber": "5450100",
+      "level": 4,
+      "name": "Mobilisasi"
+    },
+    {
+      "accountNumber": "5450101",
+      "level": 5,
+      "name": "Mobilisasi Alat/Kendaraan"
+    },
+    {
+      "accountNumber": "5450200",
+      "level": 4,
+      "name": "Pengiriman"
+    },
+    {
+      "accountNumber": "5450201",
+      "level": 5,
+      "name": "Pengiriman Dokumen"
+    },
+    {
+      "accountNumber": "5450202",
+      "level": 5,
+      "name": "Pengiriman Barang/Material"
+    },
+    {
+      "accountNumber": "5450203",
+      "level": 5,
+      "name": "Packing Barang dan Dokumen"
+    },
+    {
+      "accountNumber": "5460000",
+      "level": 3,
+      "name": "Bea Masuk"
+    },
+    {
+      "accountNumber": "5460100",
+      "level": 4,
+      "name": "Bea Masuk"
+    },
+    {
+      "accountNumber": "5460101",
+      "level": 5,
+      "name": "Bea Masuk"
+    },
+    {
+      "accountNumber": "5470000",
+      "level": 3,
+      "name": "Utiliti"
+    },
+    {
+      "accountNumber": "5470100",
+      "level": 4,
+      "name": "Biaya Utiliti"
+    },
+    {
+      "accountNumber": "5470101",
+      "level": 5,
+      "name": "Air"
+    },
+    {
+      "accountNumber": "5470102",
+      "level": 5,
+      "name": "Komunikasi"
+    },
+    {
+      "accountNumber": "5470103",
+      "level": 5,
+      "name": "Internet"
+    },
+    {
+      "accountNumber": "5470104",
+      "level": 5,
+      "name": "Listrik"
+    },
+    {
+      "accountNumber": "5470105",
+      "level": 5,
+      "name": "Stationery/ATK"
+    },
+    {
+      "accountNumber": "5470106",
+      "level": 5,
+      "name": "Pantry"
+    },
+    {
+      "accountNumber": "5470107",
+      "level": 5,
+      "name": "Copy & Printing"
+    },
+    {
+      "accountNumber": "5470108",
+      "level": 5,
+      "name": "Perlengkapan Kantor"
+    },
+    {
+      "accountNumber": "5480000",
+      "level": 3,
+      "name": "Operasional Lainnya"
+    },
+    {
+      "accountNumber": "5480100",
+      "level": 4,
+      "name": "Operasional Lainnya"
+    },
+    {
+      "accountNumber": "5480101",
+      "level": 5,
+      "name": "Parkir & Tol"
+    },
+    {
+      "accountNumber": "5480102",
+      "level": 5,
+      "name": "Senam"
+    },
+    {
+      "accountNumber": "5480103",
+      "level": 5,
+      "name": "Rekreasi & Sosial"
+    },
+    {
+      "accountNumber": "5480104",
+      "level": 5,
+      "name": "Iuran/Retribusi/Sumbangan"
+    },
+    {
+      "accountNumber": "5480105",
+      "level": 5,
+      "name": "Konsumsi"
+    },
+    {
+      "accountNumber": "5480106",
+      "level": 5,
+      "name": "Izin & Legalitas"
+    },
+    {
+      "accountNumber": "5480107",
+      "level": 5,
+      "name": "Perobatan/MCU (diluar BPJS)"
+    },
+    {
+      "accountNumber": "5480108",
+      "level": 5,
+      "name": "Laundry"
+    },
+    {
+      "accountNumber": "5480109",
+      "level": 5,
+      "name": "Iklan & Promosi"
+    },
+    {
+      "accountNumber": "5480110",
+      "level": 5,
+      "name": "Dokumen Tender"
+    },
+    {
+      "accountNumber": "5480111",
+      "level": 5,
+      "name": "Adm Lainnya Pembulatan"
+    },
+    {
+      "accountNumber": "5480112",
+      "level": 5,
+      "name": "Perlengkapan Mess"
+    },
+    {
+      "accountNumber": "5480113",
+      "level": 5,
+      "name": "Konsultan & Tenaga Ahli"
+    },
+    {
+      "accountNumber": "5480114",
+      "level": 5,
+      "name": "Management Fee"
+    },
+    {
+      "accountNumber": "5490000",
+      "level": 3,
+      "name": "Pajak"
+    },
+    {
+      "accountNumber": "5490100",
+      "level": 4,
+      "name": "PPh"
+    },
+    {
+      "accountNumber": "5490101",
+      "level": 5,
+      "name": "PPh Badan (Invoice)"
+    },
+    {
+      "accountNumber": "5490102",
+      "level": 5,
+      "name": "PPh 22 Impor"
+    },
+    {
+      "accountNumber": "5490103",
+      "level": 5,
+      "name": "PPh 25"
+    },
+    {
+      "accountNumber": "5490104",
+      "level": 5,
+      "name": "Beban Pajak"
+    },
+    {
+      "accountNumber": "5490105",
+      "level": 5,
+      "name": "PPh Final 4 Ayat 2"
+    },
+    {
+      "accountNumber": "5490106",
+      "level": 5,
+      "name": "PPh Pasal 23"
+    },
+    {
+      "accountNumber": "6100000",
+      "level": 2,
+      "name": "Tenaga Kerja"
+    },
+    {
+      "accountNumber": "6100000",
+      "level": 2,
+      "name": "Biaya Operasional"
+    },
+    {
+      "accountNumber": "6100000",
+      "level": 2,
+      "name": "Biaya Tidak Langsung"
+    },
+    {
+      "accountNumber": "6110000",
+      "level": 3,
+      "name": "Gaji Bulanan"
+    },
+    {
+      "accountNumber": "6110000",
+      "level": 3,
+      "name": "Biaya Operasional"
+    },
+    {
+      "accountNumber": "6110000",
+      "level": 3,
+      "name": "Biaya HRD"
+    },
+    {
+      "accountNumber": "6110100",
+      "level": 4,
+      "name": "Gaji Pokok"
+    },
+    {
+      "accountNumber": "6110100",
+      "level": 4,
+      "name": "Biaya HRD"
+    },
+    {
+      "accountNumber": "6110100",
+      "level": 4,
+      "name": "Biaya Gaji HRD"
+    },
+    {
+      "accountNumber": "6110101",
+      "level": 5,
+      "name": "Gaji Pokok"
+    },
+    {
+      "accountNumber": "6110101",
+      "level": 5,
+      "name": "HRD Gaji - Pokok"
+    },
+    {
+      "accountNumber": "6110101",
+      "level": 5,
+      "name": "Beban Gaji-Gapok"
+    },
+    {
+      "accountNumber": "6110102",
+      "level": 5,
+      "name": "HRD Gaji - Jabatan"
+    },
+    {
+      "accountNumber": "6110103",
+      "level": 5,
+      "name": "HRD Gaji - Makan"
+    },
+    {
+      "accountNumber": "6110104",
+      "level": 5,
+      "name": "HRD Gaji - Transport"
+    },
+    {
+      "accountNumber": "6110105",
+      "level": 5,
+      "name": "HRD Gaji - Kehadiran"
+    },
+    {
+      "accountNumber": "6110106",
+      "level": 5,
+      "name": "HRD Gaji - Other"
+    },
+    {
+      "accountNumber": "6110107",
+      "level": 5,
+      "name": "HRD THR/Bonus"
+    },
+    {
+      "accountNumber": "6110108",
+      "level": 5,
+      "name": "HRD Pesangon"
+    },
+    {
+      "accountNumber": "6110109",
+      "level": 5,
+      "name": "HRD PPh 21"
+    },
+    {
+      "accountNumber": "6110110",
+      "level": 5,
+      "name": "HRD BPJS Tenaga Kerja"
+    },
+    {
+      "accountNumber": "6110111",
+      "level": 5,
+      "name": "HRD BPJS Kesehatan"
+    },
+    {
+      "accountNumber": "6110111",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - Pokok"
+    },
+    {
+      "accountNumber": "6110112",
+      "level": 5,
+      "name": "HRD Konsumsi"
+    },
+    {
+      "accountNumber": "6110112",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - Jabatan"
+    },
+    {
+      "accountNumber": "6110112",
+      "level": 5,
+      "name": "Konsumsi"
+    },
+    {
+      "accountNumber": "6110113",
+      "level": 5,
+      "name": "HRD Pengobatan"
+    },
+    {
+      "accountNumber": "6110113",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - Makan"
+    },
+    {
+      "accountNumber": "6110114",
+      "level": 5,
+      "name": "HRD Transportasi"
+    },
+    {
+      "accountNumber": "6110114",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - Transport"
+    },
+    {
+      "accountNumber": "6110115",
+      "level": 5,
+      "name": "HRD Karyawan magang"
+    },
+    {
+      "accountNumber": "6110115",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - Denda"
+    },
+    {
+      "accountNumber": "6110116",
+      "level": 5,
+      "name": "HRD Training & Pddk"
+    },
+    {
+      "accountNumber": "6110116",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - Other"
+    },
+    {
+      "accountNumber": "6110117",
+      "level": 5,
+      "name": "HRD Seragam & Atribut"
+    },
+    {
+      "accountNumber": "6110117",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - Kehadiran"
+    },
+    {
+      "accountNumber": "6110118",
+      "level": 5,
+      "name": "HRD Rekreasi & Tour"
+    },
+    {
+      "accountNumber": "6110118",
+      "level": 5,
+      "name": "IDR-HRD-By. Gaji - OT"
+    },
+    {
+      "accountNumber": "6110119",
+      "level": 5,
+      "name": "HRD Legal"
+    },
+    {
+      "accountNumber": "6110120",
+      "level": 5,
+      "name": "HRD Iklan"
+    },
+    {
+      "accountNumber": "6110121",
+      "level": 5,
+      "name": "HRD Bansos"
+    },
+    {
+      "accountNumber": "6110121",
+      "level": 5,
+      "name": "IDR-HRD-By. THR & Bonus Thnan"
+    },
+    {
+      "accountNumber": "6110122",
+      "level": 5,
+      "name": "HRD Sosial Olahraga"
+    },
+    {
+      "accountNumber": "6110122",
+      "level": 5,
+      "name": "IDR-HRD-By. Bonus Performance"
+    },
+    {
+      "accountNumber": "6110123",
+      "level": 5,
+      "name": "Potongan Koperasi"
+    },
+    {
+      "accountNumber": "6110130",
+      "level": 5,
+      "name": "IDR-HRD-By. Pesangon"
+    },
+    {
+      "accountNumber": "6110131",
+      "level": 5,
+      "name": "IDR-HRD-By. Investment Fund"
+    },
+    {
+      "accountNumber": "6110141",
+      "level": 5,
+      "name": "IDR-HRD-By. Komisi Sales"
+    },
+    {
+      "accountNumber": "6110151",
+      "level": 5,
+      "name": "IDR-HRD-By. PPh 21"
+    },
+    {
+      "accountNumber": "6110161",
+      "level": 5,
+      "name": "IDR-HRD-By. BPJS Tenaga Kerja"
+    },
+    {
+      "accountNumber": "6110162",
+      "level": 5,
+      "name": "IDR-HRD-By. Kesehatan"
+    },
+    {
+      "accountNumber": "6110163",
+      "level": 5,
+      "name": "IDR-HRD-By. Jaminan Pensiun"
+    },
+    {
+      "accountNumber": "6110171",
+      "level": 5,
+      "name": "IDR-HRD-By. Konsumsi"
+    },
+    {
+      "accountNumber": "6110181",
+      "level": 5,
+      "name": "IDR-HRD-By. Pengobatan"
+    },
+    {
+      "accountNumber": "6110191",
+      "level": 5,
+      "name": "IDR-HRD-By. Transportasi"
+    },
+    {
+      "accountNumber": "6110200",
+      "level": 4,
+      "name": "Tunjangan Tetap"
+    },
+    {
+      "accountNumber": "6110200",
+      "level": 4,
+      "name": "Biaya Kendaraan"
+    },
+    {
+      "accountNumber": "6110200",
+      "level": 4,
+      "name": "Biaya Lain Gaji HRD"
+    },
+    {
+      "accountNumber": "6110201",
+      "level": 5,
+      "name": "Tunjangan Jabatan"
+    },
+    {
+      "accountNumber": "6110201",
+      "level": 5,
+      "name": "CAR BBM"
+    },
+    {
+      "accountNumber": "6110201",
+      "level": 5,
+      "name": "Beban Gaji-Tunjangan Tetap"
+    },
+    {
+      "accountNumber": "6110201",
+      "level": 5,
+      "name": "IDR-HRD-By. Training & Pddk"
+    },
+    {
+      "accountNumber": "6110202",
+      "level": 5,
+      "name": "Tunjangan Makan"
+    },
+    {
+      "accountNumber": "6110202",
+      "level": 5,
+      "name": "CAR Parkir & Tol"
+    },
+    {
+      "accountNumber": "6110203",
+      "level": 5,
+      "name": "Tunjangan Kehadiran"
+    },
+    {
+      "accountNumber": "6110203",
+      "level": 5,
+      "name": "CAR R & M Kendaraan"
+    },
+    {
+      "accountNumber": "6110204",
+      "level": 5,
+      "name": "Tunjangan Transport"
+    },
+    {
+      "accountNumber": "6110204",
+      "level": 5,
+      "name": "CAR Sewa"
+    },
+    {
+      "accountNumber": "6110205",
+      "level": 5,
+      "name": "Tunjangan Proyek"
+    },
+    {
+      "accountNumber": "6110205",
+      "level": 5,
+      "name": "CAR Asuransi"
+    },
+    {
+      "accountNumber": "6110206",
+      "level": 5,
+      "name": "CAR Legal"
+    },
+    {
+      "accountNumber": "6110211",
+      "level": 5,
+      "name": "IDR-HRD-By. Seragam"
+    },
+    {
+      "accountNumber": "6110221",
+      "level": 5,
+      "name": "IDR-HRD-By. Rekreasi & Tour"
+    },
+    {
+      "accountNumber": "6110231",
+      "level": 5,
+      "name": "IDR-HRD-By. Legal"
+    },
+    {
+      "accountNumber": "6110232",
+      "level": 5,
+      "name": "IDR-HRD-By. Senam"
+    },
+    {
+      "accountNumber": "6110241",
+      "level": 5,
+      "name": "By. Karyawan Magang"
+    },
+    {
+      "accountNumber": "6110300",
+      "level": 4,
+      "name": "Tunjangan Tidak Tetap"
+    },
+    {
+      "accountNumber": "6110300",
+      "level": 4,
+      "name": "Biaya Bangunan"
+    },
+    {
+      "accountNumber": "6110301",
+      "level": 5,
+      "name": "Tunjangan Makan"
+    },
+    {
+      "accountNumber": "6110301",
+      "level": 5,
+      "name": "BLD Sewa"
+    },
+    {
+      "accountNumber": "6110301",
+      "level": 5,
+      "name": "Beban Gaji-Tunjangan Tidak Tetap"
+    },
+    {
+      "accountNumber": "6110302",
+      "level": 5,
+      "name": "Tunjangan Kehadiran"
+    },
+    {
+      "accountNumber": "6110302",
+      "level": 5,
+      "name": "BLD Asuransi"
+    },
+    {
+      "accountNumber": "6110303",
+      "level": 5,
+      "name": "Tunjangan Transport"
+    },
+    {
+      "accountNumber": "6110303",
+      "level": 5,
+      "name": "BLD Kebersihan &Keaman"
+    },
+    {
+      "accountNumber": "6110304",
+      "level": 5,
+      "name": "Tunjangan Proyek"
+    },
+    {
+      "accountNumber": "6110304",
+      "level": 5,
+      "name": "BLD R & M Bangunan"
+    },
+    {
+      "accountNumber": "6110305",
+      "level": 5,
+      "name": "Tunjangan Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6110305",
+      "level": 5,
+      "name": "BLD Legal"
+    },
+    {
+      "accountNumber": "6110306",
+      "level": 5,
+      "name": "Tunjangan Tonase"
+    },
+    {
+      "accountNumber": "6110307",
+      "level": 5,
+      "name": "Rapel Gaji dan Lainnya"
+    },
+    {
+      "accountNumber": "6110308",
+      "level": 5,
+      "name": "Tunjangan PPh 21"
+    },
+    {
+      "accountNumber": "6110399",
+      "level": 5,
+      "name": "Tunjangan Lainnya"
+    },
+    {
+      "accountNumber": "6110400",
+      "level": 4,
+      "name": "Lembur"
+    },
+    {
+      "accountNumber": "6110400",
+      "level": 4,
+      "name": "Biaya Utility"
+    },
+    {
+      "accountNumber": "6110400",
+      "level": 4,
+      "name": "Oncall & Mandah"
+    },
+    {
+      "accountNumber": "6110401",
+      "level": 5,
+      "name": "Lembur Regular"
+    },
+    {
+      "accountNumber": "6110401",
+      "level": 4,
+      "name": "Premi Shift"
+    },
+    {
+      "accountNumber": "6110401",
+      "level": 5,
+      "name": "UTL Air"
+    },
+    {
+      "accountNumber": "6110401",
+      "level": 5,
+      "name": "Beban Uang Comday"
+    },
+    {
+      "accountNumber": "6110402",
+      "level": 5,
+      "name": "Lembur Non Regular"
+    },
+    {
+      "accountNumber": "6110402",
+      "level": 5,
+      "name": "UTL Komunikasi dan Data"
+    },
+    {
+      "accountNumber": "6110403",
+      "level": 5,
+      "name": "UTL Listrik & Energy"
+    },
+    {
+      "accountNumber": "6110404",
+      "level": 5,
+      "name": "UTL Stationery"
+    },
+    {
+      "accountNumber": "6110405",
+      "level": 5,
+      "name": "UTL Keperluan Pantry"
+    },
+    {
+      "accountNumber": "6110406",
+      "level": 5,
+      "name": "UTL Copy & Printing"
+    },
+    {
+      "accountNumber": "6110407",
+      "level": 5,
+      "name": "UTL R & M Inventaris"
+    },
+    {
+      "accountNumber": "6110408",
+      "level": 5,
+      "name": "UTL R & M Instalasi"
+    },
+    {
+      "accountNumber": "6110409",
+      "level": 5,
+      "name": "UTL Perlengkapan"
+    },
+    {
+      "accountNumber": "6110500",
+      "level": 4,
+      "name": "Oncall & Mandah"
+    },
+    {
+      "accountNumber": "6110500",
+      "level": 4,
+      "name": "Biaya Finance"
+    },
+    {
+      "accountNumber": "6110501",
+      "level": 5,
+      "name": "Oncall/Comday"
+    },
+    {
+      "accountNumber": "6110501",
+      "level": 5,
+      "name": "FIN Adm Bank"
+    },
+    {
+      "accountNumber": "6110502",
+      "level": 5,
+      "name": "Mandah"
+    },
+    {
+      "accountNumber": "6110502",
+      "level": 5,
+      "name": "FIN Buku Cek & Materai"
+    },
+    {
+      "accountNumber": "6110503",
+      "level": 5,
+      "name": "FIN Denda & Saksi"
+    },
+    {
+      "accountNumber": "6110504",
+      "level": 5,
+      "name": "FIN Legal"
+    },
+    {
+      "accountNumber": "6110505",
+      "level": 5,
+      "name": "FIN Bunga Pinjaman"
+    },
+    {
+      "accountNumber": "6110506",
+      "level": 5,
+      "name": "FIN Adm dan Bunga Leasing"
+    },
+    {
+      "accountNumber": "6110600",
+      "level": 4,
+      "name": "BPJS"
+    },
+    {
+      "accountNumber": "6110600",
+      "level": 4,
+      "name": "Biaya Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "6110601",
+      "level": 5,
+      "name": "BPJS Kesehatan"
+    },
+    {
+      "accountNumber": "6110601",
+      "level": 5,
+      "name": "MSN R & M Mesin & Perl"
+    },
+    {
+      "accountNumber": "6110601",
+      "level": 5,
+      "name": "Beban BPJS TK"
+    },
+    {
+      "accountNumber": "6110602",
+      "level": 5,
+      "name": "BPJS Ketenagakerjaan"
+    },
+    {
+      "accountNumber": "6110602",
+      "level": 5,
+      "name": "MSN BBM"
+    },
+    {
+      "accountNumber": "6110602",
+      "level": 5,
+      "name": "Beban BPJS KES"
+    },
+    {
+      "accountNumber": "6110700",
+      "level": 4,
+      "name": "Insentif"
+    },
+    {
+      "accountNumber": "6110700",
+      "level": 4,
+      "name": "Biaya Penyusutan & Amortisasi"
+    },
+    {
+      "accountNumber": "6110701",
+      "level": 5,
+      "name": "Insentif Proyek"
+    },
+    {
+      "accountNumber": "6110701",
+      "level": 5,
+      "name": "PENY Tanah & Bangunan"
+    },
+    {
+      "accountNumber": "6110701",
+      "level": 5,
+      "name": "Beban Uang Jalan Supir"
+    },
+    {
+      "accountNumber": "6110702",
+      "level": 5,
+      "name": "Insentif Produksi"
+    },
+    {
+      "accountNumber": "6110702",
+      "level": 5,
+      "name": "PENY Kenderaan"
+    },
+    {
+      "accountNumber": "6110702",
+      "level": 5,
+      "name": "Beban Uang Makan"
+    },
+    {
+      "accountNumber": "6110703",
+      "level": 5,
+      "name": "Insentif Lainnya"
+    },
+    {
+      "accountNumber": "6110703",
+      "level": 5,
+      "name": "Beban Insentif"
+    },
+    {
+      "accountNumber": "6110703",
+      "level": 5,
+      "name": "PENY Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "6110704",
+      "level": 5,
+      "name": "PENY Inventaris"
+    },
+    {
+      "accountNumber": "6110705",
+      "level": 5,
+      "name": "PENY Renovasi & Instalasi"
+    },
+    {
+      "accountNumber": "6110706",
+      "level": 5,
+      "name": "PENY Equipment Mess"
+    },
+    {
+      "accountNumber": "6110707",
+      "level": 5,
+      "name": "AMORT Organisasi"
+    },
+    {
+      "accountNumber": "6110708",
+      "level": 5,
+      "name": "AMORT Program Komp"
+    },
+    {
+      "accountNumber": "6110800",
+      "level": 4,
+      "name": "Biaya Operasional Lainnya"
+    },
+    {
+      "accountNumber": "6110801",
+      "level": 5,
+      "name": "OPR Pos dan Pengiriman"
+    },
+    {
+      "accountNumber": "6110802",
+      "level": 5,
+      "name": "OPR Ongkos Angkut Penjualan"
+    },
+    {
+      "accountNumber": "6110803",
+      "level": 5,
+      "name": "OPR Komisi Sales"
+    },
+    {
+      "accountNumber": "6110804",
+      "level": 5,
+      "name": "OPR Barang Sampel/FOC"
+    },
+    {
+      "accountNumber": "6110805",
+      "level": 5,
+      "name": "OPR Buku & Majalah"
+    },
+    {
+      "accountNumber": "6110806",
+      "level": 5,
+      "name": "OPR Management Fee"
+    },
+    {
+      "accountNumber": "6110807",
+      "level": 5,
+      "name": "OPR Sumbangan"
+    },
+    {
+      "accountNumber": "6110808",
+      "level": 5,
+      "name": "OPR Promosi"
+    },
+    {
+      "accountNumber": "6110809",
+      "level": 5,
+      "name": "OPR Domain & Hosting"
+    },
+    {
+      "accountNumber": "6110810",
+      "level": 5,
+      "name": "OPR Legal"
+    },
+    {
+      "accountNumber": "6110811",
+      "level": 5,
+      "name": "OPR Membership"
+    },
+    {
+      "accountNumber": "6110812",
+      "level": 5,
+      "name": "OPR Overhead Jkt"
+    },
+    {
+      "accountNumber": "6110813",
+      "level": 5,
+      "name": "OPR Consultant & Sert"
+    },
+    {
+      "accountNumber": "6110814",
+      "level": 5,
+      "name": "OPR Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6110815",
+      "level": 5,
+      "name": "OPR Konsumsi External"
+    },
+    {
+      "accountNumber": "6110816",
+      "level": 5,
+      "name": "OPR Stok hilang, rusak"
+    },
+    {
+      "accountNumber": "6110817",
+      "level": 5,
+      "name": "OPR Hutang/Piutang Tak Tertagih"
+    },
+    {
+      "accountNumber": "6110818",
+      "level": 5,
+      "name": "OPR PembuatanSticker"
+    },
+    {
+      "accountNumber": "6110819",
+      "level": 5,
+      "name": "OPR Pajak"
+    },
+    {
+      "accountNumber": "6110820",
+      "level": 5,
+      "name": "OPR Lainnya"
+    },
+    {
+      "accountNumber": "6110900",
+      "level": 4,
+      "name": "Claim Produk Garansi"
+    },
+    {
+      "accountNumber": "6110901",
+      "level": 5,
+      "name": "Claim Produk Garansi"
+    },
+    {
+      "accountNumber": "6119900",
+      "level": 4,
+      "name": "Tunjangan Lainnya"
+    },
+    {
+      "accountNumber": "6119901",
+      "level": 5,
+      "name": "Tunjangan Lain-lain"
+    },
+    {
+      "accountNumber": "6120000",
+      "level": 3,
+      "name": "Gaji Harian"
+    },
+    {
+      "accountNumber": "6120000",
+      "level": 3,
+      "name": "Biaya Kendaraan"
+    },
+    {
+      "accountNumber": "6120000",
+      "level": 3,
+      "name": "Gaji Harian & Borongan"
+    },
+    {
+      "accountNumber": "6120100",
+      "level": 4,
+      "name": "Gaji Harian"
+    },
+    {
+      "accountNumber": "6120100",
+      "level": 4,
+      "name": "Biaya Kendaraan"
+    },
+    {
+      "accountNumber": "6120100",
+      "level": 4,
+      "name": "Gaji Harian & Borongan"
+    },
+    {
+      "accountNumber": "6120101",
+      "level": 5,
+      "name": "Gaji Harian"
+    },
+    {
+      "accountNumber": "6120101",
+      "level": 5,
+      "name": "Gaji Karyawan Harian"
+    },
+    {
+      "accountNumber": "6120102",
+      "level": 5,
+      "name": "Tunjangan Makan Harian"
+    },
+    {
+      "accountNumber": "6120102",
+      "level": 5,
+      "name": "Gaji Karyawan Magang"
+    },
+    {
+      "accountNumber": "6120103",
+      "level": 5,
+      "name": "Gaji Karyawan Magang"
+    },
+    {
+      "accountNumber": "6120103",
+      "level": 5,
+      "name": "Gaji Harian Keamanan"
+    },
+    {
+      "accountNumber": "6120104",
+      "level": 5,
+      "name": "Gaji Harian Keamanan"
+    },
+    {
+      "accountNumber": "6120104",
+      "level": 5,
+      "name": "Gaji Karyawan Borongan"
+    },
+    {
+      "accountNumber": "6120105",
+      "level": 5,
+      "name": "Gaji Karyawan Borongan (Pinj Chainsaw)"
+    },
+    {
+      "accountNumber": "6120111",
+      "level": 5,
+      "name": "IDR-CAR-By. BBM"
+    },
+    {
+      "accountNumber": "6120112",
+      "level": 5,
+      "name": "IDR-CAR-By. Parkir & Tol"
+    },
+    {
+      "accountNumber": "6120113",
+      "level": 5,
+      "name": "IDR-CAR-By. R & M Mobil"
+    },
+    {
+      "accountNumber": "6120114",
+      "level": 5,
+      "name": "IDR-CAR-By. Keur"
+    },
+    {
+      "accountNumber": "6120115",
+      "level": 5,
+      "name": "IDR-CAR-By. Pajak STNK"
+    },
+    {
+      "accountNumber": "6120400",
+      "level": 4,
+      "name": "Biaya Sewa Kendaraan"
+    },
+    {
+      "accountNumber": "6120411",
+      "level": 5,
+      "name": "IDR-CAR-By. Sewa"
+    },
+    {
+      "accountNumber": "6120500",
+      "level": 4,
+      "name": "Biaya Asuransi Kendaraan"
+    },
+    {
+      "accountNumber": "6120511",
+      "level": 5,
+      "name": "IDR-CAR-By. Asuransi"
+    },
+    {
+      "accountNumber": "6120600",
+      "level": 4,
+      "name": "Biaya Legal Kendaraan"
+    },
+    {
+      "accountNumber": "6120611",
+      "level": 5,
+      "name": "IDR-CAR-By. Legal"
+    },
+    {
+      "accountNumber": "6130000",
+      "level": 3,
+      "name": "THR, Bonus, Santunan, Cuti"
+    },
+    {
+      "accountNumber": "6130000",
+      "level": 3,
+      "name": "Biaya Bangunan"
+    },
+    {
+      "accountNumber": "6130100",
+      "level": 4,
+      "name": "THR, Bonus, Santunan, Cuti"
+    },
+    {
+      "accountNumber": "6130100",
+      "level": 4,
+      "name": "Biaya Bangunan"
+    },
+    {
+      "accountNumber": "6130101",
+      "level": 5,
+      "name": "THR"
+    },
+    {
+      "accountNumber": "6130101",
+      "level": 5,
+      "name": "Beban THR & Bonus"
+    },
+    {
+      "accountNumber": "6130102",
+      "level": 5,
+      "name": "Bonus"
+    },
+    {
+      "accountNumber": "6130102",
+      "level": 5,
+      "name": "Beban Cadangan THR"
+    },
+    {
+      "accountNumber": "6130103",
+      "level": 5,
+      "name": "Santunan"
+    },
+    {
+      "accountNumber": "6130104",
+      "level": 5,
+      "name": "Cuti"
+    },
+    {
+      "accountNumber": "6130105",
+      "level": 5,
+      "name": "Pengganti Cuti"
+    },
+    {
+      "accountNumber": "6130106",
+      "level": 5,
+      "name": "Pesangon"
+    },
+    {
+      "accountNumber": "6130111",
+      "level": 5,
+      "name": "IDR-BLD-By. Sewa"
+    },
+    {
+      "accountNumber": "6130121",
+      "level": 5,
+      "name": "IDR-BLD-By. Asuransi"
+    },
+    {
+      "accountNumber": "6130131",
+      "level": 5,
+      "name": "IDR-BLD-By. Kebersihan &Keaman"
+    },
+    {
+      "accountNumber": "6130141",
+      "level": 5,
+      "name": "IDR-BLD-By. R & M Bangunan"
+    },
+    {
+      "accountNumber": "6130151",
+      "level": 5,
+      "name": "IDR-BLD-By. Legal"
+    },
+    {
+      "accountNumber": "6140000",
+      "level": 3,
+      "name": "Training/Pelatihan"
+    },
+    {
+      "accountNumber": "6140000",
+      "level": 3,
+      "name": "Biaya Utility"
+    },
+    {
+      "accountNumber": "6140100",
+      "level": 4,
+      "name": "Training/Pelatihan"
+    },
+    {
+      "accountNumber": "6140100",
+      "level": 4,
+      "name": "Biaya Utility"
+    },
+    {
+      "accountNumber": "6140101",
+      "level": 5,
+      "name": "Training/Pelatihan"
+    },
+    {
+      "accountNumber": "6140111",
+      "level": 5,
+      "name": "IDR-UTL-By. Air"
+    },
+    {
+      "accountNumber": "6140121",
+      "level": 5,
+      "name": "IDR-UTL-By. Komunikasi"
+    },
+    {
+      "accountNumber": "6140131",
+      "level": 5,
+      "name": "IDR-UTL-By. Listrik & Energy"
+    },
+    {
+      "accountNumber": "6140141",
+      "level": 5,
+      "name": "IDR-UTL-By. Stationery"
+    },
+    {
+      "accountNumber": "6140151",
+      "level": 5,
+      "name": "IDR-UTL-By. Perlengkapan"
+    },
+    {
+      "accountNumber": "6140152",
+      "level": 5,
+      "name": "IDR-UTL-By. Keperluan Kantor"
+    },
+    {
+      "accountNumber": "6140161",
+      "level": 5,
+      "name": "IDR-UTL-By. Copy & Printing"
+    },
+    {
+      "accountNumber": "6140171",
+      "level": 5,
+      "name": "IDR-UTL-By. R & M Inventaris"
+    },
+    {
+      "accountNumber": "6140181",
+      "level": 5,
+      "name": "IDR-UTL-By. R & M Instalasi"
+    },
+    {
+      "accountNumber": "6140182",
+      "level": 5,
+      "name": "IDR-UTL-By. Pantry"
+    },
+    {
+      "accountNumber": "6150000",
+      "level": 3,
+      "name": "Biaya Finance"
+    },
+    {
+      "accountNumber": "6150100",
+      "level": 4,
+      "name": "Biaya Finance"
+    },
+    {
+      "accountNumber": "6150111",
+      "level": 5,
+      "name": "IDR-FIN-By. Adm Bank"
+    },
+    {
+      "accountNumber": "6150112",
+      "level": 5,
+      "name": "IDR-FIN-By. Buku Cek & Materai"
+    },
+    {
+      "accountNumber": "6150113",
+      "level": 5,
+      "name": "IDR-FIN-By.Adm & Bunga Leasing"
+    },
+    {
+      "accountNumber": "6150114",
+      "level": 5,
+      "name": "IDR-By.Bunga Pinjaman Pribadi"
+    },
+    {
+      "accountNumber": "6150115",
+      "level": 5,
+      "name": "IDR.Adm dan Bunga Loan Bank"
+    },
+    {
+      "accountNumber": "6150116",
+      "level": 5,
+      "name": "IDR-By. Provisi & Pembiayaan"
+    },
+    {
+      "accountNumber": "6150120",
+      "level": 5,
+      "name": "IDR-Bunga Pinj. Kartu Kredit"
+    },
+    {
+      "accountNumber": "6150121",
+      "level": 5,
+      "name": "IDR-FIN-By. Denda & Sanksi"
+    },
+    {
+      "accountNumber": "6150141",
+      "level": 5,
+      "name": "IDR-FIN-By. Legal"
+    },
+    {
+      "accountNumber": "6150151",
+      "level": 5,
+      "name": "IDR-FIN-By. Bunga"
+    },
+    {
+      "accountNumber": "6160000",
+      "level": 3,
+      "name": "Biaya Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6160100",
+      "level": 4,
+      "name": "Biaya Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6160110",
+      "level": 5,
+      "name": "IDR-By. Tiket Pesawat"
+    },
+    {
+      "accountNumber": "6160120",
+      "level": 5,
+      "name": "IDR-By. Uang Saku / Mandah"
+    },
+    {
+      "accountNumber": "6160121",
+      "level": 5,
+      "name": "IDR-By. Comday"
+    },
+    {
+      "accountNumber": "6160122",
+      "level": 5,
+      "name": "IDR-By. Extra Puding"
+    },
+    {
+      "accountNumber": "6160123",
+      "level": 5,
+      "name": "IDR-By. Hotel"
+    },
+    {
+      "accountNumber": "6160124",
+      "level": 5,
+      "name": "IDR-By. Transportasi / Grab"
+    },
+    {
+      "accountNumber": "6160130",
+      "level": 5,
+      "name": "IDR-By. Telekomunikasi"
+    },
+    {
+      "accountNumber": "6160190",
+      "level": 5,
+      "name": "IDR-By. Others"
+    },
+    {
+      "accountNumber": "6170000",
+      "level": 3,
+      "name": "Biaya Penyusutan & Amortisasi"
+    },
+    {
+      "accountNumber": "6170100",
+      "level": 4,
+      "name": "Biaya Penyusutan & Amortisasi"
+    },
+    {
+      "accountNumber": "6170110",
+      "level": 5,
+      "name": "IDR-By. Asuransi Mesin"
+    },
+    {
+      "accountNumber": "6170111",
+      "level": 5,
+      "name": "IDR-PENY-Tanah & Bangunan"
+    },
+    {
+      "accountNumber": "6170121",
+      "level": 5,
+      "name": "IDR-PENY-Kenderaan"
+    },
+    {
+      "accountNumber": "6170131",
+      "level": 5,
+      "name": "IDR-PENY-Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "6170141",
+      "level": 5,
+      "name": "IDR-PENY-Inventaris"
+    },
+    {
+      "accountNumber": "6170142",
+      "level": 5,
+      "name": "IDR-PENY-Equipment Mess"
+    },
+    {
+      "accountNumber": "6170143",
+      "level": 5,
+      "name": "IDR-Peny-Equipment Cars"
+    },
+    {
+      "accountNumber": "6170151",
+      "level": 5,
+      "name": "IDR-PENY-Renovasi & Instalasi"
+    },
+    {
+      "accountNumber": "6170161",
+      "level": 5,
+      "name": "IDR-AMORT-By. Organisasi"
+    },
+    {
+      "accountNumber": "6170171",
+      "level": 5,
+      "name": "IDR-AMORT-By. Program Komp"
+    },
+    {
+      "accountNumber": "6170181",
+      "level": 5,
+      "name": "IDR-AMORT- Jasa"
+    },
+    {
+      "accountNumber": "6180000",
+      "level": 3,
+      "name": "Biaya Operasional Lainnya"
+    },
+    {
+      "accountNumber": "6180100",
+      "level": 4,
+      "name": "Biaya Operasional Lainnya"
+    },
+    {
+      "accountNumber": "6180111",
+      "level": 5,
+      "name": "IDR-OPR-By. Pos & Pengiriman"
+    },
+    {
+      "accountNumber": "6180121",
+      "level": 5,
+      "name": "IDR-OPR-By. Perjalanan"
+    },
+    {
+      "accountNumber": "6180131",
+      "level": 4,
+      "name": "Service Charge"
+    },
+    {
+      "accountNumber": "6180141",
+      "level": 5,
+      "name": "IDR-OPR-By. Buku & Majalah"
+    },
+    {
+      "accountNumber": "6180151",
+      "level": 5,
+      "name": "IDR-OPR-By. Management Fee"
+    },
+    {
+      "accountNumber": "6180161",
+      "level": 5,
+      "name": "IDR-OPR-By. Sumbangan"
+    },
+    {
+      "accountNumber": "6180171",
+      "level": 5,
+      "name": "IDR-OPR-By. Iklan & Promosi"
+    },
+    {
+      "accountNumber": "6180172",
+      "level": 5,
+      "name": "IDR-OPR-By. Domain & Hosting"
+    },
+    {
+      "accountNumber": "6180181",
+      "level": 5,
+      "name": "IDR-OPR-By. Legal"
+    },
+    {
+      "accountNumber": "6180191",
+      "level": 5,
+      "name": "IDR-OPR-By. Membership"
+    },
+    {
+      "accountNumber": "6180200",
+      "level": 4,
+      "name": "Biaya Operasional HO JKT"
+    },
+    {
+      "accountNumber": "6180201",
+      "level": 5,
+      "name": "IDR-OPR-By. Oprs HO JKT"
+    },
+    {
+      "accountNumber": "6180202",
+      "level": 5,
+      "name": "IDR-OPR-By. Consultant & Sert"
+    },
+    {
+      "accountNumber": "6180700",
+      "level": 4,
+      "name": "Biaya Komisi"
+    },
+    {
+      "accountNumber": "6180701",
+      "level": 5,
+      "name": "IDR-OPR-By. Komisi"
+    },
+    {
+      "accountNumber": "6180800",
+      "level": 4,
+      "name": "Biaya Konsumsi External"
+    },
+    {
+      "accountNumber": "6180802",
+      "level": 5,
+      "name": "IDR-OPR-By.Konsumsi External"
+    },
+    {
+      "accountNumber": "6180900",
+      "level": 4,
+      "name": "Biaya Lain"
+    },
+    {
+      "accountNumber": "6180991",
+      "level": 5,
+      "name": "IDR-OPR-By. Lainnya"
+    },
+    {
+      "accountNumber": "6180992",
+      "level": 5,
+      "name": "IDR-OPR-By. Pajak"
+    },
+    {
+      "accountNumber": "6200000",
+      "level": 2,
+      "name": "Material"
+    },
+    {
+      "accountNumber": "6200000",
+      "level": 2,
+      "name": "Kendaraan, Mesin Peralatan dan Inventaris"
+    },
+    {
+      "accountNumber": "6210000",
+      "level": 3,
+      "name": "Material"
+    },
+    {
+      "accountNumber": "6210000",
+      "level": 3,
+      "name": "Kendaraan"
+    },
+    {
+      "accountNumber": "6210100",
+      "level": 4,
+      "name": "Material"
+    },
+    {
+      "accountNumber": "6210100",
+      "level": 4,
+      "name": "Depresiasi Kendaraan"
+    },
+    {
+      "accountNumber": "6210101",
+      "level": 5,
+      "name": "PPE"
+    },
+    {
+      "accountNumber": "6210101",
+      "level": 5,
+      "name": "Beban Penyusutan Kendaraan"
+    },
+    {
+      "accountNumber": "6210102",
+      "level": 5,
+      "name": "Tools"
+    },
+    {
+      "accountNumber": "6210103",
+      "level": 5,
+      "name": "Spare Part"
+    },
+    {
+      "accountNumber": "6210104",
+      "level": 5,
+      "name": "Consumable"
+    },
+    {
+      "accountNumber": "6210200",
+      "level": 4,
+      "name": "Repair & Maintenance"
+    },
+    {
+      "accountNumber": "6210201",
+      "level": 5,
+      "name": "Beban Perbaikan & Perawatan Kendaraan"
+    },
+    {
+      "accountNumber": "6210202",
+      "level": 5,
+      "name": "Beban Others Kendaraan"
+    },
+    {
+      "accountNumber": "6210203",
+      "level": 5,
+      "name": "Beban Ban"
+    },
+    {
+      "accountNumber": "6210204",
+      "level": 5,
+      "name": "Beban Accessories & Perlengkapan Kendaraan"
+    },
+    {
+      "accountNumber": "6210205",
+      "level": 5,
+      "name": "Beban Cuci Kendaraan"
+    },
+    {
+      "accountNumber": "6300000",
+      "level": 2,
+      "name": "Kendaraan, Mesin Peralatan dan Inventaris"
+    },
+    {
+      "accountNumber": "6310000",
+      "level": 3,
+      "name": "Kendaraan"
+    },
+    {
+      "accountNumber": "6310100",
+      "level": 4,
+      "name": "Depresiasi Kendaraan"
+    },
+    {
+      "accountNumber": "6310101",
+      "level": 5,
+      "name": "Depresiasi LV"
+    },
+    {
+      "accountNumber": "6310102",
+      "level": 5,
+      "name": "Depresiasi HV"
+    },
+    {
+      "accountNumber": "6310103",
+      "level": 5,
+      "name": "Depresiasi HE"
+    },
+    {
+      "accountNumber": "6310200",
+      "level": 4,
+      "name": "Repair & Maintenance LV"
+    },
+    {
+      "accountNumber": "6310201",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan LV"
+    },
+    {
+      "accountNumber": "6310202",
+      "level": 5,
+      "name": "Spare Part LV"
+    },
+    {
+      "accountNumber": "6310203",
+      "level": 5,
+      "name": "Ban LV"
+    },
+    {
+      "accountNumber": "6310204",
+      "level": 5,
+      "name": "Cuci Kendaraan LV"
+    },
+    {
+      "accountNumber": "6310205",
+      "level": 5,
+      "name": "Tempel & Bongkar Pasang Ban LV"
+    },
+    {
+      "accountNumber": "6310300",
+      "level": 4,
+      "name": "Repair & Maintenance HV"
+    },
+    {
+      "accountNumber": "6310301",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan HV"
+    },
+    {
+      "accountNumber": "6310302",
+      "level": 5,
+      "name": "Spare Part HV"
+    },
+    {
+      "accountNumber": "6310303",
+      "level": 5,
+      "name": "Ban HV"
+    },
+    {
+      "accountNumber": "6310304",
+      "level": 5,
+      "name": "Cuci Kendaraan HV"
+    },
+    {
+      "accountNumber": "6310305",
+      "level": 5,
+      "name": "Tempel & Bongkar Pasang Ban HV"
+    },
+    {
+      "accountNumber": "6310400",
+      "level": 4,
+      "name": "Repair & Maintenance HE"
+    },
+    {
+      "accountNumber": "6310401",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan HE"
+    },
+    {
+      "accountNumber": "6310402",
+      "level": 5,
+      "name": "Spare Part HE"
+    },
+    {
+      "accountNumber": "6310403",
+      "level": 5,
+      "name": "Ban HE"
+    },
+    {
+      "accountNumber": "6310404",
+      "level": 5,
+      "name": "Cuci Kendaraan HE"
+    },
+    {
+      "accountNumber": "6310405",
+      "level": 5,
+      "name": "Tempel & Bongkar Pasang Ban HE"
+    },
+    {
+      "accountNumber": "6310500",
+      "level": 4,
+      "name": "BBM Kendaraan"
+    },
+    {
+      "accountNumber": "6310501",
+      "level": 5,
+      "name": "BBM LV"
+    },
+    {
+      "accountNumber": "6310501",
+      "level": 5,
+      "name": "Beban BBM Kendaraan"
+    },
+    {
+      "accountNumber": "6310502",
+      "level": 5,
+      "name": "BBM HV"
+    },
+    {
+      "accountNumber": "6310503",
+      "level": 5,
+      "name": "BBM HE"
+    },
+    {
+      "accountNumber": "6310504",
+      "level": 5,
+      "name": "BBM Lainnya"
+    },
+    {
+      "accountNumber": "6310505",
+      "level": 5,
+      "name": "BEV Kendaraan Listrik"
+    },
+    {
+      "accountNumber": "6310600",
+      "level": 4,
+      "name": "Legalitas Kendaraan"
+    },
+    {
+      "accountNumber": "6310601",
+      "level": 5,
+      "name": "Pajak STNK LV"
+    },
+    {
+      "accountNumber": "6310601",
+      "level": 5,
+      "name": "Beban Legal Kendaraan"
+    },
+    {
+      "accountNumber": "6310602",
+      "level": 5,
+      "name": "Pajak STNK HV"
+    },
+    {
+      "accountNumber": "6310603",
+      "level": 5,
+      "name": "Pajak STNK HE"
+    },
+    {
+      "accountNumber": "6310604",
+      "level": 5,
+      "name": "KIR LV"
+    },
+    {
+      "accountNumber": "6310605",
+      "level": 5,
+      "name": "KIR HV"
+    },
+    {
+      "accountNumber": "6310606",
+      "level": 5,
+      "name": "KIR HE"
+    },
+    {
+      "accountNumber": "6310607",
+      "level": 5,
+      "name": "Legal Lainnya LV"
+    },
+    {
+      "accountNumber": "6310608",
+      "level": 5,
+      "name": "Legal Lainnya HV"
+    },
+    {
+      "accountNumber": "6310609",
+      "level": 5,
+      "name": "Legal Lainnya HE"
+    },
+    {
+      "accountNumber": "6310610",
+      "level": 5,
+      "name": "Pajak & KIR Kendaraan External"
+    },
+    {
+      "accountNumber": "6310700",
+      "level": 4,
+      "name": "Asuransi Kendaraan"
+    },
+    {
+      "accountNumber": "6310701",
+      "level": 5,
+      "name": "Asuransi LV"
+    },
+    {
+      "accountNumber": "6310701",
+      "level": 5,
+      "name": "Beban Asuransi Kendaraan"
+    },
+    {
+      "accountNumber": "6310702",
+      "level": 5,
+      "name": "Asuransi HV"
+    },
+    {
+      "accountNumber": "6310703",
+      "level": 5,
+      "name": "Asuransi HE"
+    },
+    {
+      "accountNumber": "6310800",
+      "level": 4,
+      "name": "Kendaraan Lainnya"
+    },
+    {
+      "accountNumber": "6310801",
+      "level": 5,
+      "name": "GPS Kendaraan"
+    },
+    {
+      "accountNumber": "6310801",
+      "level": 5,
+      "name": "Beban Sewa Kendaraan"
+    },
+    {
+      "accountNumber": "6310802",
+      "level": 5,
+      "name": "Jasa Raharja"
+    },
+    {
+      "accountNumber": "6310802",
+      "level": 5,
+      "name": "Beban Mobilisasi Kendaraan"
+    },
+    {
+      "accountNumber": "6310803",
+      "level": 5,
+      "name": "Cek Fisik Kendaraan"
+    },
+    {
+      "accountNumber": "6310803",
+      "level": 5,
+      "name": "Beban GPS Kendaraan"
+    },
+    {
+      "accountNumber": "6310804",
+      "level": 5,
+      "name": "Balancing & Sporing"
+    },
+    {
+      "accountNumber": "6320000",
+      "level": 3,
+      "name": "Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "6320100",
+      "level": 4,
+      "name": "Deresiasi Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "6320101",
+      "level": 5,
+      "name": "Depresiasi Welding Machine"
+    },
+    {
+      "accountNumber": "6320101",
+      "level": 5,
+      "name": "Beban Penyusutan Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "6320102",
+      "level": 5,
+      "name": "Depresiasi Mesin Genset"
+    },
+    {
+      "accountNumber": "6320103",
+      "level": 5,
+      "name": "Depresiasi Peralatan"
+    },
+    {
+      "accountNumber": "6320200",
+      "level": 4,
+      "name": "BBM Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "6320201",
+      "level": 5,
+      "name": "BBM Welding Machine"
+    },
+    {
+      "accountNumber": "6320201",
+      "level": 5,
+      "name": "Beban BBM Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "6320202",
+      "level": 5,
+      "name": "BBM Mesin Genset"
+    },
+    {
+      "accountNumber": "6320203",
+      "level": 5,
+      "name": "BBM Peralatan"
+    },
+    {
+      "accountNumber": "6320300",
+      "level": 4,
+      "name": "Repair & Maintenance Mesin dan Peralatan"
+    },
+    {
+      "accountNumber": "6320301",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan Welding Machine"
+    },
+    {
+      "accountNumber": "6320301",
+      "level": 5,
+      "name": "Beban Perbaikan Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "6320302",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan Mesin Genset"
+    },
+    {
+      "accountNumber": "6320302",
+      "level": 5,
+      "name": "Beban Lainnya Mesin & Peralatan"
+    },
+    {
+      "accountNumber": "6320303",
+      "level": 5,
+      "name": "Service dan Jasa Perbaikan Peralatan"
+    },
+    {
+      "accountNumber": "6320304",
+      "level": 5,
+      "name": "Spare Part Welding Machine"
+    },
+    {
+      "accountNumber": "6320305",
+      "level": 5,
+      "name": "Spare Part Mesin Genset"
+    },
+    {
+      "accountNumber": "6320306",
+      "level": 5,
+      "name": "Spare Part Peralatan"
+    },
+    {
+      "accountNumber": "6330000",
+      "level": 3,
+      "name": "Inventaris"
+    },
+    {
+      "accountNumber": "6330100",
+      "level": 4,
+      "name": "Depresiasi Inventaris"
+    },
+    {
+      "accountNumber": "6330101",
+      "level": 5,
+      "name": "Depresiasi Inventaris"
+    },
+    {
+      "accountNumber": "6330101",
+      "level": 5,
+      "name": "Beban Penyusutan Inventaris Kantor"
+    },
+    {
+      "accountNumber": "6330200",
+      "level": 4,
+      "name": "Repair & Maintenance Inventaris"
+    },
+    {
+      "accountNumber": "6330201",
+      "level": 5,
+      "name": "Repair & Maintenance Inventaris"
+    },
+    {
+      "accountNumber": "6330202",
+      "level": 5,
+      "name": "Spare Part Inventaris"
+    },
+    {
+      "accountNumber": "6340000",
+      "level": 3,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "6340100",
+      "level": 4,
+      "name": "Bangunan"
+    },
+    {
+      "accountNumber": "6340101",
+      "level": 5,
+      "name": "Depresiasi Bangunan"
+    },
+    {
+      "accountNumber": "6340101",
+      "level": 5,
+      "name": "Beban Penyusutan Gedung"
+    },
+    {
+      "accountNumber": "6340102",
+      "level": 5,
+      "name": "Repair & Maintenance Bangunan"
+    },
+    {
+      "accountNumber": "6340102",
+      "level": 5,
+      "name": "Beban Sewa Bangunan"
+    },
+    {
+      "accountNumber": "6340103",
+      "level": 5,
+      "name": "Izin & Legalitas Bangunan"
+    },
+    {
+      "accountNumber": "6340103",
+      "level": 5,
+      "name": "Beban Asuransi Bangunan"
+    },
+    {
+      "accountNumber": "6340104",
+      "level": 5,
+      "name": "Asuransi Gedung & Bangunan"
+    },
+    {
+      "accountNumber": "6340104",
+      "level": 5,
+      "name": "Beban Kebersihan & Keamanan Bangunan"
+    },
+    {
+      "accountNumber": "6340105",
+      "level": 5,
+      "name": "Beban Perbaikan & Perawatan Bangunan"
+    },
+    {
+      "accountNumber": "6340106",
+      "level": 5,
+      "name": "Beban Legal Bangunan"
+    },
+    {
+      "accountNumber": "6340107",
+      "level": 5,
+      "name": "Beban Others Bangunan"
+    },
+    {
+      "accountNumber": "6400000",
+      "level": 2,
+      "name": "Other"
+    },
+    {
+      "accountNumber": "6410000",
+      "level": 3,
+      "name": "Pembelian Jasa"
+    },
+    {
+      "accountNumber": "6410100",
+      "level": 4,
+      "name": "Pembelian Jasa"
+    },
+    {
+      "accountNumber": "6410101",
+      "level": 5,
+      "name": "Sewa Kendaraan/Peralatan"
+    },
+    {
+      "accountNumber": "6410102",
+      "level": 5,
+      "name": "Sewa Bangunan/Kantor/Mess"
+    },
+    {
+      "accountNumber": "6410103",
+      "level": 5,
+      "name": "Pembelian Jasa Lainnya"
+    },
+    {
+      "accountNumber": "6420000",
+      "level": 3,
+      "name": "Asuransi dan Provisi"
+    },
+    {
+      "accountNumber": "6420100",
+      "level": 4,
+      "name": "Asuransi dan Provisi"
+    },
+    {
+      "accountNumber": "6420101",
+      "level": 5,
+      "name": "Asuransi CGL"
+    },
+    {
+      "accountNumber": "6420102",
+      "level": 5,
+      "name": "Provisi Proyek"
+    },
+    {
+      "accountNumber": "6420199",
+      "level": 5,
+      "name": "Asuransi Lainnya"
+    },
+    {
+      "accountNumber": "6430000",
+      "level": 3,
+      "name": "Finance"
+    },
+    {
+      "accountNumber": "6430100",
+      "level": 4,
+      "name": "Biaya Finance"
+    },
+    {
+      "accountNumber": "6430101",
+      "level": 5,
+      "name": "Adm Bank"
+    },
+    {
+      "accountNumber": "6430101",
+      "level": 5,
+      "name": "Beban Adm Bank"
+    },
+    {
+      "accountNumber": "6430102",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Leasing"
+    },
+    {
+      "accountNumber": "6430102",
+      "level": 5,
+      "name": "Beban Adm Bunga Provisi Denda-Leasing"
+    },
+    {
+      "accountNumber": "6430103",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Leaseback"
+    },
+    {
+      "accountNumber": "6430103",
+      "level": 5,
+      "name": "Beban Adm Bunga Provisi Denda-Pinjaman Bank"
+    },
+    {
+      "accountNumber": "6430104",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Pinjmanan Bank"
+    },
+    {
+      "accountNumber": "6430104",
+      "level": 5,
+      "name": "Beban Buku Cek & Materai"
+    },
+    {
+      "accountNumber": "6430105",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Percepatan Pencairan AR"
+    },
+    {
+      "accountNumber": "6430105",
+      "level": 5,
+      "name": "Beban Percepatan Pencairan AR"
+    },
+    {
+      "accountNumber": "6430106",
+      "level": 5,
+      "name": "Beban Utiliti, Adm, Sewa & Lainnya"
+    },
+    {
+      "accountNumber": "6430106",
+      "level": 5,
+      "name": "Bunga Pinjaman Pihak ke-3"
+    },
+    {
+      "accountNumber": "6430107",
+      "level": 5,
+      "name": "Adm Buku Cek dan Materai"
+    },
+    {
+      "accountNumber": "6430107",
+      "level": 5,
+      "name": "Beban Bunga Leasing Material"
+    },
+    {
+      "accountNumber": "6430108",
+      "level": 5,
+      "name": "Garansi Bank"
+    },
+    {
+      "accountNumber": "6430108",
+      "level": 5,
+      "name": "Bunga Pinjaman Pihak ke-3"
+    },
+    {
+      "accountNumber": "6430109",
+      "level": 5,
+      "name": "Adm/Bunga/Provisi/Denda-Pembiayaan Lainnya"
+    },
+    {
+      "accountNumber": "6430110",
+      "level": 5,
+      "name": "Pinalty/Denda Project"
+    },
+    {
+      "accountNumber": "6430111",
+      "level": 5,
+      "name": "Bunga Leasing Material"
+    },
+    {
+      "accountNumber": "6440000",
+      "level": 3,
+      "name": "Traveling"
+    },
+    {
+      "accountNumber": "6440100",
+      "level": 4,
+      "name": "Traveling"
+    },
+    {
+      "accountNumber": "6440101",
+      "level": 5,
+      "name": "Tiket Pesawat"
+    },
+    {
+      "accountNumber": "6440102",
+      "level": 5,
+      "name": "Travel/Kendaraan Darat"
+    },
+    {
+      "accountNumber": "6440103",
+      "level": 5,
+      "name": "Penginapan"
+    },
+    {
+      "accountNumber": "6440104",
+      "level": 5,
+      "name": "Tiket Kapal"
+    },
+    {
+      "accountNumber": "6450000",
+      "level": 3,
+      "name": "Mobilisasi/Pengiriman"
+    },
+    {
+      "accountNumber": "6450100",
+      "level": 4,
+      "name": "Mobilisasi"
+    },
+    {
+      "accountNumber": "6450101",
+      "level": 5,
+      "name": "Mobilisasi Alat/Kendaraan"
+    },
+    {
+      "accountNumber": "6450200",
+      "level": 4,
+      "name": "Pengiriman"
+    },
+    {
+      "accountNumber": "6450201",
+      "level": 5,
+      "name": "Pengiriman Dokument"
+    },
+    {
+      "accountNumber": "6450202",
+      "level": 5,
+      "name": "Pengiriman Barang/Material"
+    },
+    {
+      "accountNumber": "6460000",
+      "level": 3,
+      "name": "Bea Masuk"
+    },
+    {
+      "accountNumber": "6460100",
+      "level": 4,
+      "name": "Bea Masuk"
+    },
+    {
+      "accountNumber": "6460101",
+      "level": 5,
+      "name": "Bea Masuk"
+    },
+    {
+      "accountNumber": "6470000",
+      "level": 3,
+      "name": "Utiliti"
+    },
+    {
+      "accountNumber": "6470100",
+      "level": 4,
+      "name": "Biaya Utiliti"
+    },
+    {
+      "accountNumber": "6470101",
+      "level": 5,
+      "name": "Air"
+    },
+    {
+      "accountNumber": "6470101",
+      "level": 5,
+      "name": "Beban Air"
+    },
+    {
+      "accountNumber": "6470102",
+      "level": 5,
+      "name": "Komunikasi"
+    },
+    {
+      "accountNumber": "6470102",
+      "level": 5,
+      "name": "Beban Komunikasi"
+    },
+    {
+      "accountNumber": "6470103",
+      "level": 5,
+      "name": "Internet"
+    },
+    {
+      "accountNumber": "6470103",
+      "level": 5,
+      "name": "Beban Internet"
+    },
+    {
+      "accountNumber": "6470104",
+      "level": 5,
+      "name": "Listrik"
+    },
+    {
+      "accountNumber": "6470104",
+      "level": 5,
+      "name": "Beban Listrik"
+    },
+    {
+      "accountNumber": "6470105",
+      "level": 5,
+      "name": "Stationery / ATK"
+    },
+    {
+      "accountNumber": "6470105",
+      "level": 5,
+      "name": "Beban Stationary(ATK)"
+    },
+    {
+      "accountNumber": "6470106",
+      "level": 5,
+      "name": "Pantry"
+    },
+    {
+      "accountNumber": "6470106",
+      "level": 5,
+      "name": "Beban Copy & Printing"
+    },
+    {
+      "accountNumber": "6470107",
+      "level": 5,
+      "name": "Copy & Printing"
+    },
+    {
+      "accountNumber": "6470107",
+      "level": 5,
+      "name": "Beban Inventaris"
+    },
+    {
+      "accountNumber": "6470108",
+      "level": 5,
+      "name": "Perlengkapan Kantor"
+    },
+    {
+      "accountNumber": "6470108",
+      "level": 5,
+      "name": "Beban Perlengkapan Kantor"
+    },
+    {
+      "accountNumber": "6470109",
+      "level": 5,
+      "name": "Beban Perlengkapan Mess"
+    },
+    {
+      "accountNumber": "6470110",
+      "level": 5,
+      "name": "Beban Material PPE"
+    },
+    {
+      "accountNumber": "6470111",
+      "level": 5,
+      "name": "Beban Material Consumable"
+    },
+    {
+      "accountNumber": "6470112",
+      "level": 5,
+      "name": "Beban Perlengkapan Mekanik"
+    },
+    {
+      "accountNumber": "6480000",
+      "level": 3,
+      "name": "Operasional Lainnya"
+    },
+    {
+      "accountNumber": "6480100",
+      "level": 4,
+      "name": "Operasional Lainnya"
+    },
+    {
+      "accountNumber": "6480101",
+      "level": 5,
+      "name": "Parkir & Tol"
+    },
+    {
+      "accountNumber": "6480101",
+      "level": 5,
+      "name": "Beban Pos & Pengiriman"
+    },
+    {
+      "accountNumber": "6480102",
+      "level": 5,
+      "name": "Senam"
+    },
+    {
+      "accountNumber": "6480102",
+      "level": 5,
+      "name": "Beban Perjalanan"
+    },
+    {
+      "accountNumber": "6480103",
+      "level": 5,
+      "name": "Rekreasi & Sosial"
+    },
+    {
+      "accountNumber": "6480103",
+      "level": 5,
+      "name": "Beban Sosial & Sumbangan"
+    },
+    {
+      "accountNumber": "6480104",
+      "level": 5,
+      "name": "Iuran/Retribusi/Sumbangan"
+    },
+    {
+      "accountNumber": "6480104",
+      "level": 5,
+      "name": "Beban Legal & Izin"
+    },
+    {
+      "accountNumber": "6480105",
+      "level": 5,
+      "name": "Konsumsi"
+    },
+    {
+      "accountNumber": "6480105",
+      "level": 5,
+      "name": "Beban Iuran & Retribusi"
+    },
+    {
+      "accountNumber": "6480106",
+      "level": 5,
+      "name": "Izin & Legalitas"
+    },
+    {
+      "accountNumber": "6480106",
+      "level": 5,
+      "name": "Beban Domain & Hosting"
+    },
+    {
+      "accountNumber": "6480107",
+      "level": 5,
+      "name": "Perobatan/MCU (diluar BPJS)"
+    },
+    {
+      "accountNumber": "6480107",
+      "level": 5,
+      "name": "Beban Perobatan"
+    },
+    {
+      "accountNumber": "6480108",
+      "level": 5,
+      "name": "Laundry"
+    },
+    {
+      "accountNumber": "6480108",
+      "level": 5,
+      "name": "Beban Laundry"
+    },
+    {
+      "accountNumber": "6480109",
+      "level": 5,
+      "name": "Iklan & Promosi"
+    },
+    {
+      "accountNumber": "6480109",
+      "level": 5,
+      "name": "Beban Entertainment"
+    },
+    {
+      "accountNumber": "6480110",
+      "level": 5,
+      "name": "Dokumen Tender"
+    },
+    {
+      "accountNumber": "6480110",
+      "level": 5,
+      "name": "Beban Pakaian Seragam"
+    },
+    {
+      "accountNumber": "6480111",
+      "level": 5,
+      "name": "Beban Operasional Lainnya"
+    },
+    {
+      "accountNumber": "6480111",
+      "level": 5,
+      "name": "Adm Lainnya Pembulatan"
+    },
+    {
+      "accountNumber": "6480112",
+      "level": 5,
+      "name": "Perlengkapan Mess"
+    },
+    {
+      "accountNumber": "6480112",
+      "level": 5,
+      "name": "Beban Konsumsi"
+    },
+    {
+      "accountNumber": "6480113",
+      "level": 5,
+      "name": "Konsultan & Tenaga Ahli"
+    },
+    {
+      "accountNumber": "6480113",
+      "level": 5,
+      "name": "Beban Amortisasi Pra Operasi"
+    },
+    {
+      "accountNumber": "6480114",
+      "level": 5,
+      "name": "Management Fee"
+    },
+    {
+      "accountNumber": "6480114",
+      "level": 5,
+      "name": "Beban Training dan Pelatihan"
+    },
+    {
+      "accountNumber": "6480115",
+      "level": 5,
+      "name": "Beban Keterlambatan/Kedisplinan"
+    },
+    {
+      "accountNumber": "6480116",
+      "level": 5,
+      "name": "Beban Tenaga Ahli dan Konsultan"
+    },
+    {
+      "accountNumber": "6480117",
+      "level": 5,
+      "name": "Pembelian Jasa Lainnya"
+    },
+    {
+      "accountNumber": "6480118",
+      "level": 5,
+      "name": "Adm Pembulatan Lainnya"
+    },
+    {
+      "accountNumber": "6490000",
+      "level": 3,
+      "name": "Pajak"
+    },
+    {
+      "accountNumber": "6490100",
+      "level": 4,
+      "name": "PPh"
+    },
+    {
+      "accountNumber": "6490101",
+      "level": 5,
+      "name": "PPh Badan(Invoice)"
+    },
+    {
+      "accountNumber": "6490102",
+      "level": 5,
+      "name": "PPh 22 Impor"
+    },
+    {
+      "accountNumber": "6490103",
+      "level": 5,
+      "name": "PPh 25"
+    },
+    {
+      "accountNumber": "6490104",
+      "level": 5,
+      "name": "Beban Pajak"
+    },
+    {
+      "accountNumber": "6490104",
+      "level": 5,
+      "name": "Biaya Pajak"
+    },
+    {
+      "accountNumber": "6490105",
+      "level": 5,
+      "name": "PPh Pasal 23"
+    },
+    {
+      "accountNumber": "6490105",
+      "level": 5,
+      "name": "PPh Final 4 Ayat 2"
+    },
+    {
+      "accountNumber": "6490106",
+      "level": 5,
+      "name": "PPh Pasal 23"
+    },
+    {
+      "accountNumber": "6490106",
+      "level": 5,
+      "name": "PPh Pasal 4 Ayat 2"
+    },
+    {
+      "accountNumber": "6490107",
+      "level": 5,
+      "name": "Tagihan Rental Internal"
+    },
+    {
+      "accountNumber": "6490108",
+      "level": 5,
+      "name": "PPh atas Omset"
+    },
+    {
+      "accountNumber": "6490109",
+      "level": 5,
+      "name": "Overhead Project"
+    },
+    {
+      "accountNumber": "6500000",
+      "level": 2,
+      "name": "Beban Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6510000",
+      "level": 3,
+      "name": "Beban Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6510001",
+      "level": 5,
+      "name": "Beban Tiket Pesawat"
+    },
+    {
+      "accountNumber": "6510002",
+      "level": 5,
+      "name": "Beban Travel/Grab/Taxi"
+    },
+    {
+      "accountNumber": "6510003",
+      "level": 5,
+      "name": "Beban Konsumsi Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6510004",
+      "level": 5,
+      "name": "Beban Entertaint Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "6511000",
+      "level": 4,
+      "name": "Beban Perjalanan Dinas"
+    },
+    {
+      "accountNumber": "8100000",
+      "level": 2,
+      "name": "Pendapatan Lainnya"
+    },
+    {
+      "accountNumber": "8100000",
+      "level": 2,
+      "name": "Other Income"
+    },
+    {
+      "accountNumber": "8110000",
+      "level": 3,
+      "name": "Pendapatan Lainnya"
+    },
+    {
+      "accountNumber": "8110000",
+      "level": 3,
+      "name": "Other Income"
+    },
+    {
+      "accountNumber": "8110100",
+      "level": 4,
+      "name": "Pendapatan Lainnya"
+    },
+    {
+      "accountNumber": "8110100",
+      "level": 4,
+      "name": "Selisih Kurs dan Pembulatan"
+    },
+    {
+      "accountNumber": "8110101",
+      "level": 5,
+      "name": "Pendapatan Sewa"
+    },
+    {
+      "accountNumber": "8110101",
+      "level": 5,
+      "name": "IDR-Selisih Kurs & Pembulatan"
+    },
+    {
+      "accountNumber": "8110101",
+      "level": 5,
+      "name": "Pendapatan Jasa Giro"
+    },
+    {
+      "accountNumber": "8110102",
+      "level": 5,
+      "name": "Pendapatan Bunga"
+    },
+    {
+      "accountNumber": "8110102",
+      "level": 5,
+      "name": "Pendapatan Bunga Deposito"
+    },
+    {
+      "accountNumber": "8110103",
+      "level": 5,
+      "name": "Pendapatan Lainnya"
+    },
+    {
+      "accountNumber": "8110103",
+      "level": 5,
+      "name": "Laba/Rugi Penjualan Aktiiva"
+    },
+    {
+      "accountNumber": "8110104",
+      "level": 5,
+      "name": "Pendapatan Selisih Kurs"
+    },
+    {
+      "accountNumber": "8110104",
+      "level": 5,
+      "name": "Laba ( Rugi ) Selisih Kurs"
+    },
+    {
+      "accountNumber": "8110105",
+      "level": 5,
+      "name": "Pendapatan Lain-Lain"
+    },
+    {
+      "accountNumber": "8110105",
+      "level": 5,
+      "name": "Pendapatan & Pajak Jasa Giro"
+    },
+    {
+      "accountNumber": "8110106",
+      "level": 5,
+      "name": "Pendapatan Penjualan Aktiva"
+    },
+    {
+      "accountNumber": "8110900",
+      "level": 4,
+      "name": "Pendapatan Lainnya"
+    },
+    {
+      "accountNumber": "8110901",
+      "level": 5,
+      "name": "IDR-Pend Jasa Giro"
+    },
+    {
+      "accountNumber": "8110902",
+      "level": 5,
+      "name": "IDR-Pend Bunga Pinjaman"
+    },
+    {
+      "accountNumber": "8110903",
+      "level": 5,
+      "name": "IDR-Pend Kelebihan Bayar"
+    },
+    {
+      "accountNumber": "8110904",
+      "level": 5,
+      "name": "IDR-Pend Lain-Lain"
+    },
+    {
+      "accountNumber": "8110905",
+      "level": 5,
+      "name": "IDR-Pend Lease Back"
+    },
+    {
+      "accountNumber": "8200000",
+      "level": 2,
+      "name": "Biaya Lain-lain"
+    },
+    {
+      "accountNumber": "8210000",
+      "level": 3,
+      "name": "Biaya Lain-lain"
+    },
+    {
+      "accountNumber": "8210100",
+      "level": 4,
+      "name": "Biaya Lain-lain"
+    },
+    {
+      "accountNumber": "8210101",
+      "level": 5,
+      "name": "Biaya Lain-lain"
+    },
+    {
+      "accountNumber": "8210101",
+      "level": 5,
+      "name": "Diskon Pembelian"
+    },
+    {
+      "accountNumber": "8210102",
+      "level": 5,
+      "name": "Rugi Selisih Kurs"
+    },
+    {
+      "accountNumber": "8210102",
+      "level": 5,
+      "name": "Beban Lain-Lain"
+    },
+    {
+      "accountNumber": "8210103",
+      "level": 5,
+      "name": "Rugi Penjualan Aktiva"
+    },
+    {
+      "accountNumber": "8210103",
+      "level": 2,
+      "name": "Biaya Pembulatan"
+    },
+    {
+      "accountNumber": "8210103",
+      "level": 5,
+      "name": "Gain/Loss Dispossal F.A"
+    },
+    {
+      "accountNumber": "8210104",
+      "level": 5,
+      "name": "Gain/Loss Revaluation FA"
+    },
+    {
+      "accountNumber": "8210105",
+      "level": 5,
+      "name": "Realize Gain or Loss IDR"
+    },
+    {
+      "accountNumber": "8210106",
+      "level": 5,
+      "name": "Unrealize Gain or Loss IDR"
+    },
+    {
+      "accountNumber": "8210107",
+      "level": 5,
+      "name": "Pajak Jasa Giro"
+    },
+    {
+      "accountNumber": "8210189",
+      "level": 5,
+      "name": "Beban Rental Internal"
+    },
+    {
+      "accountNumber": "8210190",
+      "level": 5,
+      "name": "Rental Internal"
+    },
+    {
+      "accountNumber": "8210199",
+      "level": 5,
+      "name": "Selisih Pembulatan"
+    },
+    {
+      "accountNumber": "9100000",
+      "level": 2,
+      "name": "Other Expenses"
+    },
+    {
+      "accountNumber": "9100000",
+      "level": 2,
+      "name": "Tambahan Jurnal Laporan"
+    },
+    {
+      "accountNumber": "9110000",
+      "level": 3,
+      "name": "Tambahan Jurnal Laporan"
+    },
+    {
+      "accountNumber": "9110100",
+      "level": 4,
+      "name": "PL Project - Rental Internal"
+    },
+    {
+      "accountNumber": "9110101",
+      "level": 5,
+      "name": "Beban Rental Internal"
+    },
+    {
+      "accountNumber": "9110102",
+      "level": 5,
+      "name": "Pendapatan Rental Internal"
+    },
+    {
+      "accountNumber": "9110103",
+      "level": 5,
+      "name": "Beban PPh Project"
+    },
+    {
+      "accountNumber": "9110104",
+      "level": 5,
+      "name": "PPh Project"
+    },
+    {
+      "accountNumber": "9110105",
+      "level": 5,
+      "name": "Beban Overhead Project"
+    },
+    {
+      "accountNumber": "9110106",
+      "level": 5,
+      "name": "Overhead Project"
+    },
+    {
+      "accountNumber": "9110200",
+      "level": 4,
+      "name": "PL Project - Leasing"
+    },
+    {
+      "accountNumber": "9110201",
+      "level": 5,
+      "name": "Beban Leasing (Pokok + Bunga)"
+    },
+    {
+      "accountNumber": "9110202",
+      "level": 5,
+      "name": "Pendapatan Leasing (Pokok + Bunga)"
+    },
+    {
+      "accountNumber": "9110203",
+      "level": 5,
+      "name": "Pendapatan Invoice Terbit"
+    },
+    {
+      "accountNumber": "9110204",
+      "level": 5,
+      "name": "Invoice Terbit"
+    },
+    {
+      "accountNumber": "9190000",
+      "level": 3,
+      "name": "Other Expenses"
+    },
+    {
+      "accountNumber": "9190100",
+      "level": 4,
+      "name": "Other Expenses"
+    },
+    {
+      "accountNumber": "9190101",
+      "level": 5,
+      "name": "IDR-Pajak Atas Bunga"
+    },
+    {
+      "accountNumber": "9190102",
+      "level": 5,
+      "name": "IDR-By. Lain-Lain"
+    },
+    {
+      "accountNumber": "9190103",
+      "level": 5,
+      "name": "IDR-Laba/Rugi Penjualan Asset"
+    },
+    {
+      "accountNumber": "9190104",
+      "level": 5,
+      "name": "IDR-Penghapusan Piutang"
+    },
+    {
+      "accountNumber": "9190105",
+      "level": 2,
+      "name": "Pajak Penghasilan Badan"
+    },
+    {
+      "accountNumber": "9190105",
+      "level": 5,
+      "name": "IDR-Pajak Penghasilan Badan"
+    },
+    {
+      "accountNumber": "9190106",
+      "level": 5,
+      "name": "Duty Tax-BM"
+    },
+    {
+      "accountNumber": "9190107",
+      "level": 5,
+      "name": "Duty Tax - PPN"
+    }
+  ]
+}

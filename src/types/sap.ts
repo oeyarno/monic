@@ -89,31 +89,56 @@ export interface MasterCharacteristic {
   helpText: string;
 }
 
+export interface MaterialClassificationClass {
+  className: string;
+  classType: '001';
+  description: string;
+  characteristics: MasterCharacteristic[];
+}
+
 export interface MaterialGroupDefinition {
   matkl: string; // MARA-MATKL
   label: string;
+  classNames: string[];
+  classificationClass?: string;
   defaultMtart?: MaterialTypeCode;
-  defaultBklas?: string; // OMQW default Valuation Class (e.g. 3500, 3040, 3030, 3100, 3200)
+  defaultBklas?: string; // OMQW default Valuation Class (3100 inventory or 3200 services)
   description: string;
   characteristics: MasterCharacteristic[];
+}
+
+export interface MaterialSearchDictionaryEntry {
+  id: string;
+  keyword: string;
+  aliases: string[];
 }
 
 export interface ValuationClassDefinition {
   bklas: string;
   label: string;
   glAccount: string;
+  glAccountName: string;
   description: string;
 }
 
+export interface CoaReferenceAccount {
+  accountNumber: string;
+  level: number;
+  name: string;
+}
+
+export interface CoaReferencePayload {
+  sourceFile: string;
+  sourceRows: number;
+  uniqueAccountCodes: number;
+  uniqueEntries: number;
+  ambiguousAccountCodes: number;
+  accounts: CoaReferenceAccount[];
+}
+
 export const VALUATION_CLASSES: ValuationClassDefinition[] = [
-  { bklas: '3500', label: 'Heavy Equipment & Vehicle Units', glAccount: '145000', description: 'Unit alat berat & kendaraan operasional (UN-*)' },
-  { bklas: '3100', label: 'Trading Goods', glAccount: '141000', description: 'Barang dagang anak usaha & peralatan siap jual' },
-  { bklas: '3040', label: 'Spare Parts / MRO', glAccount: '140200', description: 'Suku cadang alat berat, kendaraan, filter & ban' },
-  { bklas: '3030', label: 'Operating Supplies & Consumables', glAccount: '140250', description: 'Pelumas, welding, tools & APD pemakaian operasional induk' },
-  { bklas: '3200', label: 'Services (OMQW)', glAccount: '510200', description: 'Jasa kalibrasi, refill APAR, repair & rental unit' },
-  { bklas: '3050', label: 'Packaging Materials', glAccount: '140300', description: 'Material kemasan & pengemasan' },
-  { bklas: '7900', label: 'Semi-Finished Goods', glAccount: '142000', description: 'Barang setengah jadi / fabrikasi' },
-  { bklas: '7920', label: 'Finished Goods', glAccount: '143000', description: 'Barang jadi hasil produksi' },
+  { bklas: '3100', label: 'Persediaan Barang', glAccount: '1140100', glAccountName: 'Persediaan Barang', description: 'Satu kelas untuk seluruh barang dagang, unit, suku cadang, tools, dan supplies karena COA hanya menyediakan akun persediaan barang ini.' },
+  { bklas: '3200', label: 'Jasa / Pembelian Jasa', glAccount: '5140100', glAccountName: 'Biaya Pembelian Jasa', description: 'Grup jasa kalibrasi, refill, perbaikan, dan rental. Nama akun 5140100 perlu konfirmasi Finance karena COA juga mencantumkannya sebagai Training/Pelatihan.' },
 ];
 
 export type UomDimension = 'Count' | 'Weight' | 'Volume' | 'Length' | 'Packaging' | 'Time';
@@ -241,6 +266,7 @@ export interface MaterialMasterRecord {
   mard: Record<string, MardStorageData>; // key: `${werks}-${lgort}`
   mbew: Record<string, MbewValuationData>; // key: `${werks}`
   mvke: MvkeSalesData;
+  classificationClass?: string;
   characteristics?: Record<string, string | number | boolean>; // AUSP values per MATKL Master Characteristic
   industryExtensions: Record<string, string | number | boolean>;
 }
@@ -362,6 +388,8 @@ export interface TenantWorkspaceData {
   customIndustryFields: CustomIndustryField[];
   standardFieldRules: StandardFieldRule[];
   materialGroups: MaterialGroupDefinition[];
+  classificationClasses?: MaterialClassificationClass[];
+  searchDictionary: MaterialSearchDictionaryEntry[];
   unitsOfMeasure: UnitOfMeasureDefinition[];
   changeDocuments: ChangeDocument[];
   plants: PlantDefinition[];

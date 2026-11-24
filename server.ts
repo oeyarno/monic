@@ -7,19 +7,24 @@ import {
   buildMtCalibrationWorkspace,
   CORE_BUSINESS_OPTIONS,
   createDefaultUnitsOfMeasure,
+  createDefaultMaterialSearchDictionary,
+  createMaterialClassificationClasses,
   createInitialMultiTenantDatabase,
+  MATERIAL_GROUP_CLASS_BY_MATKL,
   createStandardFieldRulesForBusiness,
   createStandardizedMaterialGroups,
   createTemplateCustomFields,
   createTemplateMaterialGroups,
   createTenantTemplateWorkspace,
   INDUSTRY_SECTORS,
+  inferMaterialGroupClass,
   MATERIAL_TYPES,
   TENANT_COMPANIES,
   VALUATION_TYPES,
 } from './server/seedData.ts';
 import type {
   ChangeDocument,
+  CoaReferencePayload,
   CustomIndustryField,
   MasterCharacteristic,
   MaterialDocument,
@@ -166,7 +171,7 @@ function loadDatabase(): MultiTenantDatabase {
   }
 
   const currentVersion = parsed.schemaVersion;
-  if (currentVersion < 18) {
+  if (currentVersion < 22) {
     try {
       createDatabaseBackup(DB_FILE, `pre-v${currentVersion}`);
     } catch (err) {
@@ -654,6 +659,296 @@ function loadDatabase(): MultiTenantDatabase {
       parsed.schemaVersion = 18;
     }
 
+    if (parsed.schemaVersion < 19) {
+      const now = new Date().toISOString();
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        const groupByCode = new Map((ws.materialGroups || []).map((group) => [group.matkl, group]));
+        for (const material of ws.materials || []) {
+          const defaultBklas = groupByCode.get(material.mara.matkl)?.defaultBklas;
+          if (!defaultBklas) continue;
+
+          const previousClasses = new Set<string>();
+          let changed = false;
+          for (const valuation of Object.values(material.mbew || {})) {
+            if (valuation.bklas !== defaultBklas) {
+              previousClasses.add(valuation.bklas);
+              valuation.bklas = defaultBklas;
+              changed = true;
+            }
+            for (const split of Object.values(valuation.splitValuations || {})) {
+              if (split && split.bklas !== defaultBklas) {
+                previousClasses.add(split.bklas);
+                split.bklas = defaultBklas;
+                changed = true;
+              }
+            }
+          }
+          if (changed) {
+            ws.changeDocuments.unshift({
+              changenr: nextChangeNumber(ws.changeDocuments),
+              objectClass: 'MATERIAL',
+              objectId: material.mara.matnr,
+              tableName: 'MBEW',
+              fieldName: 'BKLAS (Aligned to MATKL)',
+              oldValue: Array.from(previousClasses).sort().join(', ') || '-',
+              newValue: defaultBklas,
+              username: 'SYSTEM_MIGRATION',
+              timestamp: now,
+            });
+          }
+        }
+      }
+      parsed.schemaVersion = 19;
+    }
+
+    if (parsed.schemaVersion < 20) {
+      const now = new Date().toISOString();
+      for (const company of parsed.tenantCompanies) {
+        const ws = parsed.workspaces[company.tenantId];
+        if (!ws) continue;
+
+        for (const group of ws.materialGroups || []) {
+          group.defaultBklas =
+            group.matkl.startsWith('SV-') || group.defaultBklas === '3200' ? '3200' : '3100';
+        }
+
+        const groupClasses = new Map((ws.materialGroups || []).map((group) => [group.matkl, group.defaultBklas]));
+        for (const material of ws.materials || []) {
+          const defaultBklas =
+            groupClasses.get(material.mara.matkl) ||
+            (material.mara.matkl.startsWith('SV-') ? '3200' : '3100');
+          const previousClasses = new Set<string>();
+          let changed = false;
+          for (const valuation of Object.values(material.mbew || {})) {
+            if (valuation.bklas !== defaultBklas) {
+              previousClasses.add(valuation.bklas);
+              valuation.bklas = defaultBklas;
+              changed = true;
+            }
+            for (const split of Object.values(valuation.splitValuations || {})) {
+              if (split && split.bklas !== defaultBklas) {
+                previousClasses.add(split.bklas);
+                split.bklas = defaultBklas;
+                changed = true;
+              }
+            }
+          }
+          if (changed) {
+            ws.changeDocuments.unshift({
+              changenr: nextChangeNumber(ws.changeDocuments),
+              objectClass: 'MATERIAL',
+              objectId: material.mara.matnr,
+              tableName: 'MBEW',
+              fieldName: 'BKLAS (Aligned to COA)',
+              oldValue: Array.from(previousClasses).sort().join(', ') || '-',
+              newValue: defaultBklas,
+              username: 'SYSTEM_MIGRATION',
+              timestamp: now,
+            });
+          }
+        }
+      }
+
+      for (const material of parsed.corporateMaraMaterials || []) {
+        const bklas = material.mara.matkl.startsWith('SV-') ? '3200' : '3100';
+        for (const valuation of Object.values(material.mbew || {})) {
+          valuation.bklas = bklas;
+          for (const split of Object.values(valuation.splitValuations || {})) {
+            if (split) split.bklas = bklas;
+          }
+        }
+      }
+      parsed.schemaVersion = 20;
+    }
+
+    if (parsed.schemaVersion < 21) {
+      for (const workspace of Object.values(parsed.workspaces)) {
+        workspace.searchDictionary = workspace.searchDictionary || createDefaultMaterialSearchDictionary();
+      }
+      parsed.schemaVersion = 21;
+    }
+
+    if (parsed.schemaVersion < 22) {
+      for (const workspace of Object.values(parsed.workspaces)) {
+        if (!workspace.searchDictionary?.length) {
+          workspace.searchDictionary = createDefaultMaterialSearchDictionary();
+        }
+      }
+      parsed.schemaVersion = 22;
+    }
+
+    saveDatabase(parsed as MultiTenantDatabase);
+  }
+
+  if (parsed.schemaVersion < 23) {
+    try {
+      createDatabaseBackup(DB_FILE, 'pre-v23-material-group-class');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Backup sebelum pembaruan class Material Group gagal dibuat (${msg}). Pembaruan dihentikan tanpa mengubah ${DB_FILE}.`
+      );
+    }
+
+    for (const workspace of Object.values(parsed.workspaces)) {
+      for (const group of workspace.materialGroups || []) {
+        group.classificationClass =
+          group.classificationClass || MATERIAL_GROUP_CLASS_BY_MATKL[group.matkl];
+      }
+    }
+    parsed.schemaVersion = 23;
+    saveDatabase(parsed as MultiTenantDatabase);
+  }
+
+  if (parsed.schemaVersion < 24) {
+    try {
+      createDatabaseBackup(DB_FILE, 'pre-v24-class-characteristics');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Backup sebelum migrasi Class/Characteristic gagal dibuat (${msg}). Migrasi dihentikan tanpa mengubah ${DB_FILE}.`
+      );
+    }
+
+    for (const workspace of Object.values(parsed.workspaces)) {
+      workspace.classificationClasses = createMaterialClassificationClasses(
+        workspace.materialGroups || []
+      );
+    }
+    parsed.schemaVersion = 24;
+    saveDatabase(parsed as MultiTenantDatabase);
+  }
+
+  if (parsed.schemaVersion < 25) {
+    try {
+      createDatabaseBackup(DB_FILE, 'pre-v25-class-mapping');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Backup sebelum pembaruan pemetaan class gagal dibuat (${msg}). Migrasi dihentikan tanpa mengubah ${DB_FILE}.`
+      );
+    }
+
+    const previousMappings: Record<string, string> = {
+      'UN-LVH': 'CLS_LV_DOUBLECAB',
+      'MN-LUB': 'CLS_LUB_OIL',
+      'MN-TIR': 'CLS_TIRE_MAIN',
+    };
+    for (const workspace of Object.values(parsed.workspaces)) {
+      for (const group of workspace.materialGroups || []) {
+        const previousMapping = previousMappings[group.matkl];
+        if (previousMapping && group.classificationClass === previousMapping) {
+          group.classificationClass = MATERIAL_GROUP_CLASS_BY_MATKL[group.matkl];
+        }
+      }
+      workspace.classificationClasses = createMaterialClassificationClasses(
+        workspace.materialGroups || []
+      );
+    }
+    parsed.schemaVersion = 25;
+    saveDatabase(parsed as MultiTenantDatabase);
+  }
+
+  if (parsed.schemaVersion < 26) {
+    try {
+      createDatabaseBackup(DB_FILE, 'pre-v26-material-group-taxonomy');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Backup sebelum migrasi 22 Material Group gagal dibuat (${msg}). Migrasi dihentikan tanpa mengubah ${DB_FILE}.`
+      );
+    }
+
+    for (const [tenantId, workspace] of Object.entries(parsed.workspaces)) {
+      for (const material of workspace.materials || []) {
+        const mapping = inferMaterialGroupClass(
+          material.mara.matkl,
+          material.mara.maktx,
+          material.characteristics
+        );
+        if (mapping) {
+          material.mara.matkl = mapping.matkl;
+          material.classificationClass = mapping.className;
+          continue;
+        }
+
+        const group = (workspace.materialGroups || []).find(
+          (item) => item.matkl === material.mara.matkl
+        );
+        if (!group?.classNames?.includes(material.classificationClass || '')) {
+          throw new Error(
+            `Migrasi 22 Material Group dihentikan: material ${material.mara.matnr} di tenant ${tenantId} memakai MATKL ${material.mara.matkl} yang belum memiliki pemetaan class.`
+          );
+        }
+      }
+
+      workspace.materialGroups = createStandardizedMaterialGroups(
+        parsed.tenantCompanies.find((company) => company.tenantId === tenantId)?.coreBusinessType ||
+          'oil_gas_contractor'
+      );
+      workspace.classificationClasses = createMaterialClassificationClasses(
+        workspace.materialGroups
+      );
+    }
+
+    for (const material of parsed.corporateMaraMaterials || []) {
+      const mapping = inferMaterialGroupClass(
+        material.mara.matkl,
+        material.mara.maktx,
+        material.characteristics
+      );
+      if (mapping) {
+        material.mara.matkl = mapping.matkl;
+        material.classificationClass = mapping.className;
+      }
+    }
+
+    parsed.schemaVersion = 26;
+    saveDatabase(parsed as MultiTenantDatabase);
+  }
+
+  if (parsed.schemaVersion < 27) {
+    try {
+      createDatabaseBackup(DB_FILE, 'pre-v27-material-class-inference');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Backup sebelum pemetaan class material gagal dibuat (${msg}). Migrasi dihentikan tanpa mengubah ${DB_FILE}.`
+      );
+    }
+
+    for (const workspace of Object.values(parsed.workspaces)) {
+      for (const material of workspace.materials || []) {
+        const mapping = inferMaterialGroupClass(
+          material.mara.matkl,
+          material.mara.maktx,
+          material.characteristics
+        );
+        if (!mapping) continue;
+
+        const group = workspace.materialGroups.find((item) => item.matkl === mapping.matkl);
+        if (!group?.classNames.includes(mapping.className)) continue;
+        material.mara.matkl = mapping.matkl;
+        material.classificationClass = mapping.className;
+      }
+    }
+
+    for (const material of parsed.corporateMaraMaterials || []) {
+      const mapping = inferMaterialGroupClass(
+        material.mara.matkl,
+        material.mara.maktx,
+        material.characteristics
+      );
+      if (mapping) {
+        material.mara.matkl = mapping.matkl;
+        material.classificationClass = mapping.className;
+      }
+    }
+
+    parsed.schemaVersion = 27;
     saveDatabase(parsed as MultiTenantDatabase);
   }
 
@@ -700,6 +995,8 @@ function buildBootstrapPayload(
 ): SapBootstrapPayload {
   const company = db.tenantCompanies.find((t) => t.tenantId === tenantId) || db.tenantCompanies[0];
   const ws = db.workspaces[company.tenantId];
+  const classificationClasses = ws.classificationClasses || [];
+  const classesByName = new Map(classificationClasses.map((item) => [item.className, item]));
   return {
     activeTenant: company,
     tenants: buildTenantSummaries(db),
@@ -710,7 +1007,14 @@ function buildBootstrapPayload(
     materialDocuments: ws.materialDocuments,
     customIndustryFields: ws.customIndustryFields,
     standardFieldRules: ws.standardFieldRules,
-    materialGroups: ws.materialGroups || [],
+    materialGroups: (ws.materialGroups || []).map((group) => ({
+      ...group,
+      characteristics:
+        classesByName.get(group.classificationClass || group.classNames[0] || '')?.characteristics ||
+        group.characteristics,
+    })),
+    classificationClasses,
+    searchDictionary: ws.searchDictionary || [],
     unitsOfMeasure: ws.unitsOfMeasure || [],
     changeDocuments: ws.changeDocuments,
     plants: ws.plants,
@@ -719,6 +1023,32 @@ function buildBootstrapPayload(
     industrySectors: INDUSTRY_SECTORS,
     valuationTypes: VALUATION_TYPES,
   };
+}
+
+function getClassificationClass(
+  workspace: TenantWorkspaceData,
+  group: MaterialGroupDefinition
+) {
+  const className =
+    group.classificationClass ||
+    group.classNames?.[0] ||
+    MATERIAL_GROUP_CLASS_BY_MATKL[group.matkl] ||
+    `CLS_MATKL_${group.matkl.replace(/[^A-Z0-9_]/g, '_')}`;
+  group.classificationClass = className;
+  group.classNames ||= [className];
+  workspace.classificationClasses ||= [];
+
+  let classDefinition = workspace.classificationClasses.find((item) => item.className === className);
+  if (!classDefinition) {
+    classDefinition = {
+      className,
+      classType: '001',
+      description: `Class untuk Material Group ${group.matkl} · ${group.label}`,
+      characteristics: structuredClone(group.characteristics || []),
+    };
+    workspace.classificationClasses.push(classDefinition);
+  }
+  return classDefinition;
 }
 
 function nextSequence(prefix: string, existing: string[], padLength: number): string {
@@ -812,7 +1142,23 @@ function syncCorporateMaterial(db: MultiTenantDatabase, source: MaterialMasterRe
       existing.mara = structuredClone(source.mara);
       existing.characteristics = structuredClone(source.characteristics || {});
     } else {
-      ws.materials.unshift(structuredClone(source));
+      const newMaterial = structuredClone(source);
+      alignMaterialValuationClass(newMaterial, ws);
+      ws.materials.unshift(newMaterial);
+    }
+  }
+}
+
+function alignMaterialValuationClass(material: MaterialMasterRecord, workspace: TenantWorkspaceData): void {
+  const defaultBklas = workspace.materialGroups.find(
+    (group) => group.matkl === material.mara.matkl
+  )?.defaultBklas;
+  if (!defaultBklas) return;
+
+  for (const valuation of Object.values(material.mbew || {})) {
+    valuation.bklas = defaultBklas;
+    for (const split of Object.values(valuation.splitValuations || {})) {
+      if (split) split.bklas = defaultBklas;
     }
   }
 }
@@ -914,23 +1260,38 @@ function validateMaterialAgainstOms9(
   const matGroup = matGroups.find((mg) => mg.matkl === material.mara.matkl);
   if (!matGroup) {
     errors.push(
-      `Material Group "${material.mara.matkl || '-'}" tidak terdaftar pada Master Material Group (T023 / CT04) tenant ini.`
+      `Material Group "${material.mara.matkl || '-'}" tidak termasuk dalam 22 Material Group yang ditetapkan.`
     );
   } else {
-    for (const ch of matGroup.characteristics) {
-      if (!ch.required) continue;
-      if (ch.dataType === 'boolean') continue;
-      const val = material.characteristics?.[ch.charName];
-      if (ch.dataType === 'number') {
-        if (val === undefined || val === null || String(val).trim() === '' || Number.isNaN(Number(val))) {
-          errors.push(
-            `CT04 [${matGroup.matkl}]: Karakteristik wajib "${ch.label}" (${ch.charName}) harus diisi dengan angka.`
-          );
+    const className = material.classificationClass?.trim();
+    if (!className) {
+      errors.push('Class Material (CL02, Type 001) wajib dipilih.');
+    } else if (!matGroup.classNames.includes(className)) {
+      errors.push(
+        `Class "${className}" tidak tersedia untuk Material Group ${matGroup.matkl}.`
+      );
+    } else {
+      const classDefinition = (ws.classificationClasses || []).find(
+        (item) => item.className === className && item.classType === '001'
+      );
+      if (!classDefinition) {
+        errors.push(`Class "${className}" tidak terdaftar pada katalog CL02 (Type 001).`);
+      } else {
+        for (const ch of classDefinition.characteristics) {
+          if (!ch.required || ch.dataType === 'boolean') continue;
+          const val = material.characteristics?.[ch.charName];
+          if (ch.dataType === 'number') {
+            if (val === undefined || val === null || String(val).trim() === '' || Number.isNaN(Number(val))) {
+              errors.push(
+                `CT04 [${className}]: Karakteristik wajib "${ch.label}" (${ch.charName}) harus diisi dengan angka.`
+              );
+            }
+          } else if (val === undefined || val === null || String(val).trim() === '') {
+            errors.push(
+              `CT04 [${className}]: Karakteristik wajib "${ch.label}" (${ch.charName}) wajib diisi.`
+            );
+          }
         }
-      } else if (val === undefined || val === null || String(val).trim() === '') {
-        errors.push(
-          `CT04 [${matGroup.matkl}]: Karakteristik wajib "${ch.label}" (${ch.charName}) wajib diisi.`
-        );
       }
     }
   }
@@ -951,6 +1312,131 @@ async function startServer() {
       saveDatabase(db);
     }
     res.json(buildBootstrapPayload(db, tenantId));
+  });
+
+  app.get('/api/coa', (_req, res) => {
+    const coaFile = path.join(__dirname, 'data', 'coa-vdi-reference.json');
+    const raw = fs.readFileSync(coaFile, 'utf-8');
+    const reference = JSON.parse(raw) as CoaReferencePayload;
+    res.json(reference);
+  });
+
+  app.post('/api/search-dictionary', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { keyword, aliases, username = 'SAP_USER' } = req.body as {
+      keyword?: string;
+      aliases?: unknown;
+      username?: string;
+    };
+    const cleanKeyword = String(keyword || '').trim();
+    if (!cleanKeyword || cleanKeyword.length > 80) {
+      return res.status(400).json({ error: 'Keyword wajib diisi dan maksimal 80 karakter.' });
+    }
+    if (!Array.isArray(aliases) || aliases.length === 0 || aliases.length > 30) {
+      return res.status(400).json({ error: 'Tambahkan 1 sampai 30 kata clue.' });
+    }
+    const cleanAliases = Array.from(
+      new Set(aliases.map((alias) => String(alias || '').trim()).filter(Boolean))
+    );
+    if (
+      cleanAliases.length !== aliases.length ||
+      cleanAliases.some((alias) => alias.length > 80)
+    ) {
+      return res.status(400).json({ error: 'Setiap clue harus unik, tidak kosong, dan maksimal 80 karakter.' });
+    }
+
+    workspace.searchDictionary ||= [];
+    const entryId = nextSequence(
+      'DIC-',
+      workspace.searchDictionary.map((entry) => entry.id),
+      6
+    );
+    const entry = { id: entryId, keyword: cleanKeyword, aliases: cleanAliases };
+    workspace.searchDictionary.push(entry);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: entryId,
+      tableName: 'MATERIAL_SEARCH_DICTIONARY',
+      fieldName: 'CREATE_SEARCH_DICTIONARY_ENTRY',
+      oldValue: '-',
+      newValue: `${cleanKeyword} ← ${cleanAliases.join(', ')}`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+    saveDatabase(db);
+    return res.status(201).json({ db: buildBootstrapPayload(db, tenantId), entry });
+  });
+
+  app.put('/api/search-dictionary/:id', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { id } = req.params;
+    const { keyword, aliases, username = 'SAP_USER' } = req.body as {
+      keyword?: string;
+      aliases?: unknown;
+      username?: string;
+    };
+    const entry = (workspace.searchDictionary || []).find((item) => item.id === id);
+    if (!entry) return res.status(404).json({ error: `Entri kamus ${id} tidak ditemukan.` });
+
+    const cleanKeyword = String(keyword || '').trim();
+    if (!cleanKeyword || cleanKeyword.length > 80) {
+      return res.status(400).json({ error: 'Keyword wajib diisi dan maksimal 80 karakter.' });
+    }
+    if (!Array.isArray(aliases) || aliases.length === 0 || aliases.length > 30) {
+      return res.status(400).json({ error: 'Tambahkan 1 sampai 30 kata clue.' });
+    }
+    const cleanAliases = Array.from(
+      new Set(aliases.map((alias) => String(alias || '').trim()).filter(Boolean))
+    );
+    if (
+      cleanAliases.length !== aliases.length ||
+      cleanAliases.some((alias) => alias.length > 80)
+    ) {
+      return res.status(400).json({ error: 'Setiap clue harus unik, tidak kosong, dan maksimal 80 karakter.' });
+    }
+
+    const oldValue = `${entry.keyword} ← ${entry.aliases.join(', ')}`;
+    entry.keyword = cleanKeyword;
+    entry.aliases = cleanAliases;
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: id,
+      tableName: 'MATERIAL_SEARCH_DICTIONARY',
+      fieldName: 'UPDATE_SEARCH_DICTIONARY_ENTRY',
+      oldValue,
+      newValue: `${cleanKeyword} ← ${cleanAliases.join(', ')}`,
+      username,
+      timestamp: new Date().toISOString(),
+    });
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId), entry });
+  });
+
+  app.delete('/api/search-dictionary/:id', (req, res) => {
+    const db = loadDatabase();
+    const { tenantId, workspace } = resolveTenantContext(db, req);
+    const { id } = req.params;
+    const entryIndex = (workspace.searchDictionary || []).findIndex((item) => item.id === id);
+    if (entryIndex < 0) return res.status(404).json({ error: `Entri kamus ${id} tidak ditemukan.` });
+
+    const [entry] = workspace.searchDictionary.splice(entryIndex, 1);
+    workspace.changeDocuments.unshift({
+      changenr: nextChangeNumber(workspace.changeDocuments),
+      objectClass: 'CUSTOMIZING',
+      objectId: id,
+      tableName: 'MATERIAL_SEARCH_DICTIONARY',
+      fieldName: 'DELETE_SEARCH_DICTIONARY_ENTRY',
+      oldValue: `${entry.keyword} ← ${entry.aliases.join(', ')}`,
+      newValue: '-',
+      username: 'SAP_USER',
+      timestamp: new Date().toISOString(),
+    });
+    saveDatabase(db);
+    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
   // Create New Tenant Company (OX02)
@@ -1230,7 +1716,10 @@ async function startServer() {
 
     const matGroup = (workspace.materialGroups || []).find((mg) => mg.matkl === material.mara.matkl);
     if (autoGenerateMaktx || !material.mara.maktx.trim()) {
-      const generatedMaktx = buildMaterialShortDescription(matGroup, material.characteristics);
+      const classDefinition = (workspace.classificationClasses || []).find(
+        (item) => item.className === material.classificationClass
+      );
+      const generatedMaktx = buildMaterialShortDescription(classDefinition, material.characteristics);
       if (generatedMaktx) {
         material.mara.maktx = generatedMaktx;
       }
@@ -1267,9 +1756,15 @@ async function startServer() {
   app.post('/api/materials/import', (req, res) => {
     const db = loadDatabase();
     const { tenantId, workspace } = resolveTenantContext(db, req);
-    const { rows, matkl: selectedMatkl, username = 'SAP_IMPORT' } = req.body as {
+    const {
+      rows,
+      matkl: selectedMatkl,
+      className: selectedClass,
+      username = 'SAP_IMPORT',
+    } = req.body as {
       rows: Record<string, unknown>[];
       matkl?: string;
+      className?: string;
       username?: string;
     };
     if (!Array.isArray(rows) || rows.length === 0) {
@@ -1291,6 +1786,9 @@ async function startServer() {
       }
       const rowNumber = index + 2;
       const matkl = String(row.MATKL || selectedMatkl || '').trim().toUpperCase();
+      const classificationClass = String(
+        row.CLASS || row.CLASSIFICATIONCLASS || selectedClass || ''
+      ).trim().toUpperCase();
       const maktx = String(row.MAKTX || '').trim();
       const meins = String(row.MEINS || '').trim().toUpperCase();
       const matnrInput = String(row.MATNR || '').trim();
@@ -1303,14 +1801,25 @@ async function startServer() {
 
       const matGroup = workspace.materialGroups.find((group) => group.matkl === matkl);
       if (!matGroup) rowErrors.push(`MATKL "${matkl}" tidak terdaftar.`);
+      if (!classificationClass) {
+        rowErrors.push('CLASS (Class Material CL02, Type 001) wajib diisi.');
+      } else if (matGroup && !matGroup.classNames.includes(classificationClass)) {
+        rowErrors.push(`CLASS "${classificationClass}" tidak tersedia untuk MATKL "${matkl}".`);
+      }
+      const classDefinition = (workspace.classificationClasses || []).find(
+        (item) => item.className === classificationClass && item.classType === '001'
+      );
+      if (classificationClass && !classDefinition) {
+        rowErrors.push(`CLASS "${classificationClass}" tidak terdaftar pada katalog CL02.`);
+      }
       if (!workspace.unitsOfMeasure.some((unit) => unit.msehi === meins)) {
         rowErrors.push(`MEINS "${meins}" tidak terdaftar di master unit.`);
       }
       if (mbrsh !== 'M') rowErrors.push('MBRSH hanya dapat menggunakan M.');
       if (mtart !== 'HAWA') rowErrors.push('MTART hanya dapat menggunakan HAWA.');
 
-      if (rowErrors.length === 0 && matGroup) {
-        for (const char of matGroup.characteristics) {
+      if (rowErrors.length === 0 && classDefinition) {
+        for (const char of classDefinition.characteristics) {
           if (!char.required) continue;
           const value = row[char.charName.toUpperCase()] ?? row[char.label.toUpperCase()];
           if (value === undefined || value === null || String(value).trim() === '') {
@@ -1347,9 +1856,11 @@ async function startServer() {
         createdBy: username,
         updatedAt: now,
       };
+      material.classificationClass = classificationClass;
+      alignMaterialValuationClass(material, workspace);
 
       material.characteristics = {};
-      for (const char of matGroup?.characteristics || []) {
+      for (const char of classDefinition?.characteristics || []) {
         const value = row[char.charName.toUpperCase()] ?? row[char.label.toUpperCase()];
         if (value !== undefined && value !== null && String(value).trim() !== '') {
           if (char.dataType === 'number') {
@@ -1417,9 +1928,12 @@ async function startServer() {
     }
     normalizeCorporateMara(material);
 
-    const targetGroup = (workspace.materialGroups || []).find((mg) => mg.matkl === material.mara.matkl);
+    const classDefinition = (workspace.classificationClasses || []).find(
+      (item) => item.className === material.classificationClass
+    );
+    alignMaterialValuationClass(material, workspace);
     if (autoGenerateMaktx || !material.mara.maktx.trim()) {
-      const generatedMaktx = buildMaterialShortDescription(targetGroup, material.characteristics);
+      const generatedMaktx = buildMaterialShortDescription(classDefinition, material.characteristics);
       if (generatedMaktx) {
         material.mara.maktx = generatedMaktx;
       }
@@ -1456,6 +1970,7 @@ async function startServer() {
     addDiff('MARA', 'MAKTX (Description)', prev.mara.maktx, material.mara.maktx);
     addDiff('MARA', 'MBRSH (Industry Sector)', prev.mara.mbrsh, material.mara.mbrsh);
     addDiff('MARA', 'MATKL (Material Group)', prev.mara.matkl, material.mara.matkl);
+    addDiff('KSSK', 'CLASS (Class Type 001)', prev.classificationClass, material.classificationClass);
     addDiff('MARA', 'MSTAE (X-Plant Status)', prev.mara.mstae || 'Active', material.mara.mstae || 'Active');
     addDiff('MARA', 'XCHPF (Batch Mgmt)', prev.mara.xchpf, material.mara.xchpf);
 
@@ -1470,6 +1985,7 @@ async function startServer() {
     const prevMbew = prev.mbew[activeWerks];
     const nextMbew = material.mbew[activeWerks];
     if (prevMbew && nextMbew) {
+      addDiff('MBEW', `BKLAS [${activeWerks}] (Valuation Class)`, prevMbew.bklas, nextMbew.bklas);
       addDiff('MBEW', `BWTTY [${activeWerks}] (Val. Category)`, prevMbew.bwtty || 'None', nextMbew.bwtty || 'None');
       addDiff('MBEW', `VPRSV [${activeWerks}] (Price Ctrl)`, prevMbew.vprsv, nextMbew.vprsv);
       addDiff('MBEW', `VERPR [${activeWerks}] (MAP)`, prevMbew.verpr, nextMbew.verpr);
@@ -1480,12 +1996,11 @@ async function startServer() {
       addDiff('CI_MARA', cf.fieldName, prev.industryExtensions?.[cf.fieldName], material.industryExtensions?.[cf.fieldName]);
     }
 
-    const matGroup = (workspace.materialGroups || []).find((mg) => mg.matkl === material.mara.matkl);
-    if (matGroup) {
-      for (const ch of matGroup.characteristics) {
+    if (classDefinition) {
+      for (const ch of classDefinition.characteristics) {
         addDiff(
           'AUSP',
-          `${matGroup.matkl} · ${ch.charName}`,
+          `${classDefinition.className} · ${ch.charName}`,
           prev.characteristics?.[ch.charName],
           material.characteristics?.[ch.charName]
         );
@@ -2234,6 +2749,7 @@ async function startServer() {
       group: {
         matkl: string;
         label: string;
+        classificationClass?: string;
         defaultMtart?: MaterialTypeCode;
         defaultBklas?: string;
         description?: string;
@@ -2249,6 +2765,12 @@ async function startServer() {
     if (!cleanMatkl || !cleanLabel) {
       return res.status(400).json({ error: 'Kode Material Group (MATKL) dan Label wajib diisi.' });
     }
+    const catalogGroup = createStandardizedMaterialGroups('oil_gas_contractor').find(
+      (item) => item.matkl === cleanMatkl
+    );
+    if (!catalogGroup) {
+      return res.status(400).json({ error: 'Katalog T023 dibatasi pada 22 Material Group dari spreadsheet.' });
+    }
     if (!workspace.materialGroups) workspace.materialGroups = [];
     if (workspace.materialGroups.some((mg) => mg.matkl === cleanMatkl)) {
       return res.status(409).json({ error: `Material Group ${cleanMatkl} sudah terdaftar di tenant ini.` });
@@ -2257,6 +2779,11 @@ async function startServer() {
     const newGroup: MaterialGroupDefinition = {
       matkl: cleanMatkl,
       label: cleanLabel,
+      classNames: catalogGroup.classNames,
+      classificationClass:
+        group.classificationClass?.trim() ||
+        MATERIAL_GROUP_CLASS_BY_MATKL[cleanMatkl] ||
+        `CLS_MATKL_${cleanMatkl.replace(/[^A-Z0-9_]/g, '_')}`,
       defaultMtart: group.defaultMtart || 'HAWA',
       defaultBklas: group.defaultBklas?.trim() || '3100',
       description: (group.description || cleanLabel).trim(),
@@ -2264,6 +2791,7 @@ async function startServer() {
     };
 
     workspace.materialGroups.push(newGroup);
+    getClassificationClass(workspace, newGroup);
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
@@ -2271,7 +2799,7 @@ async function startServer() {
       tableName: 'T023',
       fieldName: 'CREATE_MATKL',
       oldValue: '-',
-      newValue: `${cleanMatkl} · ${cleanLabel} (ValClass ${newGroup.defaultBklas})`,
+      newValue: `${cleanMatkl} · ${cleanLabel} (ValClass ${newGroup.defaultBklas}${newGroup.classificationClass ? ` · Class ${newGroup.classificationClass}` : ''})`,
       username,
       timestamp: new Date().toISOString(),
     });
@@ -2288,6 +2816,7 @@ async function startServer() {
     const { group, username = 'BASIS_ADMIN' } = req.body as {
       group: {
         label: string;
+        classificationClass?: string;
         defaultMtart?: MaterialTypeCode;
         defaultBklas?: string;
         description?: string;
@@ -2302,9 +2831,27 @@ async function startServer() {
     if (!cleanLabel) {
       return res.status(400).json({ error: 'Nama Material Group wajib diisi.' });
     }
+    if (cleanLabel !== existing.label) {
+      return res.status(400).json({
+        error: 'Nama 22 Material Group dikunci sesuai kategori pada spreadsheet.',
+      });
+    }
 
     const prevLabel = existing.label;
     existing.label = cleanLabel;
+    if (group.classificationClass !== undefined && group.classificationClass.trim()) {
+      const selectedClass = group.classificationClass
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9_]/g, '_');
+      if (!existing.classNames.includes(selectedClass)) {
+        return res.status(400).json({
+          error: `Class ${selectedClass} tidak termasuk class yang diizinkan untuk Material Group ${matkl}.`,
+        });
+      }
+      existing.classificationClass = selectedClass;
+    }
+    getClassificationClass(workspace, existing);
     existing.defaultMtart = group.defaultMtart || existing.defaultMtart || 'HAWA';
     if (group.defaultBklas !== undefined && group.defaultBklas.trim()) {
       existing.defaultBklas = group.defaultBklas.trim();
@@ -2318,7 +2865,7 @@ async function startServer() {
       tableName: 'T023',
       fieldName: 'UPDATE_MATKL',
       oldValue: prevLabel,
-      newValue: `${existing.label} (${existing.defaultMtart}${existing.defaultBklas ? ` · ValClass ${existing.defaultBklas}` : ''})`,
+      newValue: `${existing.label} (${existing.defaultMtart}${existing.defaultBklas ? ` · ValClass ${existing.defaultBklas}` : ''}${existing.classificationClass ? ` · Class ${existing.classificationClass}` : ''})`,
       username,
       timestamp: new Date().toISOString(),
     });
@@ -2336,29 +2883,9 @@ async function startServer() {
     if (!workspace.materialGroups) workspace.materialGroups = [];
     const idx = workspace.materialGroups.findIndex((mg) => mg.matkl === matkl);
     if (idx === -1) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
-
-    const usedBy = workspace.materials.filter((m) => m.mara.matkl === matkl);
-    if (usedBy.length > 0) {
-      return res.status(400).json({
-        error: `Material Group ${matkl} sedang digunakan oleh ${usedBy.length} material (mis. ${usedBy[0].mara.matnr}). Tidak dapat dihapus.`,
-      });
-    }
-
-    const removed = workspace.materialGroups.splice(idx, 1)[0];
-    workspace.changeDocuments.unshift({
-      changenr: nextChangeNumber(workspace.changeDocuments),
-      objectClass: 'CUSTOMIZING',
-      objectId: matkl,
-      tableName: 'T023',
-      fieldName: 'DROP_MATKL',
-      oldValue: `${removed.matkl} · ${removed.label}`,
-      newValue: 'Removed',
-      username: 'BASIS_ADMIN',
-      timestamp: new Date().toISOString(),
+    return res.status(403).json({
+      error: '22 Material Group dari spreadsheet merupakan katalog tetap dan tidak dapat dihapus.',
     });
-
-    saveDatabase(db);
-    return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
   // T006 / CUNI - Create Base Unit of Measure
@@ -2492,7 +3019,7 @@ async function startServer() {
     return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
-  // CT04 - Add Master Characteristic to a Material Group
+  // CT04/CL02 - Add a characteristic to the class assigned to a material group
   app.post('/api/customizing/material-groups/:matkl/characteristics', (req, res) => {
     const db = loadDatabase();
     const { tenantId, workspace } = resolveTenantContext(db, req);
@@ -2507,16 +3034,18 @@ async function startServer() {
     if (!group) {
       return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
     }
+    const classDefinition = getClassificationClass(workspace, group);
 
     const rawName = (characteristic?.charName || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
-    const normalizedCharName = rawName.startsWith('CHR_') ? rawName : `CHR_${rawName}`;
+    const normalizedCharName =
+      rawName.startsWith('CHR_') || rawName.startsWith('CH_') ? rawName : `CHR_${rawName}`;
     if (!rawName || !characteristic?.label?.trim()) {
       return res.status(400).json({ error: 'Technical Characteristic Name (CHR_*) dan Label wajib diisi.' });
     }
 
-    if (group.characteristics.some((c) => c.charName === normalizedCharName)) {
+    if (classDefinition.characteristics.some((c) => c.charName === normalizedCharName)) {
       return res.status(409).json({
-        error: `Karakteristik ${normalizedCharName} sudah terdaftar pada Material Group ${matkl}.`,
+        error: `Karakteristik ${normalizedCharName} sudah terdaftar pada Class ${classDefinition.className}.`,
       });
     }
 
@@ -2534,12 +3063,12 @@ async function startServer() {
       helpText: characteristic.helpText?.trim() || `Karakteristik master untuk ${group.label}`,
     };
 
-    group.characteristics.push(newChar);
+    classDefinition.characteristics.push(newChar);
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
-      objectId: matkl,
-      tableName: 'CT04 / CABN',
+      objectId: classDefinition.className,
+      tableName: 'CL02 / CT04',
       fieldName: `ADD ${newChar.charName}`,
       oldValue: '-',
       newValue: `${newChar.label} (${newChar.required ? 'Wajib' : 'Opsional'})`,
@@ -2551,7 +3080,7 @@ async function startServer() {
     return res.status(201).json({ characteristic: newChar, db: buildBootstrapPayload(db, tenantId) });
   });
 
-  // CT04 - Update Master Characteristic
+  // CT04/CL02 - Update a characteristic in the assigned class
   app.put('/api/customizing/material-groups/:matkl/characteristics/:charId', (req, res) => {
     const db = loadDatabase();
     const { tenantId, workspace } = resolveTenantContext(db, req);
@@ -2563,20 +3092,26 @@ async function startServer() {
 
     const group = (workspace.materialGroups || []).find((mg) => mg.matkl === matkl);
     if (!group) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+    const classDefinition = getClassificationClass(workspace, group);
 
-    const idx = group.characteristics.findIndex((c) => c.id === charId);
+    const idx = classDefinition.characteristics.findIndex((c) => c.id === charId);
     if (idx === -1) return res.status(404).json({ error: 'Master Characteristic tidak ditemukan.' });
 
-    const prev = group.characteristics[idx];
-    group.characteristics[idx] = { ...prev, ...characteristic, id: prev.id, charName: prev.charName };
+    const prev = classDefinition.characteristics[idx];
+    classDefinition.characteristics[idx] = {
+      ...prev,
+      ...characteristic,
+      id: prev.id,
+      charName: prev.charName,
+    };
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
-      objectId: matkl,
-      tableName: 'CT04 / CABN',
+      objectId: classDefinition.className,
+      tableName: 'CL02 / CT04',
       fieldName: prev.charName,
       oldValue: `${prev.label} (${prev.required ? 'Wajib' : 'Opsional'})`,
-      newValue: `${group.characteristics[idx].label} (${group.characteristics[idx].required ? 'Wajib' : 'Opsional'})`,
+      newValue: `${classDefinition.characteristics[idx].label} (${classDefinition.characteristics[idx].required ? 'Wajib' : 'Opsional'})`,
       username,
       timestamp: new Date().toISOString(),
     });
@@ -2585,7 +3120,7 @@ async function startServer() {
     return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
-  // CT04 - Reorder Master Characteristics (determines MARA-MAKTX Short Description sequence)
+  // CL02 - Reorder class characteristics used by the MARA-MAKTX short description
   app.put('/api/customizing/material-groups/:matkl/reorder', (req, res) => {
     const db = loadDatabase();
     const { tenantId, workspace } = resolveTenantContext(db, req);
@@ -2597,9 +3132,10 @@ async function startServer() {
 
     const group = (workspace.materialGroups || []).find((mg) => mg.matkl === matkl);
     if (!group) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+    const classDefinition = getClassificationClass(workspace, group);
 
-    const prevPattern = group.characteristics.map((c) => c.label).join('-');
-    const byId = new Map(group.characteristics.map((c) => [c.id, c]));
+    const prevPattern = classDefinition.characteristics.map((c) => c.label).join('-');
+    const byId = new Map(classDefinition.characteristics.map((c) => [c.id, c]));
     const reordered: MasterCharacteristic[] = [];
     for (const id of charIds || []) {
       const item = byId.get(id);
@@ -2612,14 +3148,14 @@ async function startServer() {
       reordered.push(remaining);
     }
 
-    group.characteristics = reordered;
-    const nextPattern = group.characteristics.map((c) => c.label).join('-');
+    classDefinition.characteristics = reordered;
+    const nextPattern = classDefinition.characteristics.map((c) => c.label).join('-');
 
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
-      objectId: matkl,
-      tableName: 'CT04 / CABN',
+      objectId: classDefinition.className,
+      tableName: 'CL02 / CT04',
       fieldName: 'REORDER_SHORT_DESC_FORMAT',
       oldValue: prevPattern || '-',
       newValue: nextPattern || '-',
@@ -2631,7 +3167,7 @@ async function startServer() {
     return res.json({ db: buildBootstrapPayload(db, tenantId) });
   });
 
-  // CT04 - Delete Master Characteristic
+  // CL02 - Remove a characteristic from the assigned class
   app.delete('/api/customizing/material-groups/:matkl/characteristics/:charId', (req, res) => {
     const db = loadDatabase();
     const { tenantId, workspace } = resolveTenantContext(db, req);
@@ -2639,16 +3175,17 @@ async function startServer() {
 
     const group = (workspace.materialGroups || []).find((mg) => mg.matkl === matkl);
     if (!group) return res.status(404).json({ error: `Material Group ${matkl} tidak ditemukan.` });
+    const classDefinition = getClassificationClass(workspace, group);
 
-    const idx = group.characteristics.findIndex((c) => c.id === charId);
+    const idx = classDefinition.characteristics.findIndex((c) => c.id === charId);
     if (idx === -1) return res.status(404).json({ error: 'Master Characteristic tidak ditemukan.' });
 
-    const removed = group.characteristics.splice(idx, 1)[0];
+    const removed = classDefinition.characteristics.splice(idx, 1)[0];
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
-      objectId: matkl,
-      tableName: 'CT04 / CABN',
+      objectId: classDefinition.className,
+      tableName: 'CL02 / CT04',
       fieldName: `DROP ${removed.charName}`,
       oldValue: removed.label,
       newValue: 'Removed',
@@ -2681,7 +3218,7 @@ async function startServer() {
     });
   }
 
-  const PORT = Number(process.env.PORT || 8080);
+  const PORT = 3000;
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`SAP S/4HANA Multi-Tenant Material Master & MM server running on http://0.0.0.0:${PORT}`);
   });

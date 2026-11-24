@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { AlertCircle, Plus, RefreshCw } from 'lucide-react';
 import { AuditTrailView } from './components/AuditTrailView.tsx';
+import { CoaReferenceView } from './components/CoaReferenceView.tsx';
 import { IndustryCustomizingView } from './components/IndustryCustomizingView.tsx';
 import { MaterialListView } from './components/MaterialListView.tsx';
 import { MaterialMasterEditor } from './components/MaterialMasterEditor.tsx';
@@ -12,6 +13,7 @@ import type {
   IndustrySectorCode,
   MasterCharacteristic,
   MaterialMasterRecord,
+  MaterialSearchDictionaryEntry,
   MaterialTypeCode,
   MovementTypeCode,
   PlantDefinition,
@@ -32,6 +34,7 @@ const ROUTE_BREADCRUMBS: Record<ActiveRoute, { section: string; title: string }>
   migo: { section: 'Materials Management (MM)', title: 'MIGO · Goods Movement & Valuasi' },
   mmbe: { section: 'Materials Management (MM)', title: 'MMBE · Stock Overview' },
   ox02: { section: 'SPRO & Tata Kelola', title: 'OX02 · Multi-Tenant Company & Core Business' },
+  coa: { section: 'SPRO & Tata Kelola', title: 'COA · Master Chart of Accounts' },
   oms9: { section: 'SPRO Customizing', title: 'OMS9 · Kustomisasi Field & Master HAWA' },
   cdhdr: { section: 'Tata Kelola', title: 'CDHDR · Change Documents & Audit Trail' },
 };
@@ -232,6 +235,7 @@ export default function App() {
       mb51: 'migo',
       mmbe: 'mmbe',
       ox02: 'ox02',
+      coa: 'coa',
       oms9: 'oms9',
       oms3: 'oms9',
       omsf: 'oms9',
@@ -245,7 +249,7 @@ export default function App() {
     };
     const target = map[code];
     if (!target) {
-      showToast(`T-Code "${raw.toUpperCase()}" tidak dikenali. Gunakan MM60, MM01, MM02, ME51N, ME21N, MIGO, MMBE, OX02, OMS9, CT04, CUNI, atau CDHDR.`);
+      showToast(`T-Code "${raw.toUpperCase()}" tidak dikenali. Gunakan MM60, MM01, MM02, ME51N, ME21N, MIGO, MMBE, OX02, COA, OMS9, CT04, CUNI, atau CDHDR.`);
       return;
     }
     if (code === 'cuni' || code === 't006') {
@@ -439,6 +443,7 @@ export default function App() {
   const handleCreateMaterialGroup = async (group: {
     matkl: string;
     label: string;
+    classificationClass?: string;
     defaultMtart?: MaterialTypeCode;
     defaultBklas?: string;
     description?: string;
@@ -458,6 +463,7 @@ export default function App() {
     matkl: string,
     group: {
       label: string;
+      classificationClass?: string;
       defaultMtart?: MaterialTypeCode;
       defaultBklas?: string;
       description?: string;
@@ -589,6 +595,43 @@ export default function App() {
     return { ok: true };
   };
 
+  const handleSaveSearchDictionaryEntry = async (
+    entry: Pick<MaterialSearchDictionaryEntry, 'keyword' | 'aliases'>,
+    id?: string
+  ) => {
+    try {
+      const res = await fetch(
+        id ? `/api/search-dictionary/${encodeURIComponent(id)}` : '/api/search-dictionary',
+        {
+          method: id ? 'PUT' : 'POST',
+          headers: buildHeaders(true),
+          body: JSON.stringify(entry),
+        }
+      );
+      const json = await res.json();
+      if (!res.ok) return { ok: false, error: json.error as string | undefined };
+      setData(json.db as SapBootstrapPayload);
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Gagal menghubungi server untuk menyimpan kamus pencarian.' };
+    }
+  };
+
+  const handleDeleteSearchDictionaryEntry = async (id: string) => {
+    try {
+      const res = await fetch(`/api/search-dictionary/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: buildHeaders(false),
+      });
+      const json = await res.json();
+      if (!res.ok) return { ok: false, error: json.error as string | undefined };
+      setData(json.db as SapBootstrapPayload);
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Gagal menghubungi server untuk menghapus kamus pencarian.' };
+    }
+  };
+
   const handleResetDemo = async () => {
     const res = await fetch('/api/reset', {
       method: 'POST',
@@ -712,6 +755,8 @@ export default function App() {
                   }}
                   onCreateNewMaterial={() => handleNavigate('mm01')}
                   onImported={(payload) => applyBootstrapPayload(payload, false)}
+                  onSaveSearchDictionaryEntry={handleSaveSearchDictionaryEntry}
+                  onDeleteSearchDictionaryEntry={handleDeleteSearchDictionaryEntry}
                 />
               )}
 
@@ -798,6 +843,8 @@ export default function App() {
                   onDeleteUom={handleDeleteUom}
                 />
               )}
+
+              {activeRoute === 'coa' && <CoaReferenceView />}
 
               {activeRoute === 'cdhdr' && (
                 <AuditTrailView

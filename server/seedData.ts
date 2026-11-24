@@ -4,9 +4,11 @@ import type {
   FieldStatus,
   IndustrySectorCode,
   IndustrySectorDefinition,
+  MaterialClassificationClass,
   MaterialDocument,
   MaterialGroupDefinition,
   MaterialMasterRecord,
+  MaterialSearchDictionaryEntry,
   MaterialTypeDefinition,
   MultiTenantDatabase,
   PlantDefinition,
@@ -20,6 +22,17 @@ import type {
   ValuationTypeDefinition,
   VendorDefinition,
 } from '../src/types/sap.ts';
+import { MATERIAL_CLASS_TEMPLATES } from './materialClassTemplates.ts';
+import {
+  inferMaterialGroupClass,
+  LEGACY_MATERIAL_GROUP_MAPPING,
+  MATERIAL_GROUP_TEMPLATES,
+} from './materialGroupTemplates.ts';
+export { inferMaterialGroupClass, LEGACY_MATERIAL_GROUP_MAPPING } from './materialGroupTemplates.ts';
+
+export function createDefaultMaterialSearchDictionary(): MaterialSearchDictionaryEntry[] {
+  return [{ id: 'DIC-000001', keyword: 'bearing', aliases: ['klahar', 'laher'] }];
+}
 
 export const VALUATION_TYPES: ValuationTypeDefinition[] = [
   {
@@ -776,789 +789,34 @@ export function createDefaultUnitsOfMeasure(): UnitOfMeasureDefinition[] {
   ];
 }
 
+export const MATERIAL_GROUP_CLASS_BY_MATKL: Record<string, string> = Object.fromEntries(
+  Object.entries(LEGACY_MATERIAL_GROUP_MAPPING).map(([matkl, mapping]) => [matkl, mapping.className])
+);
+
+export function createMaterialClassificationClasses(
+  groups: MaterialGroupDefinition[]
+): MaterialClassificationClass[] {
+  const classes = structuredClone(MATERIAL_CLASS_TEMPLATES);
+  for (const group of groups) {
+    const mapping = LEGACY_MATERIAL_GROUP_MAPPING[group.matkl];
+    const groupTemplate = MATERIAL_GROUP_TEMPLATES.find((item) => item.matkl === group.matkl);
+    group.classNames = groupTemplate?.classNames || (mapping ? [mapping.className] : group.classNames || []);
+    group.classificationClass = group.classNames[0];
+    group.characteristics = [];
+  }
+  return classes;
+}
+
 export function createStandardizedMaterialGroups(
-  coreType: TenantCoreBusinessType
+  _coreType: TenantCoreBusinessType
 ): MaterialGroupDefinition[] {
-  // Induk (PT. VDI) & Workshop (PT. HRI) memperlakukan Tools/Safety/Instrumen sebagai Operating Supplies (3030),
-  // sedangkan Anak Usaha Trading/Kalibrasi (PT. PA, PT. MT, PT. HAMAC) sebagai Trading Goods (3100).
-  const toolsSafetyBklas =
-    coreType === 'oil_gas_contractor' || coreType === 'heavy_workshop' ? '3030' : '3100';
-
-  return [
-    // 1. UNIT ALAT BERAT (3500)
-    {
-      matkl: 'UN-EXC',
-      label: 'Unit - Excavators',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Hydraulic Excavator (Mini, 20 Ton, 30 Ton+), Long Arm, Amphibious.',
-      characteristics: [
-        { id: 'ch-unexc-jns', charName: 'CHR_EXC_JENIS', label: 'Jenis Excavator', dataType: 'select', options: ['Standard Excavator', 'Mini Excavator', 'Long Arm Excavator', 'Amphibious Excavator'], required: true, helpText: 'Tipe konfigurasi excavator' },
-        { id: 'ch-unexc-kls', charName: 'CHR_EXC_KELAS', label: 'Kelas Tonase', dataType: 'select', options: ['5-8 Ton', '13 Ton', '20 Ton', '30 Ton', '40+ Ton'], required: true, helpText: 'Kelas bobot operasi unit' },
-        { id: 'ch-unexc-mdl', charName: 'CHR_EXC_MODEL', label: 'Model / Seri', dataType: 'text', required: true, helpText: 'Model unit pabrikan (mis. PC200-8, 320 GC, ZX210F)' },
-        { id: 'ch-unexc-bkt', charName: 'CHR_EXC_BUCKET', label: 'Kapasitas Bucket', dataType: 'text', required: false, helpText: 'Volume bucket standar (mis. 0.9 m3, 1.2 m3)' },
-        { id: 'ch-unexc-brd', charName: 'CHR_EXC_BRAND', label: 'Brand', dataType: 'select', options: ['Komatsu', 'Caterpillar', 'Hitachi', 'Kobelco', 'SANY', 'LiuGong', 'Volvo'], required: true, helpText: 'Merek pabrikan excavator' },
-      ],
-    },
-    {
-      matkl: 'UN-DOZ',
-      label: 'Unit - Bulldozers & Graders',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Bulldozer (D6, D7, D8), Motor Grader, Wheel Loader, Backhoe Loader.',
-      characteristics: [
-        { id: 'ch-undoz-jns', charName: 'CHR_DOZ_JENIS', label: 'Jenis Unit', dataType: 'select', options: ['Bulldozer', 'Motor Grader', 'Wheel Loader', 'Backhoe Loader'], required: true, helpText: 'Kategori unit earthmoving' },
-        { id: 'ch-undoz-mdl', charName: 'CHR_DOZ_MODEL', label: 'Model / Seri', dataType: 'text', required: true, helpText: 'Model seri unit (mis. D6R, D85ESS-2, 140K, WA380)' },
-        { id: 'ch-undoz-pwr', charName: 'CHR_DOZ_POWER', label: 'Daya Engine', dataType: 'number', unit: 'HP', required: true, helpText: 'Tenaga mesin terukur dalam Horsepower' },
-        { id: 'ch-undoz-bld', charName: 'CHR_DOZ_BLADE', label: 'Tipe Blade / Bucket', dataType: 'select', options: ['Semi-U Blade', 'Angle Blade', 'Moldboard 14 ft', 'GP Bucket 3.0 m3', '4-in-1 Bucket'], required: true, helpText: 'Perlengkapan kerja depan' },
-        { id: 'ch-undoz-brd', charName: 'CHR_DOZ_BRAND', label: 'Brand', dataType: 'select', options: ['Caterpillar', 'Komatsu', 'LiuGong', 'XCMG', 'Shantui', 'SDLG', 'JCB'], required: true, helpText: 'Merek pabrikan unit' },
-      ],
-    },
-    {
-      matkl: 'UN-CMP',
-      label: 'Unit - Compactors & Road Equip.',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Vibratory Roller / Vibro, Tandem Roller, Pneumatic Tire Roller, Asphalt Finisher.',
-      characteristics: [
-        { id: 'ch-uncmp-jns', charName: 'CHR_CMP_JENIS', label: 'Jenis Unit', dataType: 'select', options: ['Vibratory Roller (Vibro)', 'Tandem Roller', 'Pneumatic Tire Roller', 'Asphalt Finisher'], required: true, helpText: 'Kategori alat pemadat / jalan' },
-        { id: 'ch-uncmp-kls', charName: 'CHR_CMP_KELAS', label: 'Berat Operasi', dataType: 'select', options: ['3-5 Ton', '10-12 Ton', '14-16 Ton', '20+ Ton'], required: true, helpText: 'Kelas berat pemadatan' },
-        { id: 'ch-uncmp-drm', charName: 'CHR_CMP_DRUM', label: 'Tipe Drum / Roda', dataType: 'select', options: ['Smooth Drum', 'Padfoot Drum', 'Combo Drum/Tire', 'Pneumatic 9-Tire'], required: true, helpText: 'Konfigurasi drum atau roda' },
-        { id: 'ch-uncmp-mdl', charName: 'CHR_CMP_MODEL', label: 'Model / Seri', dataType: 'text', required: true, helpText: 'Model seri unit (mis. SV512D, BW211D)' },
-        { id: 'ch-uncmp-brd', charName: 'CHR_CMP_BRAND', label: 'Brand', dataType: 'select', options: ['SAKAI', 'Dynapac', 'BOMAG', 'Hamm', 'Caterpillar', 'XCMG'], required: true, helpText: 'Merek pabrikan' },
-      ],
-    },
-    {
-      matkl: 'UN-CRN',
-      label: 'Unit - Cranes & Lifting Fleet',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Mobile Crane, Rough Terrain Crane, Crawler Crane, Truck Mounted Crane, Forklift.',
-      characteristics: [
-        { id: 'ch-uncrn-jns', charName: 'CHR_CRN_JENIS', label: 'Jenis Crane / Forklift', dataType: 'select', options: ['Mobile Crane', 'Rough Terrain Crane', 'Crawler Crane', 'Truck Mounted Crane', 'Forklift Diesel', 'Forklift Electric'], required: true, helpText: 'Kategori armada angkat' },
-        { id: 'ch-uncrn-kap', charName: 'CHR_CRN_KAPASITAS', label: 'Kapasitas Angkat (SWL)', dataType: 'text', required: true, helpText: 'Kapasitas maksimum angkat (mis. 25 Ton, 50 Ton, 3 Ton)' },
-        { id: 'ch-uncrn-bom', charName: 'CHR_CRN_BOOM', label: 'Panjang Boom / Mast', dataType: 'text', required: true, helpText: 'Panjang boom atau tinggi angkat mast (mis. 32 m, 4.5 m)' },
-        { id: 'ch-uncrn-mdl', charName: 'CHR_CRN_MODEL', label: 'Model / Seri', dataType: 'text', required: true, helpText: 'Model unit (mis. GR-500EX, FD30T)' },
-        { id: 'ch-uncrn-brd', charName: 'CHR_CRN_BRAND', label: 'Brand', dataType: 'select', options: ['Tadano', 'Kato', 'Kobelco', 'SANY', 'Zoomlion', 'Toyota', 'Mitsubishi'], required: true, helpText: 'Merek pabrikan' },
-      ],
-    },
-    {
-      matkl: 'UN-GEN',
-      label: 'Unit - Generators, Compressors & Pumps',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Diesel Generator Set (Genset), Air Compressor industri, Dewatering Pump, Tower Lamp.',
-      characteristics: [
-        { id: 'ch-ungen-jns', charName: 'CHR_GEN_JENIS', label: 'Jenis Peralatan', dataType: 'select', options: ['Diesel Generator Set (Genset)', 'Air Compressor Industri', 'Dewatering Pump', 'Tower Lamp'], required: true, helpText: 'Jenis peralatan utilitas daya' },
-        { id: 'ch-ungen-kap', charName: 'CHR_GEN_KAPASITAS', label: 'Kapasitas Output', dataType: 'text', required: true, helpText: 'Kapasitas output (mis. 100 kVA, 375 CFM, 6" 300 m3/h)' },
-        { id: 'ch-ungen-tip', charName: 'CHR_GEN_TIPE', label: 'Tipe Enclosure', dataType: 'select', options: ['Silent Canopy', 'Open Type', 'Skid Mounted', 'Trailer Mounted'], required: true, helpText: 'Konstruksi pelindung unit' },
-        { id: 'ch-ungen-phs', charName: 'CHR_GEN_PHASE', label: 'Tegangan / Tekanan', dataType: 'select', options: ['380V / 3-Phase / 50Hz', '220V / 1-Phase', '7-12 Bar', 'High Head Diesel'], required: false, helpText: 'Spesifikasi listrik atau tekanan kerja' },
-        { id: 'ch-ungen-brd', charName: 'CHR_GEN_BRAND', label: 'Brand', dataType: 'select', options: ['Cummins', 'Perkins', 'Caterpillar', 'Atlas Copco', 'Airman', 'Denyo', 'Doosan'], required: true, helpText: 'Merek pabrikan' },
-      ],
-    },
-    {
-      matkl: 'UN-ATT',
-      label: 'Unit - Heavy Equip. Attachments',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Hydraulic Breaker, Ripper, Vibro Hammer, Bucket khusus (unit terpisah).',
-      characteristics: [
-        { id: 'ch-unatt-jns', charName: 'CHR_ATT_JENIS', label: 'Jenis Attachment', dataType: 'select', options: ['Hydraulic Breaker', 'Ripper', 'Vibro Hammer', 'Skeleton Bucket', 'Mud Bucket', 'Quick Coupler'], required: true, helpText: 'Jenis attachment alat berat' },
-        { id: 'ch-unatt-fit', charName: 'CHR_ATT_FIT', label: 'Kesesuaian Kelas Unit', dataType: 'select', options: ['Mini (5-8T)', '13-15 Ton', '20 Ton', '30+ Ton'], required: true, helpText: 'Kelas excavator / unit pembawa' },
-        { id: 'ch-unatt-pin', charName: 'CHR_ATT_CHISEL', label: 'Diameter Pin / Chisel', dataType: 'text', required: true, helpText: 'Diameter pin atau chisel (mis. 135 mm, Pin 80 mm)' },
-        { id: 'ch-unatt-mdl', charName: 'CHR_ATT_MODEL', label: 'Model / Seri', dataType: 'text', required: true, helpText: 'Model attachment (mis. SB81, HB20G)' },
-        { id: 'ch-unatt-brd', charName: 'CHR_ATT_BRAND', label: 'Brand', dataType: 'select', options: ['Soosan', 'Furukawa', 'Epiroc', 'MBI', 'Komatsu', 'Caterpillar'], required: true, helpText: 'Merek pabrikan attachment' },
-      ],
-    },
-
-    // 2. UNIT KENDARAAN & TRANSPORT (3500)
-    {
-      matkl: 'UN-LVH',
-      label: 'Unit - Light Vehicles (LV / 4x4)',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Double Cabin 4x4 (Hilux/Triton), SUV Operasional, Minibus kru, Ambulance proyek.',
-      characteristics: [
-        { id: 'ch-unlvh-mdl', charName: 'CHR_LV_MODEL', label: 'Nama / Model', dataType: 'select', options: ['Hilux', 'Triton', 'Fortuner', 'Pajero', 'Innova', 'Avanza', 'Navara', 'Hiace Ambulance'], required: true, helpText: 'Model unit kendaraan ringan' },
-        { id: 'ch-unlvh-typ', charName: 'CHR_LV_TYPE', label: 'Tipe Bodi', dataType: 'select', options: ['Double Cabin', 'SUV Operasional', 'Minibus Kru', 'Ambulance Proyek', 'Single Cabin'], required: true, helpText: 'Konfigurasi bodi kendaraan' },
-        { id: 'ch-unlvh-trn', charName: 'CHR_LV_TRANS', label: 'Transmisi', dataType: 'select', options: ['Manual', 'Matic'], required: true, helpText: 'Jenis transmisi kendaraan' },
-        { id: 'ch-unlvh-drv', charName: 'CHR_LV_DRIVE', label: 'Gardan / Penggerak', dataType: 'select', options: ['4x4', '4x2'], required: true, helpText: 'Konfigurasi gardan 4x4 / 4x2' },
-        { id: 'ch-unlvh-brd', charName: 'CHR_LV_BRAND', label: 'Brand', dataType: 'select', options: ['Toyota', 'Mitsubishi', 'Isuzu', 'Nissan', 'Suzuki'], required: true, helpText: 'Merek pabrikan kendaraan' },
-      ],
-    },
-    {
-      matkl: 'UN-DMP',
-      label: 'Unit - Dump Trucks',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Dump Truck 6 Roda (Engkel/CDE/CDD), Dump Truck 10 Roda (Tronton), Articulated Dump Truck.',
-      characteristics: [
-        { id: 'ch-undmp-jns', charName: 'CHR_DMP_JENIS', label: 'Konfigurasi Roda', dataType: 'select', options: ['6 Roda (Engkel/CDE/CDD)', '10 Roda (Tronton 6x4)', '12 Roda (8x4)', 'Articulated Dump Truck (ADT)'], required: true, helpText: 'Konfigurasi axle dan roda dump truck' },
-        { id: 'ch-undmp-bak', charName: 'CHR_DMP_BAK', label: 'Kapasitas Bak', dataType: 'select', options: ['8 m3', '12 m3', '20 m3', '24 m3', '30+ Ton'], required: true, helpText: 'Volume vessel atau kapasitas angkut' },
-        { id: 'ch-undmp-mdl', charName: 'CHR_DMP_MODEL', label: 'Model / Seri', dataType: 'text', required: true, helpText: 'Model unit (mis. FM 260 JD, Questor CWE280, P380)' },
-        { id: 'ch-undmp-brd', charName: 'CHR_DMP_BRAND', label: 'Brand', dataType: 'select', options: ['Hino', 'Mitsubishi Fuso', 'UD Trucks', 'Scania', 'Volvo', 'Isuzu', 'Mercedes-Benz'], required: true, helpText: 'Merek pabrikan dump truck' },
-      ],
-    },
-    {
-      matkl: 'UN-TRL',
-      label: 'Unit - Prime Movers & Trailers',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Prime Mover / Tractor Head, Lowbed Trailer (angkut alat berat), Flatbed Trailer (angkut pipa).',
-      characteristics: [
-        { id: 'ch-untrl-jns', charName: 'CHR_TRL_JENIS', label: 'Jenis Unit', dataType: 'select', options: ['Prime Mover / Tractor Head', 'Lowbed Trailer', 'Flatbed Trailer', 'Self-Loader'], required: true, helpText: 'Kategori tractor head atau trailer' },
-        { id: 'ch-untrl-kap', charName: 'CHR_TRL_KAPASITAS', label: 'Kapasitas Angkut / Tarik', dataType: 'select', options: ['30 Ton', '40 Ton', '50 Ton', '60-80 Ton', '100 Ton'], required: true, helpText: 'Kapasitas muatan maksimum' },
-        { id: 'ch-untrl-axl', charName: 'CHR_TRL_AXLE', label: 'Konfigurasi Axle', dataType: 'select', options: ['6x4 Tractor Head', '2-Axle Trailer', '3-Axle Trailer', '4-Axle Lowbed'], required: true, helpText: 'Konfigurasi sumbu roda' },
-        { id: 'ch-untrl-mdl', charName: 'CHR_TRL_MODEL', label: 'Model / Panjang Bed', dataType: 'text', required: true, helpText: 'Model atau dimensi panjang deck (mis. 40 ft Flatbed, Lowbed 12m)' },
-        { id: 'ch-untrl-brd', charName: 'CHR_TRL_BRAND', label: 'Brand', dataType: 'select', options: ['Scania', 'Volvo', 'UD Trucks', 'Hino', 'Mercedes-Benz', 'Patria', 'CIMC'], required: true, helpText: 'Merek pabrikan / karoseri' },
-      ],
-    },
-    {
-      matkl: 'UN-TNK',
-      label: 'Unit - Tankers & Special Trucks',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Fuel Truck (tangki BBM), Water Truck (penyiram jalan), Vacuum Truck, Lube Truck (servis).',
-      characteristics: [
-        { id: 'ch-untnk-jns', charName: 'CHR_TNK_JENIS', label: 'Jenis Truk Khusus', dataType: 'select', options: ['Fuel Truck (Tangki BBM)', 'Water Truck', 'Vacuum Truck', 'Lube Truck (Servis)'], required: true, helpText: 'Fungsi truk tangki khusus' },
-        { id: 'ch-untnk-kap', charName: 'CHR_TNK_KAPASITAS', label: 'Kapasitas Tangki', dataType: 'number', unit: 'L', required: true, helpText: 'Volume tangki dalam liter (mis. 5000, 10000, 16000)' },
-        { id: 'ch-untnk-ftr', charName: 'CHR_TNK_FITUR', label: 'Perlengkapan Khusus', dataType: 'select', options: ['Flow Meter + Pump', 'Rear Spray Bar + Water Cannon', 'High-Vac Rotary Pump', 'Multi-Reel Oil/Grease Dispenser'], required: true, helpText: 'Sistem pompa / dispenser bawaan' },
-        { id: 'ch-untnk-chs', charName: 'CHR_TNK_CHASSIS', label: 'Penggerak Chassis', dataType: 'select', options: ['4x2', '6x4', '6x6'], required: true, helpText: 'Konfigurasi penggerak chassis' },
-        { id: 'ch-untnk-brd', charName: 'CHR_TNK_BRAND', label: 'Brand Chassis', dataType: 'select', options: ['Hino', 'Isuzu', 'Mitsubishi Fuso', 'UD Trucks', 'MAN'], required: true, helpText: 'Merek pabrikan chassis' },
-      ],
-    },
-    {
-      matkl: 'UN-BUS',
-      label: 'Unit - Buses & Crew Transport',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3500',
-      description: 'Medium Bus, Big Bus transportasi pekerja proyek PHR.',
-      characteristics: [
-        { id: 'ch-unbus-jns', charName: 'CHR_BUS_JENIS', label: 'Kelas Bus', dataType: 'select', options: ['Medium Bus', 'Big Bus', 'Microbus Kru'], required: true, helpText: 'Kategori ukuran bus transportasi' },
-        { id: 'ch-unbus-sht', charName: 'CHR_BUS_SEAT', label: 'Kapasitas Kursi', dataType: 'number', unit: 'Seat', required: true, helpText: 'Jumlah kursi penumpang (mis. 15, 29, 45)' },
-        { id: 'ch-unbus-spc', charName: 'CHR_BUS_SPEC', label: 'Standar Keselamatan Migas', dataType: 'select', options: ['AC + Seatbelt 3-Point + ROPS', 'AC + Seatbelt 2-Point + APAR', 'Standar PHR Crew Spec'], required: true, helpText: 'Kelengkapan safety transportasi kru' },
-        { id: 'ch-unbus-brd', charName: 'CHR_BUS_BRAND', label: 'Brand Chassis', dataType: 'select', options: ['Hino', 'Mercedes-Benz', 'Isuzu', 'Mitsubishi Fuso', 'Toyota'], required: true, helpText: 'Merek chassis bus' },
-      ],
-    },
-
-    // 3. SPARE PARTS, FILTERS, LUBRICANTS, TIRES & WELDING (3040 / 3030)
-    {
-      matkl: 'HE-ENG',
-      label: 'Heavy Equip - Engine & Powertrain',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3040',
-      description: 'Suku cadang mesin alat berat, transmisi, turbocharger, radiator, injector.',
-      characteristics: [
-        { id: 'ch-heeng-kmp', charName: 'CHR_ENG_KOMP', label: 'Sub-Sistem Komponen', dataType: 'select', options: ['Engine Block / Overhaul Kit', 'Transmisi & Torque Converter', 'Turbocharger', 'Radiator & Cooling', 'Fuel Injector & Pump'], required: true, helpText: 'Kelompok sub-sistem mesin & powertrain' },
-        { id: 'ch-heeng-pn', charName: 'CHR_ENG_PN', label: 'Part Number OEM', dataType: 'text', required: true, helpText: 'Nomor part OEM / cross-reference' },
-        { id: 'ch-heeng-unt', charName: 'CHR_ENG_UNIT', label: 'Aplikasi Model Unit / Engine', dataType: 'text', required: true, helpText: 'Mis. Komatsu PC200-8 / SAA6D107E, CAT 320D' },
-        { id: 'ch-heeng-grd', charName: 'CHR_ENG_GRADE', label: 'Klasifikasi Part', dataType: 'select', options: ['Genuine OEM', 'OEM Equivalent', 'Aftermarket'], required: true, helpText: 'Kualitas suku cadang' },
-        { id: 'ch-heeng-brd', charName: 'CHR_ENG_BRAND', label: 'Brand', dataType: 'select', options: ['Komatsu', 'Caterpillar', 'Cummins', 'Bosch', 'Denso', 'Garrett'], required: true, helpText: 'Merek pabrikan part' },
-      ],
-    },
-    {
-      matkl: 'HE-HYD',
-      label: 'Heavy Equip - Hydraulic & Pneumatic',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3040',
-      description: 'Pompa hidrolik, hydraulic hose, silinder, seal kit, control valve.',
-      characteristics: [
-        { id: 'ch-hehyd-kmp', charName: 'CHR_HYD_KOMP', label: 'Jenis Komponen', dataType: 'select', options: ['Hydraulic Pump', 'Hydraulic Hose', 'Hydraulic Cylinder', 'Seal Kit', 'Control Valve', 'Hydraulic Motor'], required: true, helpText: 'Jenis komponen hidrolik / pneumatik' },
-        { id: 'ch-hehyd-spc', charName: 'CHR_HYD_SPEC', label: 'Ukuran / Rating Tekanan', dataType: 'text', required: true, helpText: 'Mis. R2AT 3/4" 350 bar, K3V112DT, Rod 80mm' },
-        { id: 'ch-hehyd-pn', charName: 'CHR_HYD_PN', label: 'Part Number / Kode', dataType: 'text', required: true, helpText: 'Part number atau tipe katalog' },
-        { id: 'ch-hehyd-fit', charName: 'CHR_HYD_FIT', label: 'Fitting / Aplikasi Unit', dataType: 'text', required: false, helpText: 'Tipe konektor JIC/BSP atau model unit' },
-        { id: 'ch-hehyd-brd', charName: 'CHR_HYD_BRAND', label: 'Brand', dataType: 'select', options: ['Kawasaki', 'Rexroth', 'Parker', 'Gates', 'NOK', 'SKF', 'OEM'], required: true, helpText: 'Merek pabrikan' },
-      ],
-    },
-    {
-      matkl: 'HE-UND',
-      label: 'Heavy Equip - Undercarriage & GET',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3040',
-      description: 'Track link, roller, idler, sprocket, cutting edge, kuku bucket (tooth).',
-      characteristics: [
-        { id: 'ch-heund-kmp', charName: 'CHR_UND_KOMP', label: 'Jenis Komponen', dataType: 'select', options: ['Track Link Assy', 'Track / Carrier Roller', 'Idler', 'Sprocket', 'Cutting Edge / End Bit', 'Bucket Tooth & Adapter'], required: true, helpText: 'Komponen kaki-kaki alat berat / GET' },
-        { id: 'ch-heund-pn', charName: 'CHR_UND_PN', label: 'Part Number', dataType: 'text', required: true, helpText: 'Nomor part katalog undercarriage' },
-        { id: 'ch-heund-unt', charName: 'CHR_UND_UNIT', label: 'Kelas / Model Unit', dataType: 'text', required: true, helpText: 'Mis. PC200 / D85ESS / CAT 320' },
-        { id: 'ch-heund-spc', charName: 'CHR_UND_SPEC', label: 'Pitch / Jumlah Link / Tipe', dataType: 'text', required: false, helpText: 'Mis. 45 Links, 190mm Pitch, Standard Chisel' },
-        { id: 'ch-heund-brd', charName: 'CHR_UND_BRAND', label: 'Brand', dataType: 'select', options: ['Berco', 'ITR', 'ITM', 'ESCO', 'Komatsu', 'Caterpillar'], required: true, helpText: 'Merek pabrikan' },
-      ],
-    },
-    {
-      matkl: 'VH-PRT',
-      label: 'Vehicle & Light Truck Parts',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3040',
-      description: 'Suku cadang LV/4x4, dump truck, kampas rem, kopling, suspensi.',
-      characteristics: [
-        { id: 'ch-vhprt-kmp', charName: 'CHR_VHP_KOMP', label: 'Sistem Kendaraan', dataType: 'select', options: ['Rem (Brake Pad/Shoe)', 'Kopling (Clutch Disc/Cover)', 'Suspensi & Tie Rod', 'Drivetrain / Axle', 'Engine & Cooling'], required: true, helpText: 'Kategori suku cadang kendaraan' },
-        { id: 'ch-vhprt-pn', charName: 'CHR_VHP_PN', label: 'Part Number', dataType: 'text', required: true, helpText: 'Nomor part kendaraan' },
-        { id: 'ch-vhprt-unt', charName: 'CHR_VHP_UNIT', label: 'Model Kendaraan', dataType: 'select', options: ['Hilux 4x4', 'Triton 4x4', 'Hino 500', 'Dutro / Canter', 'Bus / Multi-Model'], required: true, helpText: 'Kendaraan pengguna part' },
-        { id: 'ch-vhprt-pos', charName: 'CHR_VHP_POS', label: 'Posisi', dataType: 'select', options: ['Front', 'Rear', 'Set (F+R)', 'Universal'], required: false, helpText: 'Posisi pemasangan pada kendaraan' },
-        { id: 'ch-vhprt-brd', charName: 'CHR_VHP_BRAND', label: 'Brand', dataType: 'select', options: ['Toyota Genuine', 'Mitsubishi Genuine', 'Hino Genuine', 'Aisin', 'Brembo', 'KYB'], required: true, helpText: 'Merek pabrikan part' },
-      ],
-    },
-    {
-      matkl: 'MN-FLT',
-      label: 'Filters & Elements',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3040',
-      description: 'Filter oli, filter solar (fuel filter), filter udara, filter hidrolik.',
-      characteristics: [
-        { id: 'ch-mnflt-jns', charName: 'CHR_FLT_JENIS', label: 'Jenis Filter', dataType: 'select', options: ['Filter Oli (Oil Filter)', 'Filter Solar (Fuel Filter)', 'Water Separator', 'Filter Udara (Air Filter)', 'Filter Hidrolik'], required: true, helpText: 'Fungsi penyaringan filter' },
-        { id: 'ch-mnflt-pn', charName: 'CHR_FLT_PN', label: 'Part Number / Cross-Ref', dataType: 'text', required: true, helpText: 'Mis. LF9009, P551000, 600-211-1340' },
-        { id: 'ch-mnflt-mic', charName: 'CHR_FLT_MICRON', label: 'Rating Filtrasi / Tipe', dataType: 'text', required: false, helpText: 'Mis. 10 Micron, Primary + Secondary' },
-        { id: 'ch-mnflt-app', charName: 'CHR_FLT_APP', label: 'Aplikasi Unit / Engine', dataType: 'text', required: true, helpText: 'Model unit atau mesin yang menggunakan filter ini' },
-        { id: 'ch-mnflt-brd', charName: 'CHR_FLT_BRAND', label: 'Brand', dataType: 'select', options: ['Donaldson', 'Fleetguard', 'Baldwin', 'Sakura', 'Komatsu', 'Caterpillar'], required: true, helpText: 'Merek filter' },
-      ],
-    },
-    {
-      matkl: 'MN-LUB',
-      label: 'Lubricants, Greases & Chemicals',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'Oli mesin, oli hidrolik, grease, coolant, brake fluid.',
-      characteristics: [
-        { id: 'ch-mnlub-app', charName: 'CHR_LUB_APLIKASI', label: 'Jenis Pelumas', dataType: 'select', options: ['Oli Mesin (Engine Oil)', 'Oli Hidrolik', 'Oli Transmisi / Gardan', 'Grease', 'Coolant', 'Brake Fluid'], required: true, helpText: 'Aplikasi atau fungsi pelumas' },
-        { id: 'ch-mnlub-vis', charName: 'CHR_LUB_VISKOSITAS', label: 'Viskositas SAE / ISO / NLGI', dataType: 'select', options: ['SAE 15W-40', 'SAE 10W-30', 'SAE 5W-30', 'SAE 80W-90', 'SAE 85W-140', 'ISO VG 46', 'ISO VG 68', 'NLGI 2', 'NLGI 3', '50/50 Premix'], required: true, helpText: 'Tingkat kekentalan SAE, ISO VG, atau NLGI' },
-        { id: 'ch-mnlub-spc', charName: 'CHR_LUB_SPEC', label: 'Standar API / OEM', dataType: 'select', options: ['API CI-4', 'API CK-4', 'API GL-5', 'Caterpillar TO-4', 'DIN 51524 HLP', 'Lithium Complex EP2', 'DOT 4'], required: true, helpText: 'Spesifikasi performa standar API / OEM' },
-        { id: 'ch-mnlub-pck', charName: 'CHR_LUB_KEMASAN', label: 'Kemasan', dataType: 'select', options: ['Drum 209L', 'Drum 200L', 'Pail 20L', 'Pail 18L', 'Galon 4L', 'Botol 1L', 'Cartridge 400g'], required: true, helpText: 'Ukuran kemasan' },
-        { id: 'ch-mnlub-brd', charName: 'CHR_LUB_BRAND', label: 'Brand', dataType: 'select', options: ['Pertamina', 'Shell', 'Mobil', 'Castrol', 'TotalEnergies', 'CAT Oil', 'Komatsu Genuine'], required: true, helpText: 'Merek pabrikan pelumas' },
-      ],
-    },
-    {
-      matkl: 'MN-TIR',
-      label: 'Tires, Batteries & Electrical',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3040',
-      description: 'Ban alat berat & kendaraan, aki (battery), alternator, starter motor, lampu kerja.',
-      characteristics: [
-        { id: 'ch-mntir-jns', charName: 'CHR_TIR_JENIS', label: 'Jenis Item', dataType: 'select', options: ['Ban Alat Berat (OTR)', 'Ban Truk / Bus', 'Ban Light Vehicle (4x4)', 'Aki (Battery)', 'Alternator', 'Starter Motor', 'Lampu Kerja LED'], required: true, helpText: 'Kategori ban, aki, atau komponen elektrikal' },
-        { id: 'ch-mntir-spc', charName: 'CHR_TIR_SPEC', label: 'Ukuran / Tegangan / Kapasitas', dataType: 'text', required: true, helpText: 'Mis. 23.5R25, 11.00R20, 265/65R17, 12V 100Ah N100, 24V 80A' },
-        { id: 'ch-mntir-ply', charName: 'CHR_TIR_PLY', label: 'Pattern / PR / IP Rating', dataType: 'text', required: false, helpText: 'Mis. E3/L3, AT/MT, N200, IP67 48W' },
-        { id: 'ch-mntir-brd', charName: 'CHR_TIR_BRAND', label: 'Brand', dataType: 'select', options: ['Bridgestone', 'Michelin', 'Goodyear', 'Gajah Tunggal', 'GS Astra', 'Yuasa', 'Denso', 'Hella'], required: true, helpText: 'Merek pabrikan' },
-      ],
-    },
-    {
-      matkl: 'MN-WLD',
-      label: 'Welding & Fabrication Supplies',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'Kawat las (electrode), gas oksigen/asetilen, batu gerinda, pelat besi.',
-      characteristics: [
-        { id: 'ch-mnwld-jns', charName: 'CHR_WLD_JENIS', label: 'Jenis Material', dataType: 'select', options: ['Kawat Las (Electrode)', 'Kawat Las MIG/TIG', 'Gas Oksigen / Asetilen / Argon', 'Batu Gerinda Potong/Poles', 'Pelat Besi / Baja'], required: true, helpText: 'Kategori material pengelasan & fabrikasi' },
-        { id: 'ch-mnwld-spc', charName: 'CHR_WLD_SPEC', label: 'AWS Class / Grade / Dimensi', dataType: 'text', required: true, helpText: 'Mis. AWS E7018, AWS E6013, SS308L, 4" x 1.2mm, Plate SS400 10mm' },
-        { id: 'ch-mnwld-dia', charName: 'CHR_WLD_DIA', label: 'Diameter / Ketebalan / Volume', dataType: 'text', required: true, helpText: 'Mis. 2.6 mm, 3.2 mm, 4.0 mm, Tabung 6 m3' },
-        { id: 'ch-mnwld-pck', charName: 'CHR_WLD_PACK', label: 'Kemasan / Ukuran Lembar', dataType: 'text', required: true, helpText: 'Mis. Box 5 KG, Spool 15 KG, Tabung 40L, 1200x2400 mm' },
-        { id: 'ch-mnwld-brd', charName: 'CHR_WLD_BRAND', label: 'Brand', dataType: 'select', options: ['Kobe Steel (KOBELCO)', 'ESAB', 'Lincoln Electric', 'Nikko Steel', '3M', 'Bosch', 'Samator'], required: true, helpText: 'Merek pabrikan' },
-      ],
-    },
-
-    // 4. TOOLS, SAFETY/APD, FIRE & INSTRUMENTS (3100 Anak / 3030 Induk)
-    {
-      matkl: 'TL-HND',
-      label: 'Hand Tools & Workshop Perkakas',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Kunci pas/ring, obeng, tang, palu, socket set, torque wrench.',
-      characteristics: [
-        { id: 'ch-tlhnd-jns', charName: 'CHR_HND_JENIS', label: 'Jenis Perkakas', dataType: 'select', options: ['Kunci Pas / Ring', 'Socket Set', 'Torque Wrench (Kunci Momen)', 'Obeng / Tang / Palu', 'Tool Cabinet / Box'], required: true, helpText: 'Kategori hand tools' },
-        { id: 'ch-tlhnd-ukr', charName: 'CHR_HND_UKURAN', label: 'Ukuran / Rentang', dataType: 'text', required: true, helpText: 'Mis. 8-32 mm, 1/2" Drive 40-200 Nm, 60 Pcs Set' },
-        { id: 'ch-tlhnd-mat', charName: 'CHR_HND_MATERIAL', label: 'Material / Isolasi', dataType: 'select', options: ['Chrome Vanadium (Cr-V)', 'Chrome Molybdenum (Cr-Mo)', 'VDE Insulated 1000V', 'Non-Sparking Cu-Be'], required: true, helpText: 'Material baja atau proteksi isolasi listrik' },
-        { id: 'ch-tlhnd-brd', charName: 'CHR_HND_BRAND', label: 'Brand', dataType: 'select', options: ['Stahlwille', 'Snap-on', 'Facom', 'Tekiro', 'Wera', 'Norbar', 'Koken'], required: true, helpText: 'Merek perkakas' },
-      ],
-    },
-    {
-      matkl: 'TL-PWR',
-      label: 'Power Tools & Pneumatic Tools',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Mesin bor, gerinda tangan, impact wrench, kompresor angin.',
-      characteristics: [
-        { id: 'ch-tlpwr-jns', charName: 'CHR_PWR_JENIS', label: 'Jenis Mesin', dataType: 'select', options: ['Mesin Bor (Drill)', 'Gerinda Tangan (Angle Grinder)', 'Impact Wrench', 'Kompresor Angin', 'Magnetic Drill'], required: true, helpText: 'Jenis mesin perkakas bertenaga' },
-        { id: 'ch-tlpwr-sbr', charName: 'CHR_PWR_SUMBER', label: 'Sumber Tenaga', dataType: 'select', options: ['Cordless Battery 18V/20V', 'Listrik 220V', 'Pneumatic (Angin)'], required: true, helpText: 'Penggerak tenaga mesin' },
-        { id: 'ch-tlpwr-kap', charName: 'CHR_PWR_KAPASITAS', label: 'Daya / Torsi / Ukuran', dataType: 'text', required: true, helpText: 'Mis. 850W / 4", 1.200 Nm / 3/4", 10 HP / 300L' },
-        { id: 'ch-tlpwr-ex', charName: 'CHR_PWR_AREA', label: 'Standar Area Kerja', dataType: 'select', options: ['Standard Industrial', 'Heavy Duty Workshop', 'Explosion-Proof ATEX'], required: false, helpText: 'Kesesuaian kelas bahaya area' },
-        { id: 'ch-tlpwr-brd', charName: 'CHR_PWR_BRAND', label: 'Brand', dataType: 'select', options: ['Makita', 'Bosch', 'DeWalt', 'Milwaukee', 'Ingersoll Rand', 'Chicago Pneumatic'], required: true, helpText: 'Merek mesin perkakas' },
-      ],
-    },
-    {
-      matkl: 'TL-LFT',
-      label: 'Lifting, Rigging & Material Handling',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Chain block, webbing sling, wire rope, shackle, dongkrak hidrolik.',
-      characteristics: [
-        { id: 'ch-tllft-jns', charName: 'CHR_LFT_JENIS', label: 'Jenis Alat Angkat', dataType: 'select', options: ['Chain Block', 'Lever Hoist', 'Webbing Sling', 'Wire Rope Sling', 'Shackle (Bow/D)', 'Dongkrak Hidrolik'], required: true, helpText: 'Kategori alat angkat dan rigging' },
-        { id: 'ch-tllft-wll', charName: 'CHR_LFT_WLL', label: 'SWL / WLL (Kapasitas)', dataType: 'text', required: true, helpText: 'Batas beban kerja aman (mis. 2 Ton, 5 Ton, 10 Ton, 25 Ton)' },
-        { id: 'ch-tllft-dim', charName: 'CHR_LFT_DIM', label: 'Panjang / Diameter / Lift', dataType: 'text', required: true, helpText: 'Mis. 3 Meter, 6 Meter, 16 mm IWRC' },
-        { id: 'ch-tllft-crt', charName: 'CHR_LFT_CERT', label: 'Sertifikasi & Safety Factor', dataType: 'select', options: ['SF 7:1 EN 1492-1', 'SF 6:1 EN 13414', 'Crosby Grade 80/100', 'Sertifikat Uji Tarik / MIGAS'], required: true, helpText: 'Standar keselamatan dan uji sertifikat' },
-        { id: 'ch-tllft-brd', charName: 'CHR_LFT_BRAND', label: 'Brand', dataType: 'select', options: ['Vital', 'Elephant', 'Kito', 'Crosby', 'Toyo', 'Enerpac'], required: true, helpText: 'Merek peralatan lifting' },
-      ],
-    },
-    {
-      matkl: 'SF-APD',
-      label: 'Safety - Personal Protective (APD)',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Helm proyek, sepatu safety, kacamata, sarung tangan, wearpack FR.',
-      characteristics: [
-        { id: 'ch-sfapd-jns', charName: 'CHR_APD_JENIS', label: 'Jenis APD', dataType: 'select', options: ['Helm Proyek', 'Sepatu Safety', 'Kacamata Safety', 'Sarung Tangan Kerja', 'Wearpack Flame Retardant (FR)', 'Ear Muff / Respirator'], required: true, helpText: 'Kategori alat pelindung diri' },
-        { id: 'ch-sfapd-std', charName: 'CHR_APD_STD', label: 'Standar Sertifikasi', dataType: 'select', options: ['ANSI Z89.1', 'EN 397', 'SNI / ASTM F2413', 'NFPA 2112 (FR)', 'ANSI Z87.1', 'EN 388'], required: true, helpText: 'Standar kepatuhan K3' },
-        { id: 'ch-sfapd-sz', charName: 'CHR_APD_SIZE', label: 'Ukuran / Warna', dataType: 'text', required: true, helpText: 'Mis. Size 42, Size L, Putih, Biru Dongker' },
-        { id: 'ch-sfapd-brd', charName: 'CHR_APD_BRAND', label: 'Brand', dataType: 'select', options: ['3M', 'MSA', 'Honeywell', 'Uvex', 'Red Wing', 'Cheetah', 'Nomex / Dupont'], required: true, helpText: 'Merek APD' },
-      ],
-    },
-    {
-      matkl: 'SF-HGT',
-      label: 'Safety - Working at Height & Fall',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Full body harness, lanyard, lifeline, fall arrester.',
-      characteristics: [
-        { id: 'ch-sfhgt-jns', charName: 'CHR_HGT_JENIS', label: 'Jenis Peralatan', dataType: 'select', options: ['Full Body Harness', 'Double Lanyard Absorber', 'Self-Retracting Lifeline (SRL)', 'Anchor Strap / Fall Arrester'], required: true, helpText: 'Jenis alat kerja ketinggian' },
-        { id: 'ch-sfhgt-drg', charName: 'CHR_HGT_DRING', label: 'Konfigurasi D-Ring / Panjang', dataType: 'select', options: ['1 Dorsal D-Ring', '2 D-Ring (Dorsal+Sternal)', '5 D-Ring Full Rescue', '1.8m Double Webbing', '10m SRL'], required: true, helpText: 'Jumlah D-Ring atau panjang tali' },
-        { id: 'ch-sfhgt-std', charName: 'CHR_HGT_STD', label: 'Standar Uji', dataType: 'select', options: ['EN 361 / EN 355', 'ANSI Z359.11', 'EN 360'], required: true, helpText: 'Standar sertifikasi kerja ketinggian' },
-        { id: 'ch-sfhgt-ld', charName: 'CHR_HGT_LOAD', label: 'Beban Maksimum', dataType: 'number', unit: 'kg', required: true, helpText: 'Kapasitas beban pengguna + alat (mis. 140 kg)' },
-        { id: 'ch-sfhgt-brd', charName: 'CHR_HGT_BRAND', label: 'Brand', dataType: 'select', options: ['3M DBI-SALA', 'MSA', 'Honeywell Miller', 'Petzl', 'Karam'], required: true, helpText: 'Merek peralatan fall arrest' },
-      ],
-    },
-    {
-      matkl: 'SF-FIR',
-      label: 'Fire Protection & Racun Api (APAR)',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Tabung APAR (Powder, CO2, Foam), fire blanket, hydrant hose, nozzle.',
-      characteristics: [
-        { id: 'ch-sffir-jns', charName: 'CHR_FIR_JENIS', label: 'Jenis Peralatan', dataType: 'select', options: ['Tabung APAR Portable', 'APAR Trolley / Wheeled', 'Fire Blanket', 'Hydrant Hose', 'Fire Nozzle'], required: true, helpText: 'Kategori proteksi kebakaran' },
-        { id: 'ch-sffir-med', charName: 'CHR_FIR_MEDIA', label: 'Media Pemadam / Bahan', dataType: 'select', options: ['Dry Chemical Powder ABC', 'CO2', 'Foam AFFF', 'Clean Agent HCFC', 'Fiberglass / Canvas'], required: true, helpText: 'Jenis isi media pemadam atau bahan selang' },
-        { id: 'ch-sffir-kap', charName: 'CHR_FIR_KAP', label: 'Kapasitas / Dimensi', dataType: 'text', required: true, helpText: 'Mis. 6 KG, 9 KG, 25 KG, 2.5" x 30m, 1.8 x 1.8m' },
-        { id: 'ch-sffir-cls', charName: 'CHR_FIR_CLASS', label: 'Kelas Kebakaran / Rating', dataType: 'select', options: ['Class ABC', 'Class BC', 'EN 1869', 'NFPA / Damkar'], required: true, helpText: 'Klasifikasi kelas api atau sertifikasi' },
-        { id: 'ch-sffir-brd', charName: 'CHR_FIR_BRAND', label: 'Brand', dataType: 'select', options: ['Servvo', 'Chubb', 'Gunnebo', 'Yamato', 'Viking'], required: true, helpText: 'Merek peralatan pemadam' },
-      ],
-    },
-    {
-      matkl: 'SF-SGN',
-      label: 'Safety Signs, Lockout & Spill Kit',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'LOTO (Lockout Tagout), rambu K3 migas, oil spill kit, eyewash station.',
-      characteristics: [
-        { id: 'ch-sfsgn-jns', charName: 'CHR_SGN_JENIS', label: 'Jenis Item', dataType: 'select', options: ['LOTO (Lockout Tagout) Kit', 'Rambu K3 Migas', 'Oil Spill Kit', 'Emergency Eyewash & Shower'], required: true, helpText: 'Kategori perlengkapan K3 area kerja' },
-        { id: 'ch-sfsgn-kap', charName: 'CHR_SGN_KAP', label: 'Kapasitas / Isi / Ukuran', dataType: 'text', required: true, helpText: 'Mis. 120L Wheeled Bin, 40 x 60 cm ACP, 15-Menit Portable' },
-        { id: 'ch-sfsgn-std', charName: 'CHR_SGN_STD', label: 'Standar Kepatuhan', dataType: 'select', options: ['OSHA 1910.147', 'ANSI Z358.1', 'IMO / Oil & Gas', 'SNI K3'], required: true, helpText: 'Referensi standar K3 / lingkungan' },
-        { id: 'ch-sfsgn-brd', charName: 'CHR_SGN_BRAND', label: 'Brand', dataType: 'select', options: ['Brady', 'Master Lock', 'New Pig', 'Speakman', 'Haws', 'Custom K3'], required: true, helpText: 'Merek / pembuat' },
-      ],
-    },
-    {
-      matkl: 'IN-GAS',
-      label: 'Gas Detectors & Monitors',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Portable multi-gas detector (H2S, LEL, CO, O2), fixed gas detector, sensor gas.',
-      characteristics: [
-        { id: 'ch-ingas-tip', charName: 'CHR_GAS_TIPE', label: 'Tipe Detektor / Item', dataType: 'select', options: ['Portable Multi-Gas Detector', 'Portable Single-Gas Detector', 'Fixed Gas Detector', 'Replacement Gas Sensor', 'Calibration Gas Cylinder'], required: true, helpText: 'Tipe perangkat deteksi gas' },
-        { id: 'ch-ingas-sns', charName: 'CHR_GAS_SENSOR', label: 'Gas Terdeteksi', dataType: 'text', required: true, helpText: 'Mis. H2S, CO, O2, LEL atau H2S Only' },
-        { id: 'ch-ingas-atx', charName: 'CHR_GAS_ATEX', label: 'Sertifikasi Ex-Proof', dataType: 'select', options: ['ATEX Zone 0 / Ex ia', 'IECEx', 'CSA / UL Class I Div 1', 'Non-Ex'], required: true, helpText: 'Sertifikasi keamanan area berbahaya' },
-        { id: 'ch-ingas-ip', charName: 'CHR_GAS_IP', label: 'Ingress Protection / Baterai', dataType: 'text', required: false, helpText: 'Mis. IP68 / 18 Jam, 4-20mA Hart' },
-        { id: 'ch-ingas-brd', charName: 'CHR_GAS_BRAND', label: 'Brand', dataType: 'select', options: ['MSA', 'BW Honeywell', 'Dräger', 'Industrial Scientific', 'Riken Keiki'], required: true, helpText: 'Merek instrumen gas' },
-      ],
-    },
-    {
-      matkl: 'IN-MSR',
-      label: 'Measuring & Testing Instruments',
-      defaultMtart: 'HAWA',
-      defaultBklas: toolsSafetyBklas,
-      description: 'Caliper, micrometer, pressure gauge, multimeter, thickness gauge.',
-      characteristics: [
-        { id: 'ch-inmsr-jns', charName: 'CHR_MSR_JENIS', label: 'Jenis Alat Ukur', dataType: 'select', options: ['Digital Caliper', 'Micrometer', 'Pressure Gauge', 'Digital Multimeter / Clamp Meter', 'Ultrasonic Thickness Gauge', 'Infrared Thermometer'], required: true, helpText: 'Kategori instrumen ukur dan uji' },
-        { id: 'ch-inmsr-rng', charName: 'CHR_MSR_RANGE', label: 'Rentang Ukur', dataType: 'text', required: true, helpText: 'Mis. 0-300 mm, 0-400 bar, 0-1000V AC/DC, 1.2-225 mm' },
-        { id: 'ch-inmsr-acc', charName: 'CHR_MSR_ACC', label: 'Resolusi / Akurasi', dataType: 'text', required: true, helpText: 'Mis. 0.01 mm, ±0.5% FS, True RMS CAT IV' },
-        { id: 'ch-inmsr-cal', charName: 'CHR_MSR_CAL', label: 'Sertifikat Kalibrasi', dataType: 'select', options: ['KAN Traceable', 'Factory Cert ISO', 'Tanpa Sertifikat'], required: true, helpText: 'Status kelengkapan sertifikat kalibrasi' },
-        { id: 'ch-inmsr-brd', charName: 'CHR_MSR_BRAND', label: 'Brand', dataType: 'select', options: ['Mitutoyo', 'Fluke', 'WIKA', 'Ashcroft', 'Olympus', 'Hioki'], required: true, helpText: 'Merek alat ukur' },
-      ],
-    },
-
-    // 5. SERVICES (3200 - OMQW)
-    {
-      matkl: 'SV-CAL',
-      label: 'Calibration & Certification Services',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3200',
-      description: 'Jasa kalibrasi gas detector, kalibrasi pressure gauge, kalibrasi torque wrench.',
-      characteristics: [
-        { id: 'ch-svcal-alt', charName: 'CHR_SVC_ALAT', label: 'Objek Kalibrasi', dataType: 'select', options: ['Gas Detector (Single/Multi)', 'Pressure Gauge / Transmitter', 'Torque Wrench', 'Multimeter / Clamp Meter', 'Safety Valve / PSV'], required: true, helpText: 'Alat yang dikalibrasi oleh PT. MT / PT. PA' },
-        { id: 'ch-svcal-std', charName: 'CHR_SVC_STD', label: 'Standar Acuan', dataType: 'select', options: ['ISO/IEC 17025 (KAN)', 'Traceable NIST', 'OEM Standard'], required: true, helpText: 'Acuan standar sertifikat kalibrasi' },
-        { id: 'ch-svcal-lok', charName: 'CHR_SVC_LOKASI', label: 'Lokasi Pengerjaan', dataType: 'select', options: ['In-Lab (PT. MT / PT. PA)', 'On-Site Customer / Offshore'], required: true, helpText: 'Tempat pelaksanaan kalibrasi' },
-        { id: 'ch-svcal-sla', charName: 'CHR_SVC_SLA', label: 'Masa Berlaku Sertifikat', dataType: 'select', options: ['6 Bulan', '12 Bulan', '24 Bulan'], required: true, helpText: 'Interval berlaku sertifikat kalibrasi' },
-      ],
-    },
-    {
-      matkl: 'SV-FIR',
-      label: 'Fire Extinguisher Refill & Service',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3200',
-      description: 'Jasa isi ulang (refill) APAR, hydrotest tabung pemadam.',
-      characteristics: [
-        { id: 'ch-svfir-jns', charName: 'CHR_SVF_JENIS', label: 'Cakupan Jasa', dataType: 'select', options: ['Refill APAR Powder ABC', 'Refill APAR CO2', 'Refill APAR Foam AFFF', 'Hydrotest Tabung APAR', 'Inspeksi Tahunan Hydrant'], required: true, helpText: 'Jenis layanan pemeliharaan alat pemadam' },
-        { id: 'ch-svfir-kap', charName: 'CHR_SVF_KAP', label: 'Kapasitas Tabung', dataType: 'text', required: true, helpText: 'Mis. 3 KG, 6 KG, 9 KG, 25 KG, 50 KG' },
-        { id: 'ch-svfir-hsl', charName: 'CHR_SVF_HASIL', label: 'Deliverable / Tagging', dataType: 'select', options: ['Sertifikat Hydrotest + Barcode Tag', 'Berita Acara Refill + Segel Baru'], required: true, helpText: 'Dokumen serah terima hasil service' },
-        { id: 'ch-svfir-lok', charName: 'CHR_SVF_LOKASI', label: 'Lokasi Layanan', dataType: 'select', options: ['Workshop Service', 'On-Site Mobile Unit'], required: true, helpText: 'Lokasi pengerjaan refill/hydrotest' },
-      ],
-    },
-    {
-      matkl: 'SV-MNT',
-      label: 'Equipment Repair & Maintenance Service',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3200',
-      description: 'Jasa perbaikan alat berat/kendaraan, overhaul, machining, fabrikasi.',
-      characteristics: [
-        { id: 'ch-svmnt-scp', charName: 'CHR_SVM_SCOPE', label: 'Lingkup Jasa', dataType: 'select', options: ['Overhaul Engine / Transmisi', 'Perbaikan Sistem Hidrolik', 'PM Service Berkala (250-2000 HM)', 'Machining / Line Boring', 'Fabrikasi & Welding'], required: true, helpText: 'Jenis pekerjaan perbaikan / workshop' },
-        { id: 'ch-svmnt-obj', charName: 'CHR_SVM_OBJEK', label: 'Kategori Alat / Kendaraan', dataType: 'select', options: ['Excavator / Bulldozer', 'Dump Truck / Trailer', 'Light Vehicle 4x4', 'Crane / Genset', 'Komponen Lepas'], required: true, helpText: 'Objek unit yang dikerjakan' },
-        { id: 'ch-svmnt-lok', charName: 'CHR_SVM_LOKASI', label: 'Lokasi Eksekusi', dataType: 'select', options: ['Workshop PT. HRI', 'Field / Site Project', 'Offshore Rig'], required: true, helpText: 'Lokasi pengerjaan service' },
-        { id: 'ch-svmnt-war', charName: 'CHR_SVM_WARRANTY', label: 'Garansi Pengerjaan', dataType: 'select', options: ['30 Hari / 250 HM', '90 Hari / 500 HM', '180 Hari / 1000 HM', 'Time & Material'], required: true, helpText: 'Jaminan garansi jasa workshop' },
-      ],
-    },
-    {
-      matkl: 'SV-RNT',
-      label: 'Heavy Equipment & Vehicle Rental',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3200',
-      description: 'Jasa sewa alat berat, sewa kendaraan operasional proyek.',
-      characteristics: [
-        { id: 'ch-svrnt-unt', charName: 'CHR_SVR_UNIT', label: 'Unit yang Disewa', dataType: 'select', options: ['Excavator', 'Bulldozer / Grader', 'Crane / Forklift', 'Dump Truck / Trailer', 'Light Vehicle 4x4', 'Genset / Compressor'], required: true, helpText: 'Kategori armada yang disewakan' },
-        { id: 'ch-svrnt-kap', charName: 'CHR_SVR_KAP', label: 'Kelas / Kapasitas Unit', dataType: 'text', required: true, helpText: 'Mis. 20 Ton, 4x4 Double Cabin, 50 Ton, 250 kVA' },
-        { id: 'ch-svrnt-bss', charName: 'CHR_SVR_BASIS', label: 'Basis Tarif Sewa', dataType: 'select', options: ['Bulanan (Monthly)', 'Harian (Daily)', 'Per Jam (HM / Hour)', 'All-In Operator + BBM', 'Bare Rental (Unit Only)'], required: true, helpText: 'Skema kontrak dan penagihan sewa' },
-        { id: 'ch-svrnt-lok', charName: 'CHR_SVR_AREA', label: 'Area Operasi', dataType: 'select', options: ['Onshore Riau / PHR', 'Kalimantan / Balikpapan', 'Batam / Offshore', 'Jabodetabek / Jawa'], required: true, helpText: 'Lokasi proyek operasional unit sewa' },
-      ],
-    },
-
-    // 6. GENERAL AFFAIRS, IT & ELECTRONICS (3030)
-    {
-      matkl: 'GA-ATK',
-      label: 'Office Stationery & ATK',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'Kertas HVS, pulpen, tinta/toner printer, map, perlengkapan arsip.',
-      characteristics: [
-        { id: 'ch-gaatk-jns', charName: 'CHR_ATK_JENIS', label: 'Jenis ATK', dataType: 'select', options: ['Kertas HVS / Kertas Cetak', 'Pulpen / Spidol / Alat Tulis', 'Tinta / Toner Printer', 'Map / Ordner / Perlengkapan Arsip', 'Lakban / Perekat / Klip'], required: true, helpText: 'Kategori alat tulis kantor dan arsip' },
-        { id: 'ch-gaatk-spc', charName: 'CHR_ATK_SPEC', label: 'Ukuran / Tipe / Kode', dataType: 'text', required: true, helpText: 'Mis. A4 80 gsm, F4 75 gsm, HP 85A Black, Odner Folio 7cm' },
-        { id: 'ch-gaatk-wrn', charName: 'CHR_ATK_WARNA', label: 'Warna / Varian', dataType: 'select', options: ['Hitam', 'Biru', 'Merah', 'Putih', 'Cyan / Magenta / Yellow', 'Assorted'], required: true, helpText: 'Warna tinta, kertas, atau map' },
-        { id: 'ch-gaatk-pck', charName: 'CHR_ATK_PACK', label: 'Kemasan / Isi', dataType: 'text', required: true, helpText: 'Mis. 1 Rim (500 Lbr), Box 12 Pcs, 1 Cartridge, 1 Buah' },
-        { id: 'ch-gaatk-brd', charName: 'CHR_ATK_BRAND', label: 'Brand', dataType: 'select', options: ['PaperOne', 'Sinar Dunia (SiDU)', 'Bantex', 'HP', 'Epson', 'Canon', 'Kenko', 'Snowman'], required: true, helpText: 'Merek ATK / tinta printer' },
-      ],
-    },
-    {
-      matkl: 'GA-HSH',
-      label: 'Household & Pantry Supplies',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'Sabun, tisu, alat kebersihan camp, galon air, perlengkapan dapur.',
-      characteristics: [
-        { id: 'ch-gahsh-jns', charName: 'CHR_HSH_JENIS', label: 'Kategori Kebutuhan', dataType: 'select', options: ['Sabun / Deterjen / Disinfektan', 'Tisu (Wajah / Toilet / Hand Towel)', 'Alat Kebersihan Camp / Kantor', 'Air Minum Galon / Minuman Pantry', 'Perlengkapan Dapur & Makan'], required: true, helpText: 'Kelompok perlengkapan rumah tangga & pantry' },
-        { id: 'ch-gahsh-spc', charName: 'CHR_HSH_SPEC', label: 'Varian / Ukuran / Kapasitas', dataType: 'text', required: true, helpText: 'Mis. Galon 19L, 2-Ply 250 Sheets, Jerigen 5L, Sapu Microfiber' },
-        { id: 'ch-gahsh-pck', charName: 'CHR_HSH_PACK', label: 'Kemasan', dataType: 'select', options: ['Galon', 'Jerigen', 'Pack / Roll', 'Botol / Pouch', 'Box / Karton', 'Set / Unit'], required: true, helpText: 'Format kemasan produk' },
-        { id: 'ch-gahsh-brd', charName: 'CHR_HSH_BRAND', label: 'Brand', dataType: 'select', options: ['Aqua', 'Le Minerale', 'Paseo', 'Tessa', 'Sunlight', 'SOS', 'Wipol', '3M Scotch-Brite'], required: true, helpText: 'Merek produk' },
-      ],
-    },
-    {
-      matkl: 'GA-FRN',
-      label: 'Office & Camp Furniture',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'Meja, kursi kantor, lemari arsip, kasur/ranjang camp, loker.',
-      characteristics: [
-        { id: 'ch-gafrn-jns', charName: 'CHR_FRN_JENIS', label: 'Jenis Furniture', dataType: 'select', options: ['Meja Kerja / Rapat', 'Kursi Kantor / Putar', 'Lemari Arsip / Filing Cabinet', 'Kasur / Ranjang Camp', 'Loker Karyawan'], required: true, helpText: 'Kategori perabotan kantor atau mess/camp' },
-        { id: 'ch-gafrn-mat', charName: 'CHR_FRN_MAT', label: 'Material Utama', dataType: 'select', options: ['Besi / Steel Powder Coated', 'Kayu / Particle Board / HPL', 'Busa / Springbed + Rangka Besi', 'Mesh + Nylon Base'], required: true, helpText: 'Bahan konstruksi utama' },
-        { id: 'ch-gafrn-dim', charName: 'CHR_FRN_DIM', label: 'Dimensi / Kapasitas', dataType: 'text', required: true, helpText: 'Mis. 120 x 60 x 75 cm, 4 Laci, 90 x 200 cm Single, 12 Pintu' },
-        { id: 'ch-gafrn-wrn', charName: 'CHR_FRN_WARNA', label: 'Warna', dataType: 'select', options: ['Abu-abu', 'Hitam', 'Cokelat Kayu', 'Putih', 'Biru'], required: false, helpText: 'Warna finishing furniture' },
-        { id: 'ch-gafrn-brd', charName: 'CHR_FRN_BRAND', label: 'Brand', dataType: 'select', options: ['Brother', 'Lion', 'Chitose', 'Informa', 'Modera', 'Chairman', 'Olympic'], required: true, helpText: 'Merek furniture' },
-      ],
-    },
-    {
-      matkl: 'IT-HRD',
-      label: 'Computer, Laptop & IT Hardware',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'PC, laptop, monitor, printer, scanner, server, router/switch, UPS.',
-      characteristics: [
-        { id: 'ch-ithrd-jns', charName: 'CHR_IT_JENIS', label: 'Jenis Perangkat', dataType: 'select', options: ['Laptop / Notebook', 'PC Desktop / Workstation', 'Monitor LED / IPS', 'Printer / Scanner / MFP', 'Server / NAS', 'Router / Switch / Access Point', 'UPS (Backup Power)'], required: true, helpText: 'Kategori perangkat keras IT' },
-        { id: 'ch-ithrd-spc', charName: 'CHR_IT_SPEC', label: 'Spesifikasi Utama', dataType: 'text', required: true, helpText: 'Mis. Core i7 / 16GB / 512GB SSD, 24" FHD IPS, 24-Port PoE, 2000VA' },
-        { id: 'ch-ithrd-con', charName: 'CHR_IT_PORT', label: 'Konektivitas / Fitur', dataType: 'text', required: false, helpText: 'Mis. WiFi 6 + LAN + HDMI, Duplex + ADF, Rackmount 2U, Pure Sine Wave' },
-        { id: 'ch-ithrd-war', charName: 'CHR_IT_WAR', label: 'Garansi Resmi', dataType: 'select', options: ['1 Tahun', '2 Tahun', '3 Tahun On-Site'], required: true, helpText: 'Masa garansi pabrikan' },
-        { id: 'ch-ithrd-brd', charName: 'CHR_IT_BRAND', label: 'Brand', dataType: 'select', options: ['Lenovo', 'Dell', 'HP', 'ASUS', 'Epson', 'Canon', 'Cisco', 'MikroTik', 'APC'], required: true, helpText: 'Merek perangkat IT' },
-      ],
-    },
-    {
-      matkl: 'IT-ACC',
-      label: 'IT Accessories & Peripherals',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'Mouse, keyboard, kabel LAN/HDMI, flashdisk, hardisk eksternal.',
-      characteristics: [
-        { id: 'ch-itacc-jns', charName: 'CHR_ITA_JENIS', label: 'Jenis Aksesoris', dataType: 'select', options: ['Mouse', 'Keyboard / Combo', 'Kabel LAN (UTP / STP)', 'Kabel HDMI / DisplayPort / USB-C', 'Flashdisk', 'Hardisk / SSD Eksternal', 'Webcam / Headset / USB Hub'], required: true, helpText: 'Kategori periferal dan aksesoris IT' },
-        { id: 'ch-itacc-spc', charName: 'CHR_ITA_SPEC', label: 'Kapasitas / Panjang / Tipe', dataType: 'text', required: true, helpText: 'Mis. Wireless 2.4GHz, Cat6 305m Box, HDMI 2.1 - 3m, 64GB USB 3.2, 2TB HDD' },
-        { id: 'ch-itacc-int', charName: 'CHR_ITA_INT', label: 'Interface / Konektor', dataType: 'select', options: ['USB-A', 'USB-C', 'RJ45 Cat6', 'HDMI', 'Wireless / Bluetooth'], required: true, helpText: 'Jenis antarmuka koneksi' },
-        { id: 'ch-itacc-brd', charName: 'CHR_ITA_BRAND', label: 'Brand', dataType: 'select', options: ['Logitech', 'SanDisk', 'Seagate', 'WD', 'Belden', 'UGREEN', 'TP-Link', 'HP'], required: true, helpText: 'Merek periferal IT' },
-      ],
-    },
-    {
-      matkl: 'EL-APP',
-      label: 'Electronic & Home Appliances',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3030',
-      description: 'Unit AC (split/standing), mesin cuci (washing machine), dryer, water heater, kulkas, dispenser, kipas angin industri, vacuum cleaner, microwave.',
-      characteristics: [
-        { id: 'ch-elapp-jns', charName: 'CHR_EL_JENIS', label: 'Jenis Peralatan', dataType: 'select', options: ['AC Split Wall', 'AC Standing Floor', 'Mesin Cuci (Washing Machine)', 'Mesin Pengering (Dryer)', 'Water Heater', 'Kulkas / Freezer', 'Dispenser Galon', 'Kipas Angin Industri', 'Vacuum Cleaner', 'Microwave'], required: true, helpText: 'Kategori peralatan elektronik & camp/kantor' },
-        { id: 'ch-elapp-kap', charName: 'CHR_EL_KAP', label: 'Kapasitas / Ukuran', dataType: 'text', required: true, helpText: 'Mis. 1 PK, 2 PK, 5 PK, 10 KG, 220 Liter, 15 Liter, 26 Inch' },
-        { id: 'ch-elapp-day', charName: 'CHR_EL_DAYA', label: 'Daya Listrik', dataType: 'text', required: true, helpText: 'Mis. 750 Watt / 220V, 1.800 Watt / 220V, 3-Phase 380V' },
-        { id: 'ch-elapp-tip', charName: 'CHR_EL_TIPE', label: 'Teknologi / Varian', dataType: 'select', options: ['Inverter', 'Standard Low Watt', 'Front Loading', 'Top Loading', 'Hot-Normal-Cold', 'Wet & Dry'], required: true, helpText: 'Fitur atau tipe pengoperasian unit' },
-        { id: 'ch-elapp-brd', charName: 'CHR_EL_BRAND', label: 'Brand', dataType: 'select', options: ['Daikin', 'Panasonic', 'LG', 'Samsung', 'Sharp', 'Electrolux', 'Modena', 'Krisbow', 'Miyako'], required: true, helpText: 'Merek elektronik' },
-      ],
-    },
-  ];
+  return structuredClone(MATERIAL_GROUP_TEMPLATES);
 }
 
 export function createTemplateMaterialGroups(
   coreType: TenantCoreBusinessType
 ): MaterialGroupDefinition[] {
-  const standardGroups = createStandardizedMaterialGroups(coreType);
-  if (coreType === 'oil_gas_contractor') {
-    return [
-      ...standardGroups,
-      {
-        matkl: 'OCTG-PIPE',
-        label: 'Seamless Line Pipe & OCTG',
-        defaultMtart: 'HAWA',
-        defaultBklas: '3100',
-        description: 'Pipa saluran migas seamless, casing, dan tubing berstandar API 5L / 5CT.',
-        characteristics: [
-          { id: 'ch-og-od', charName: 'CHR_PIPE_OD', label: 'Nominal Pipe Size (OD)', dataType: 'select', options: ['4"', '6"', '8"', '10"', '12"', '16"'], required: true, helpText: 'Diameter nominal pipa dalam inci' },
-          { id: 'ch-og-sch', charName: 'CHR_PIPE_SCH', label: 'Wall Schedule', dataType: 'select', options: ['Sch.40', 'Sch.80', 'Sch.160', 'STD', 'XS', 'XXS'], required: true, helpText: 'Ketebalan dinding pipa sesuai ASME B36.10M' },
-          { id: 'ch-og-grd', charName: 'CHR_STEEL_GRADE', label: 'Material Steel Grade', dataType: 'select', options: ['API 5L Gr.B', 'API 5L X52 PSL2', 'API 5L X65 PSL2', 'ASTM A312 TP316L'], required: true, helpText: 'Grade baja pipa untuk tekanan & sour service' },
-          { id: 'ch-og-end', charName: 'CHR_END_CONN', label: 'End Connection', dataType: 'select', options: ['Beveled End (BE)', 'Plain End (PE)', 'Threaded & Coupled (T&C)'], required: false, helpText: 'Bentuk ujung pipa untuk pengelasan atau ulir' },
-        ],
-      },
-      {
-        matkl: 'VALVE-HP',
-        label: 'High-Pressure Valve & Fitting',
-        defaultMtart: 'HAWA',
-        description: 'Gate, Ball, Globe, Check Valve serta flange bertekanan tinggi untuk fasilitas EPC.',
-        characteristics: [
-          { id: 'ch-og-vsz', charName: 'CHR_VALVE_SIZE', label: 'Nominal Valve Size', dataType: 'select', options: ['2"', '3"', '4"', '6"', '8"', '12"'], required: true, helpText: 'Ukuran nominal bore valve' },
-          { id: 'ch-og-vcls', charName: 'CHR_VALVE_CLASS', label: 'ASME Pressure Class', dataType: 'select', options: ['Class 150', 'Class 300', 'Class 600', 'Class 900', 'Class 1500'], required: true, helpText: 'Rating tekanan flange ASME B16.5' },
-          { id: 'ch-og-vbod', charName: 'CHR_BODY_MAT', label: 'Body Material', dataType: 'select', options: ['ASTM A216 WCB', 'ASTM A105N', 'ASTM A351 CF8M', 'Duplex F51'], required: true, helpText: 'Material utama bodi valve' },
-          { id: 'ch-og-vtrm', charName: 'CHR_TRIM_SPEC', label: 'API Trim Specification', dataType: 'text', required: false, helpText: 'Mis. Trim 8 (13Cr / Stellite 6)' },
-        ],
-      },
-      {
-        matkl: 'DRILL-MUD',
-        label: 'Drilling Mud & Chemical Additive',
-        defaultMtart: 'HAWA',
-        description: 'Material lumpur pengeboran (Barite, Bentonite) dan aditif kimia sumur.',
-        characteristics: [
-          { id: 'ch-og-sg', charName: 'CHR_SG_MIN', label: 'Specific Gravity (Min)', dataType: 'number', unit: 'g/cm³', required: true, helpText: 'Berat jenis minimal sesuai standar API 13A' },
-          { id: 'ch-og-pur', charName: 'CHR_PURITY_PCT', label: 'Kadar Kemurnian / Aktif', dataType: 'number', unit: '%', required: true, helpText: 'Persentase kemurnian zat aktif' },
-          { id: 'ch-og-pck', charName: 'CHR_PACK_TYPE', label: 'Jenis Kemasan', dataType: 'select', options: ['Sak 25 KG', 'Big Bag 1.000 KG', 'Drum 200 L', 'IBC Tank 1.000 L'], required: true, helpText: 'Format kemasan pengiriman ke rig' },
-        ],
-      },
-    ];
-  }
-
-  if (coreType === 'heavy_workshop') {
-    return [
-      ...standardGroups,
-      {
-        matkl: 'HYD-PUMP',
-        label: 'Hydraulic Pump, Motor & Cylinder',
-        defaultMtart: 'HAWA',
-        description: 'Komponen utama sistem hidrolik alat berat untuk overhaul maupun rekondisi.',
-        characteristics: [
-          { id: 'ch-ws-disp', charName: 'CHR_DISP_CC', label: 'Displacement', dataType: 'number', unit: 'cc/rev', required: true, helpText: 'Kapasitas volume per putaran pompa hidrolik' },
-          { id: 'ch-ws-prs', charName: 'CHR_MAX_PRESS', label: 'Max Operating Pressure', dataType: 'number', unit: 'bar', required: true, helpText: 'Tekanan kerja maksimum sistem hidrolik' },
-          { id: 'ch-ws-rot', charName: 'CHR_ROTATION', label: 'Arah Putaran Shaft', dataType: 'select', options: ['Clockwise (CW)', 'Counter-Clockwise (CCW)', 'Bi-Directional'], required: true, helpText: 'Arah rotasi input shaft' },
-          { id: 'ch-ws-cnd', charName: 'CHR_PART_GRADE', label: 'Klasifikasi Komponen', dataType: 'select', options: ['Genuine OEM', 'OEM Equivalent', 'Reconditioned / Core'], required: false, helpText: 'Grade komponen workshop' },
-        ],
-      },
-      {
-        matkl: 'FLT-KIT',
-        label: 'PM Service Filter & Seal Kit',
-        defaultMtart: 'HAWA',
-        description: 'Paket filter bahan bakar, oli, udara, dan seal preventive maintenance.',
-        characteristics: [
-          { id: 'ch-ws-mic', charName: 'CHR_MICRON_RATING', label: 'Filtration Rating', dataType: 'number', unit: 'µm', required: true, helpText: 'Ukuran partikel penyaringan dalam mikron' },
-          { id: 'ch-ws-int', charName: 'CHR_PM_INTERVAL', label: 'Interval Preventive Maintenance', dataType: 'select', options: ['250 HM', '500 HM', '1000 HM', '2000 HM'], required: true, helpText: 'Jadwal PM alat berat yang memakai kit ini' },
-          { id: 'ch-ws-cnt', charName: 'CHR_KIT_CONTENTS', label: 'Rincian Isi Kit', dataType: 'text', required: true, helpText: 'Daftar filter/seal yang termasuk dalam satu set' },
-        ],
-      },
-      {
-        matkl: 'LUBE-HD',
-        label: 'Heavy Duty Lubricants & Coolant',
-        defaultMtart: 'HAWA',
-        description: 'Pelumas mesin diesel berat, oli hidrolik, transmisi, dan grease.',
-        characteristics: [
-          { id: 'ch-ws-vis', charName: 'CHR_SAE_VISC', label: 'Viskositas SAE / ISO', dataType: 'select', options: ['SAE 15W-40', 'SAE 10W-30', 'SAE 85W-140', 'ISO VG 46', 'ISO VG 68'], required: true, helpText: 'Standar kekentalan pelumas' },
-          { id: 'ch-ws-api', charName: 'CHR_API_CLASS', label: 'API / JASO Performance', dataType: 'select', options: ['API CI-4', 'API CK-4', 'API GL-5', 'Caterpillar TO-4', 'DIN 51524 HLP'], required: true, helpText: 'Standar performa pelumas OEM' },
-          { id: 'ch-ws-vol', charName: 'CHR_PACK_VOL', label: 'Volume Kemasan', dataType: 'number', unit: 'L', required: true, helpText: 'Isi bersih per drum / pail' },
-        ],
-      },
-    ];
-  }
-
-  if (coreType === 'unit_spareparts') {
-    return [
-      ...standardGroups,
-      {
-        matkl: 'UNIT-WL',
-        label: 'Heavy Unit & Commercial Vehicle',
-        defaultMtart: 'HAWA',
-        description: 'Unit alat berat & kendaraan niaga lengkap siap jual (Wheel Loader, Excavator, Dump Truck).',
-        characteristics: [
-          { id: 'ch-us-hp', charName: 'CHR_ENGINE_POWER', label: 'Engine Net Power', dataType: 'number', unit: 'HP', required: true, helpText: 'Daya mesin terukur dalam Horsepower' },
-          { id: 'ch-us-wt', charName: 'CHR_OP_WEIGHT', label: 'Operating Weight', dataType: 'number', unit: 'kg', required: true, helpText: 'Bobot operasi standar unit' },
-          { id: 'ch-us-bkt', charName: 'CHR_BUCKET_CAP', label: 'Bucket / Payload Capacity', dataType: 'number', unit: 'm³', required: true, helpText: 'Kapasitas bucket atau bak standar' },
-          { id: 'ch-us-drv', charName: 'CHR_DRIVE_TYPE', label: 'Konfigurasi Penggerak', dataType: 'select', options: ['4WD Articulated', 'Crawler Track', '6x4 Heavy Duty', '8x4 Mining'], required: true, helpText: 'Tipe sistem penggerak unit' },
-        ],
-      },
-      {
-        matkl: 'PART-ELEC',
-        label: 'Electrical & Sensor Spare Parts',
-        defaultMtart: 'HAWA',
-        description: 'Alternator, starter motor, ECU, solenoid, dan sensor kelistrikan unit.',
-        characteristics: [
-          { id: 'ch-us-vlt', charName: 'CHR_VOLTAGE', label: 'Nominal Voltage', dataType: 'select', options: ['12V DC', '24V DC'], required: true, helpText: 'Tegangan sistem kelistrikan unit' },
-          { id: 'ch-us-amp', charName: 'CHR_AMPERAGE', label: 'Output / Arus Nominal', dataType: 'number', unit: 'A', required: true, helpText: 'Kapasitas arus listrik dalam Ampere' },
-          { id: 'ch-us-plg', charName: 'CHR_CONNECTOR_TYPE', label: 'Tipe Pulley / Konektor', dataType: 'text', required: true, helpText: 'Spesifikasi konektor pin atau groove pulley' },
-        ],
-      },
-      {
-        matkl: 'PART-UC',
-        label: 'Undercarriage & Ground Engaging',
-        defaultMtart: 'HAWA',
-        description: 'Track link, track shoe, roller, idler, sprocket, dan bucket teeth.',
-        characteristics: [
-          { id: 'ch-us-ptc', charName: 'CHR_TRACK_PITCH', label: 'Link Pitch', dataType: 'number', unit: 'mm', required: true, helpText: 'Jarak antar pin track link' },
-          { id: 'ch-us-lnk', charName: 'CHR_LINK_COUNT', label: 'Jumlah Link', dataType: 'number', unit: 'Links', required: true, helpText: 'Total mata rantai per sisi track' },
-          { id: 'ch-us-shw', charName: 'CHR_SHOE_WIDTH', label: 'Lebar Track Shoe', dataType: 'number', unit: 'mm', required: true, helpText: 'Lebar pelat shoe track' },
-        ],
-      },
-    ];
-  }
-
-  if (coreType === 'tools_ppe') {
-    return [
-      ...standardGroups,
-      {
-        matkl: 'INST-GAS',
-        label: 'Gas Detector & Calibration Instrument',
-        defaultMtart: 'HAWA',
-        description: 'Detektor gas portabel maupun fixed (H2S, CO, O2, LEL, VOC) bersertifikat ATEX/IECEx.',
-        characteristics: [
-          { id: 'ch-tl-gas', charName: 'CHR_SENSOR_GASES', label: 'Target Gas Sensor', dataType: 'text', required: true, helpText: 'Daftar gas yang dideteksi (mis. H2S, CO, O2, LEL)' },
-          { id: 'ch-tl-atx', charName: 'CHR_ATEX_CERT', label: 'Klasifikasi Area Berbahaya', dataType: 'select', options: ['ATEX Zone 0 / Ex ia', 'ATEX Zone 1 / Ex ib', 'IECEx', 'Non-Ex Safe Area'], required: true, helpText: 'Sertifikasi keselamatan area gas mudah terbakar' },
-          { id: 'ch-tl-bat', charName: 'CHR_BATTERY_LIFE', label: 'Daya Tahan Baterai', dataType: 'number', unit: 'Jam', required: true, helpText: 'Durasi operasi kontinu sekali pengisian' },
-        ],
-      },
-      {
-        matkl: 'TOOL-HAND',
-        label: 'Hand Tools & Kunci-kunci Industri',
-        defaultMtart: 'HAWA',
-        description: 'Kunci pas ring, kunci sok, kunci L, obeng insulated, dan tool set bengkel.',
-        characteristics: [
-          { id: 'ch-tl-rng', charName: 'CHR_SIZE_RANGE', label: 'Rentang Ukuran Kunci', dataType: 'text', required: true, helpText: 'Mis. 8–32 mm atau 3/8"–1-1/4"' },
-          { id: 'ch-tl-pcs', charName: 'CHR_PCS_COUNT', label: 'Jumlah Isi / Pieces', dataType: 'number', unit: 'Pcs', required: true, helpText: 'Total item di dalam set atau satuan' },
-          { id: 'ch-tl-aly', charName: 'CHR_TOOL_ALLOY', label: 'Material Baja Perkakas', dataType: 'select', options: ['Chrome Vanadium (Cr-V)', 'Chrome Molybdenum (Cr-Mo)', 'Non-Sparking Cu-Be', 'VDE Insulated 1000V'], required: true, helpText: 'Jenis baja / standar isolasi perkakas' },
-        ],
-      },
-      {
-        matkl: 'TOOL-TORQ',
-        label: 'Torque Wrench & Precision Tools',
-        defaultMtart: 'HAWA',
-        description: 'Kunci momen (click, dial, digital), torque multiplier, dan alat ukur presisi.',
-        characteristics: [
-          { id: 'ch-tl-drv', charName: 'CHR_DRIVE_SIZE', label: 'Square Drive Size', dataType: 'select', options: ['1/4"', '3/8"', '1/2"', '3/4"', '1"'], required: true, helpText: 'Ukuran kepala square drive' },
-          { id: 'ch-tl-trq', charName: 'CHR_TORQUE_RANGE', label: 'Rentang Torsi Kerja', dataType: 'text', required: true, helpText: 'Kapasitas torsi minimum–maksimum (mis. 40–200 Nm)' },
-          { id: 'ch-tl-acc', charName: 'CHR_ACCURACY', label: 'Toleransi Akurasi', dataType: 'select', options: ['±2% Digital', '±3% ISO 6789', '±4% Standard'], required: true, helpText: 'Akurasi kalibrasi pabrikan' },
-        ],
-      },
-      {
-        matkl: 'PPE-FALL',
-        label: 'APD Fall Protection & Working at Height',
-        defaultMtart: 'HAWA',
-        description: 'Full body harness, double lanyard, shock absorber, dan SRL kerja ketinggian.',
-        characteristics: [
-          { id: 'ch-tl-ld', charName: 'CHR_MAX_LOAD_KG', label: 'Beban Kerja Maksimum', dataType: 'number', unit: 'kg', required: true, helpText: 'Batas berat pengguna + peralatan sesuai EN 361' },
-          { id: 'ch-tl-dr', charName: 'CHR_D_RING_COUNT', label: 'Konfigurasi D-Ring', dataType: 'select', options: ['1 Dorsal', '2 Dorsal + Sternal', '5 Full Body Rescue'], required: true, helpText: 'Jumlah dan posisi attachment D-Ring' },
-          { id: 'ch-tl-ln', charName: 'CHR_LANYARD_TYPE', label: 'Tipe Lanyard / Absorber', dataType: 'select', options: ['Double Webbing + Absorber', 'Double Kernmantle Rope', 'Self-Retracting Lifeline (SRL)'], required: true, helpText: 'Jenis tali penahan jatuh' },
-        ],
-      },
-      {
-        matkl: 'PPE-HEAD',
-        label: 'APD Head, Eye & Respiratory',
-        defaultMtart: 'HAWA',
-        description: 'Safety helmet, kacamata safety, face shield, ear muff, dan respirator.',
-        characteristics: [
-          { id: 'ch-tl-die', charName: 'CHR_DIELECTRIC_CLS', label: 'Kelas Proteksi Dielektrik', dataType: 'select', options: ['Class E (20,000V)', 'Class G (2,200V)', 'Class C (Conductive / Vented)'], required: true, helpText: 'Klasifikasi ketahanan listrik sesuai ANSI Z89.1' },
-          { id: 'ch-tl-sus', charName: 'CHR_SUSPENSION', label: 'Tipe Suspensi Dalam', dataType: 'select', options: ['4-Point Ratchet', '6-Point Ratchet', 'Pin-Lock Standard'], required: true, helpText: 'Sistem pengikat kepala di dalam helm' },
-          { id: 'ch-tl-clr', charName: 'CHR_COLOR_CODE', label: 'Kode Warna APD', dataType: 'select', options: ['Putih', 'Kuning', 'Merah', 'Biru', 'Hijau', 'Oranye'], required: true, helpText: 'Warna identifikasi peran di site/lapangan' },
-        ],
-      },
-      {
-        matkl: 'INST-CAL',
-        label: 'Calibration Gas & Lab Consumables',
-        defaultMtart: 'HAWA',
-        description: 'Tabung gas kalibrasi campuran, regulator flow, dan sensor pengganti.',
-        characteristics: [
-          { id: 'ch-tl-cvl', charName: 'CHR_CYLINDER_VOL', label: 'Volume Tabung Gas', dataType: 'number', unit: 'L', required: true, helpText: 'Kapasitas liter tabung bertekanan' },
-          { id: 'ch-tl-cbl', charName: 'CHR_GAS_BLEND', label: 'Konsentrasi Campuran Gas', dataType: 'text', required: true, helpText: 'Komposisi PPM / % LEL / % Vol' },
-          { id: 'ch-tl-shf', charName: 'CHR_STABILITY_MO', label: 'Stabilitas Sertifikat Gas', dataType: 'number', unit: 'Bulan', required: true, helpText: 'Masa berlaku akurasi campuran gas' },
-        ],
-      },
-    ];
-  }
-
-  if (coreType === 'calibration_service') {
-    return [
-      ...standardGroups,
-      {
-        matkl: 'CAL-INST',
-        label: 'Calibration Instrument & Master Gauge',
-        defaultMtart: 'HAWA',
-        description: 'Alat ukur acuan laboratorium kalibrasi (Deadweight Tester, Torque Analyzer, Gas Calibrator).',
-        characteristics: [
-          { id: 'ch-mt-nm', charName: 'CHR_CAL_JENIS', label: 'Jenis Instrumen', dataType: 'select', options: ['Gas Calibrator', 'Pressure Gauge Calibrator', 'Torque Analyzer', 'Multimeter Calibrator', 'Temperature Dry-Well'], required: true, helpText: 'Jenis peralatan kalibrasi' },
-          { id: 'ch-mt-rng', charName: 'CHR_CAL_RANGE', label: 'Rentang Ukur', dataType: 'text', required: true, helpText: 'Rentang pengukuran alat (mis. 0-1000 bar, 10-1000 Nm)' },
-          { id: 'ch-mt-acc', charName: 'CHR_CAL_ACCURACY', label: 'Akurasi', dataType: 'text', required: true, helpText: 'Kelas akurasi (mis. ±0.05% FS, ±0.5% Reading)' },
-          { id: 'ch-mt-brd', charName: 'CHR_CAL_BRAND', label: 'Brand', dataType: 'select', options: ['Fluke', 'Druck', 'WIKA', 'Norbar', 'Stahlwille', 'MSA', 'BW Honeywell'], required: true, helpText: 'Merek instrumen kalibrasi' },
-        ],
-      },
-      {
-        matkl: 'INST-CAL',
-        label: 'Calibration Gas & Lab Consumables',
-        defaultMtart: 'HAWA',
-        description: 'Tabung gas kalibrasi bersertifikat NIST/KAN, regulator flow, dan sensor pengganti.',
-        characteristics: [
-          { id: 'ch-mt-cvl', charName: 'CHR_CYLINDER_VOL', label: 'Volume Tabung Gas', dataType: 'number', unit: 'L', required: true, helpText: 'Kapasitas liter tabung gas kalibrasi' },
-          { id: 'ch-mt-cbl', charName: 'CHR_GAS_BLEND', label: 'Konsentrasi Campuran Gas', dataType: 'text', required: true, helpText: 'Komposisi PPM / % LEL / % Vol' },
-          { id: 'ch-mt-shf', charName: 'CHR_STABILITY_MO', label: 'Stabilitas Sertifikat', dataType: 'number', unit: 'Bulan', required: true, helpText: 'Masa berlaku sertifikat gas' },
-        ],
-      },
-    ];
-  }
-
-  return [
-    ...standardGroups,
-    {
-      matkl: 'GEN-001',
-      label: 'General Industrial Material',
-      defaultMtart: 'HAWA',
-      defaultBklas: '3100',
-      description: 'Kelompok material industri umum.',
-      characteristics: [
-        { id: 'ch-gen-spec', charName: 'CHR_STD_SPEC', label: 'Spesifikasi Utama', dataType: 'text', required: true, helpText: 'Spesifikasi ringkas material sesuai standar grup ini' },
-      ],
-    },
-  ];
+  return createStandardizedMaterialGroups(coreType);
 }
 
 export function createTenantTemplateWorkspace(
@@ -1736,14 +994,19 @@ export function createTenantTemplateWorkspace(
     ];
   }
 
+  const materialGroups = createTemplateMaterialGroups(coreType);
+  const classificationClasses = createMaterialClassificationClasses(materialGroups);
+
   return {
     materials: [],
+    searchDictionary: createDefaultMaterialSearchDictionary(),
     purchaseRequisitions: [],
     purchaseOrders: [],
     materialDocuments: [],
     customIndustryFields: createTemplateCustomFields(coreType),
     standardFieldRules: createStandardFieldRulesForBusiness(coreType),
-    materialGroups: createTemplateMaterialGroups(coreType),
+    materialGroups,
+    classificationClasses,
     unitsOfMeasure: createDefaultUnitsOfMeasure(),
     changeDocuments: [
       {
@@ -3955,7 +3218,7 @@ export function buildMtCalibrationWorkspace(): TenantWorkspaceData {
 
 export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
   const db: MultiTenantDatabase = {
-    schemaVersion: 18,
+    schemaVersion: 25,
     activeTenantId: TENANT_COMPANIES[0].tenantId,
     tenantCompanies: structuredClone(TENANT_COMPANIES),
     workspaces: {
@@ -3971,6 +3234,30 @@ export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
     const ws = db.workspaces[company.tenantId];
     if (ws) {
       ws.materialGroups = createStandardizedMaterialGroups(company.coreBusinessType);
+      ws.classificationClasses = createMaterialClassificationClasses(ws.materialGroups);
+      const groupClasses = new Map(ws.materialGroups.map((group) => [group.matkl, group.defaultBklas]));
+      for (const material of ws.materials) {
+        const mapping = inferMaterialGroupClass(
+          material.mara.matkl,
+          material.mara.maktx,
+          material.characteristics
+        );
+        if (mapping) {
+          material.mara.matkl = mapping.matkl;
+          material.classificationClass = mapping.className;
+        } else {
+          const currentGroup = ws.materialGroups.find((group) => group.matkl === material.mara.matkl);
+          material.classificationClass ||= currentGroup?.classNames[0];
+        }
+        const defaultBklas = groupClasses.get(material.mara.matkl);
+        if (!defaultBklas) continue;
+        for (const valuation of Object.values(material.mbew)) {
+          valuation.bklas = defaultBklas;
+          for (const split of Object.values(valuation.splitValuations || {})) {
+            if (split) split.bklas = defaultBklas;
+          }
+        }
+      }
     }
   }
 
@@ -3986,8 +3273,15 @@ export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
   db.corporateMaraMaterials = Array.from(corporateMaterials.values()).map((material) => {
     material.mara.mbrsh = 'M';
     material.mara.mtart = 'HAWA';
+    const bklas = material.mara.matkl.startsWith('SV-') ? '3200' : '3100';
+    for (const valuation of Object.values(material.mbew)) {
+      valuation.bklas = bklas;
+      for (const split of Object.values(valuation.splitValuations || {})) {
+        if (split) split.bklas = bklas;
+      }
+    }
     return material;
   });
-  db.schemaVersion = 15;
+  db.schemaVersion = 22;
   return db;
 }
