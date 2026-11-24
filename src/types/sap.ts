@@ -402,6 +402,7 @@ export interface MultiTenantDatabase {
   tenantCompanies: TenantCompany[];
   workspaces: Record<string, TenantWorkspaceData>;
   corporateMaraMaterials?: MaterialMasterRecord[];
+  corporateSearchDictionary?: MaterialSearchDictionaryEntry[];
 }
 
 export interface SapBootstrapPayload extends TenantWorkspaceData {

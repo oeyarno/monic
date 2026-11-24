@@ -952,6 +952,69 @@ function loadDatabase(): MultiTenantDatabase {
     saveDatabase(parsed as MultiTenantDatabase);
   }
 
+  if (parsed.schemaVersion < 28) {
+    try {
+      createDatabaseBackup(DB_FILE, 'pre-v28-corporate-search-dictionary');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Backup sebelum pemindahan kamus clue ke level corporate gagal dibuat (${msg}). Migrasi dihentikan tanpa mengubah ${DB_FILE}.`
+      );
+    }
+
+    const corporateEntries: MultiTenantDatabase['corporateSearchDictionary'] = [];
+    const byKeyword = new Map<string, NonNullable<typeof corporateEntries>[number]>();
+    const usedIds = new Set<string>();
+    const dictionaries = [
+      ...(parsed.corporateSearchDictionary ? [parsed.corporateSearchDictionary] : []),
+      ...Object.values(parsed.workspaces).map((workspace) => workspace.searchDictionary || []),
+    ];
+    for (const dictionary of dictionaries) {
+      for (const source of dictionary) {
+        const keyword = source.keyword.trim();
+        const key = keyword.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        if (!key) continue;
+
+        const existing = byKeyword.get(key);
+        const aliases = (existing?.aliases || []).slice();
+        const aliasKeys = new Set(
+          aliases.map((alias) =>
+            alias.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+          )
+        );
+        for (const alias of source.aliases || []) {
+          const cleanAlias = alias.trim();
+          const aliasKey = cleanAlias
+            .normalize('NFKD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+          if (cleanAlias && !aliasKeys.has(aliasKey)) {
+            aliases.push(cleanAlias);
+            aliasKeys.add(aliasKey);
+          }
+        }
+
+        if (existing) {
+          existing.aliases = aliases;
+          continue;
+        }
+
+        const id = !usedIds.has(source.id)
+          ? source.id
+          : nextSequence('DIC-', Array.from(usedIds), 6);
+        usedIds.add(id);
+        const entry = { id, keyword, aliases };
+        byKeyword.set(key, entry);
+        corporateEntries.push(entry);
+      }
+    }
+
+    parsed.corporateSearchDictionary =
+      corporateEntries.length > 0 ? corporateEntries : createDefaultMaterialSearchDictionary();
+    parsed.schemaVersion = 28;
+    saveDatabase(parsed as MultiTenantDatabase);
+  }
+
   return parsed as MultiTenantDatabase;
 }
 
@@ -1014,7 +1077,7 @@ function buildBootstrapPayload(
         group.characteristics,
     })),
     classificationClasses,
-    searchDictionary: ws.searchDictionary || [],
+    searchDictionary: db.corporateSearchDictionary || createDefaultMaterialSearchDictionary(),
     unitsOfMeasure: ws.unitsOfMeasure || [],
     changeDocuments: ws.changeDocuments,
     plants: ws.plants,
@@ -1346,14 +1409,14 @@ async function startServer() {
       return res.status(400).json({ error: 'Setiap clue harus unik, tidak kosong, dan maksimal 80 karakter.' });
     }
 
-    workspace.searchDictionary ||= [];
+    db.corporateSearchDictionary ||= createDefaultMaterialSearchDictionary();
     const entryId = nextSequence(
       'DIC-',
-      workspace.searchDictionary.map((entry) => entry.id),
+      db.corporateSearchDictionary.map((entry) => entry.id),
       6
     );
     const entry = { id: entryId, keyword: cleanKeyword, aliases: cleanAliases };
-    workspace.searchDictionary.push(entry);
+    db.corporateSearchDictionary.push(entry);
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
@@ -1378,7 +1441,8 @@ async function startServer() {
       aliases?: unknown;
       username?: string;
     };
-    const entry = (workspace.searchDictionary || []).find((item) => item.id === id);
+    db.corporateSearchDictionary ||= createDefaultMaterialSearchDictionary();
+    const entry = db.corporateSearchDictionary.find((item) => item.id === id);
     if (!entry) return res.status(404).json({ error: `Entri kamus ${id} tidak ditemukan.` });
 
     const cleanKeyword = String(keyword || '').trim();
@@ -1420,10 +1484,11 @@ async function startServer() {
     const db = loadDatabase();
     const { tenantId, workspace } = resolveTenantContext(db, req);
     const { id } = req.params;
-    const entryIndex = (workspace.searchDictionary || []).findIndex((item) => item.id === id);
+    db.corporateSearchDictionary ||= createDefaultMaterialSearchDictionary();
+    const entryIndex = db.corporateSearchDictionary.findIndex((item) => item.id === id);
     if (entryIndex < 0) return res.status(404).json({ error: `Entri kamus ${id} tidak ditemukan.` });
 
-    const [entry] = workspace.searchDictionary.splice(entryIndex, 1);
+    const [entry] = db.corporateSearchDictionary.splice(entryIndex, 1);
     workspace.changeDocuments.unshift({
       changenr: nextChangeNumber(workspace.changeDocuments),
       objectClass: 'CUSTOMIZING',
@@ -3218,7 +3283,7 @@ async function startServer() {
     });
   }
 
-  const PORT = Number(process.env.PORT) || 8080;
+  const PORT = 3000;
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`SAP S/4HANA Multi-Tenant Material Master & MM server running on http://0.0.0.0:${PORT}`);
   });

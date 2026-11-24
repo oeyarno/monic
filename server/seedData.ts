@@ -3218,7 +3218,7 @@ export function buildMtCalibrationWorkspace(): TenantWorkspaceData {
 
 export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
   const db: MultiTenantDatabase = {
-    schemaVersion: 25,
+    schemaVersion: 28,
     activeTenantId: TENANT_COMPANIES[0].tenantId,
     tenantCompanies: structuredClone(TENANT_COMPANIES),
     workspaces: {
@@ -3228,6 +3228,7 @@ export function createInitialMultiTenantDatabase(): MultiTenantDatabase {
       'tenant-workshop': buildWorkshopWorkspace(),
       'tenant-unitparts': buildUnitPartsWorkspace(),
     },
+    corporateSearchDictionary: createDefaultMaterialSearchDictionary(),
   };
 
   for (const company of db.tenantCompanies) {

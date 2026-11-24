@@ -417,14 +417,14 @@ export function MaterialListView({
         <details className="rounded-md border border-slate-200 bg-slate-50">
           <summary className="cursor-pointer px-3 py-2.5 text-xs font-semibold text-slate-700 flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-slate-500" />
-            Kamus clue pencarian ({data.searchDictionary.length})
+            Kamus clue corporate ({data.searchDictionary.length})
             <span className="font-normal text-slate-500">
               · contoh: bearing ← klahar
             </span>
           </summary>
           <div className="border-t border-slate-200 p-3 space-y-3">
             <p className="text-xs text-slate-600">
-              Tambahkan istilah lokal atau sebutan lain. Pencarian clue akan mencari keyword pada nomor, deskripsi, grup, dan kode lama material.
+              Master kamus ini berlaku di semua perusahaan. Tambahkan keyword dan sebutan lain; clue akan mencari nomor material, deskripsi, characteristic, serta Material Group.
             </p>
             <form onSubmit={saveDictionaryEntry} className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_auto_auto] gap-2">
               <input

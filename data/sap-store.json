@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 27,
-  "activeTenantId": "tenant-oilgas",
+  "schemaVersion": 28,
+  "activeTenantId": "tenant-mt",
   "tenantCompanies": [
     {
       "tenantId": "tenant-oilgas",
@@ -66,6 +66,226 @@
   "workspaces": {
     "tenant-oilgas": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000312",
+            "maktx": "coupling-33445555-3456-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T08:00:10.297Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T08:00:10.297Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "33445555",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "coupling ",
+            "CH_DIMENSION": "3456"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "200000311",
+            "maktx": "bearing-123-6508-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T06:46:55.243Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T06:46:55.243Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "123",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "bearing",
+            "CH_DIMENSION": "6508"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000310",
@@ -3895,6 +4115,50 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000886",
+          "objectClass": "MATERIAL",
+          "objectId": "200000312",
+          "tableName": "MARA",
+          "fieldName": "CREATE_MATERIAL (MM01)",
+          "oldValue": "-",
+          "newValue": "coupling-33445555-3456-skf [HAWA/M]",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T08:00:10.297Z"
+        },
+        {
+          "changenr": "CHG-000885",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000005",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "CREATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "-",
+          "newValue": "corporate_test ← all_company_clue",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T07:45:29.980Z"
+        },
+        {
+          "changenr": "CHG-000884",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000004",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "CREATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "-",
+          "newValue": "brake ← rem",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T07:08:23.040Z"
+        },
+        {
+          "changenr": "CHG-000883",
+          "objectClass": "MATERIAL",
+          "objectId": "200000311",
+          "tableName": "MARA",
+          "fieldName": "CREATE_MATERIAL (MM01)",
+          "oldValue": "-",
+          "newValue": "bearing-123-6508-skf [HAWA/M]",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T06:46:55.243Z"
+        },
+        {
           "changenr": "CHG-000882",
           "objectClass": "CUSTOMIZING",
           "objectId": "DIC-000003",
@@ -4944,6 +5208,13 @@
           "keyword": "excavator",
           "aliases": [
             "monster"
+          ]
+        },
+        {
+          "id": "DIC-000004",
+          "keyword": "brake",
+          "aliases": [
+            "rem"
           ]
         }
       ],
@@ -7001,6 +7272,226 @@
     },
     "tenant-workshop": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000312",
+            "maktx": "coupling-33445555-3456-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T08:00:10.297Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T08:00:10.297Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "33445555",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "coupling ",
+            "CH_DIMENSION": "3456"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "200000311",
+            "maktx": "bearing-123-6508-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T06:46:55.243Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T06:46:55.243Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "123",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "bearing",
+            "CH_DIMENSION": "6508"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000310",
@@ -10795,6 +11286,28 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000949",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000005",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "DELETE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "corporate_test ← updated_shared_clue",
+          "newValue": "-",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T07:45:30.252Z"
+        },
+        {
+          "changenr": "CHG-000948",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000005",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "UPDATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "corporate_test ← all_company_clue",
+          "newValue": "corporate_test ← updated_shared_clue",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T07:45:30.115Z"
+        },
+        {
           "changenr": "CHG-000947",
           "objectClass": "MATERIAL",
           "objectId": "100000903",
@@ -13638,6 +14151,226 @@
     },
     "tenant-unitparts": {
       "materials": [
+        {
+          "mara": {
+            "matnr": "200000312",
+            "maktx": "coupling-33445555-3456-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T08:00:10.297Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T08:00:10.297Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "33445555",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "coupling ",
+            "CH_DIMENSION": "3456"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "200000311",
+            "maktx": "bearing-123-6508-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T06:46:55.243Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T06:46:55.243Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "123",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "bearing",
+            "CH_DIMENSION": "6508"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
         {
           "mara": {
             "matnr": "200000310",
@@ -20137,6 +20870,226 @@
       "materials": [
         {
           "mara": {
+            "matnr": "200000312",
+            "maktx": "coupling-33445555-3456-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T08:00:10.297Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T08:00:10.297Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "33445555",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "coupling ",
+            "CH_DIMENSION": "3456"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "200000311",
+            "maktx": "bearing-123-6508-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T06:46:55.243Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T06:46:55.243Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "123",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "bearing",
+            "CH_DIMENSION": "6508"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
+        {
+          "mara": {
             "matnr": "200000310",
             "maktx": "Suspensi & Tie Rod-bearing 11-Bus / Multi-Model-Universal-Toyota Genuine",
             "mtart": "HAWA",
@@ -26629,6 +27582,226 @@
       "materials": [
         {
           "mara": {
+            "matnr": "200000312",
+            "maktx": "coupling-33445555-3456-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T08:00:10.297Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T08:00:10.297Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "33445555",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "coupling ",
+            "CH_DIMENSION": "3456"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
+        {
+          "mara": {
+            "matnr": "200000311",
+            "maktx": "bearing-123-6508-skf",
+            "mtart": "HAWA",
+            "mbrsh": "M",
+            "meins": "PC",
+            "matkl": "06-SP",
+            "bismt": "",
+            "spart": "01",
+            "brgew": 1,
+            "ntgew": 1,
+            "gewei": "KG",
+            "volum": 0.01,
+            "voleh": "M3",
+            "groes": "",
+            "ean11": "",
+            "mstae": "",
+            "xchpf": false,
+            "createdAt": "2026-11-24T06:46:55.243Z",
+            "createdBy": "SAP_USER",
+            "updatedAt": "2026-11-24T06:46:55.243Z"
+          },
+          "marc": {
+            "OG01": {
+              "werks": "OG01",
+              "ekgrp": "P01",
+              "bstme": "PC",
+              "ekwsl": "Z001",
+              "kautb": false,
+              "webaz": 1,
+              "kordp": false,
+              "dismm": "PD",
+              "dispo": "M01",
+              "minbe": 100,
+              "disls": "EX",
+              "bstmi": 10,
+              "bstma": 1000,
+              "bstfe": 100,
+              "eisbe": 50,
+              "beskz": "F",
+              "plifz": 7,
+              "mtvfp": "02",
+              "prctr": "PC-OG01",
+              "sernp": ""
+            }
+          },
+          "mard": {
+            "OG01-0001": {
+              "werks": "OG01",
+              "lgort": "0001",
+              "lgobe": "Material & Sparts",
+              "lgpbe": "BIN-0001-01",
+              "labst": 0,
+              "insme": 0,
+              "speme": 0,
+              "raube": "01 - Normal Indoor",
+              "tempb": "Ambient",
+              "maxlz": 365,
+              "mhdrz": 90,
+              "mhdhb": 365
+            }
+          },
+          "mbew": {
+            "OG01": {
+              "bwkey": "OG01",
+              "bwtty": "",
+              "bklas": "3100",
+              "vprsv": "V",
+              "verpr": 10000,
+              "stprs": 10000,
+              "peinh": 1,
+              "waers": "IDR",
+              "lbkum": 0,
+              "salk3": 0
+            }
+          },
+          "mvke": {
+            "vkorg": "1000",
+            "vtweg": "10",
+            "dwerk": "OG01",
+            "taxkm": "1",
+            "mtpos": "NORM",
+            "kondm": "01",
+            "tragr": "0001",
+            "ladgr": "0001"
+          },
+          "classificationClass": "CLS_SP_GENERAL",
+          "characteristics": {
+            "CH_BRAND": "skf",
+            "CH_MODEL": "",
+            "CH_OPER_WEIGHT": "",
+            "CH_BUCKET_CAP": "",
+            "CH_ARM_TYPE": "",
+            "CH_FILTER_TYPE": "",
+            "CH_PART_NO": "123",
+            "CH_EQUIP_APP": "",
+            "CH_GEN_TYPE": "bearing",
+            "CH_DIMENSION": "6508"
+          },
+          "industryExtensions": {
+            "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+            "ZZ_API_SPEC": "API 5L PSL2",
+            "ZZ_PRESSURE_CLASS": "Non-Pressure",
+            "ZZ_NACE_SOUR": false,
+            "ZZ_MTC_EN10204": false,
+            "ZZ_CAS_NUMBER": "",
+            "ZZ_HAZARD_CLASS": "Non-Hazardous"
+          }
+        },
+        {
+          "mara": {
             "matnr": "200000310",
             "maktx": "Suspensi & Tie Rod-bearing 11-Bus / Multi-Model-Universal-Toyota Genuine",
             "mtart": "HAWA",
@@ -30526,6 +31699,17 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000132",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000005",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "CREATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "-",
+          "newValue": "coupling ← roda gila",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T07:55:18.346Z"
+        },
+        {
           "changenr": "CHG-000131",
           "objectClass": "MATERIAL",
           "objectId": "100000801",
@@ -32972,6 +34156,226 @@
     }
   },
   "corporateMaraMaterials": [
+    {
+      "mara": {
+        "matnr": "200000312",
+        "maktx": "coupling-33445555-3456-skf",
+        "mtart": "HAWA",
+        "mbrsh": "M",
+        "meins": "PC",
+        "matkl": "06-SP",
+        "bismt": "",
+        "spart": "01",
+        "brgew": 1,
+        "ntgew": 1,
+        "gewei": "KG",
+        "volum": 0.01,
+        "voleh": "M3",
+        "groes": "",
+        "ean11": "",
+        "mstae": "",
+        "xchpf": false,
+        "createdAt": "2026-11-24T08:00:10.297Z",
+        "createdBy": "SAP_USER",
+        "updatedAt": "2026-11-24T08:00:10.297Z"
+      },
+      "marc": {
+        "OG01": {
+          "werks": "OG01",
+          "ekgrp": "P01",
+          "bstme": "PC",
+          "ekwsl": "Z001",
+          "kautb": false,
+          "webaz": 1,
+          "kordp": false,
+          "dismm": "PD",
+          "dispo": "M01",
+          "minbe": 100,
+          "disls": "EX",
+          "bstmi": 10,
+          "bstma": 1000,
+          "bstfe": 100,
+          "eisbe": 50,
+          "beskz": "F",
+          "plifz": 7,
+          "mtvfp": "02",
+          "prctr": "PC-OG01",
+          "sernp": ""
+        }
+      },
+      "mard": {
+        "OG01-0001": {
+          "werks": "OG01",
+          "lgort": "0001",
+          "lgobe": "Material & Sparts",
+          "lgpbe": "BIN-0001-01",
+          "labst": 0,
+          "insme": 0,
+          "speme": 0,
+          "raube": "01 - Normal Indoor",
+          "tempb": "Ambient",
+          "maxlz": 365,
+          "mhdrz": 90,
+          "mhdhb": 365
+        }
+      },
+      "mbew": {
+        "OG01": {
+          "bwkey": "OG01",
+          "bwtty": "",
+          "bklas": "3100",
+          "vprsv": "V",
+          "verpr": 10000,
+          "stprs": 10000,
+          "peinh": 1,
+          "waers": "IDR",
+          "lbkum": 0,
+          "salk3": 0
+        }
+      },
+      "mvke": {
+        "vkorg": "1000",
+        "vtweg": "10",
+        "dwerk": "OG01",
+        "taxkm": "1",
+        "mtpos": "NORM",
+        "kondm": "01",
+        "tragr": "0001",
+        "ladgr": "0001"
+      },
+      "classificationClass": "CLS_SP_GENERAL",
+      "characteristics": {
+        "CH_BRAND": "skf",
+        "CH_MODEL": "",
+        "CH_OPER_WEIGHT": "",
+        "CH_BUCKET_CAP": "",
+        "CH_ARM_TYPE": "",
+        "CH_FILTER_TYPE": "",
+        "CH_PART_NO": "33445555",
+        "CH_EQUIP_APP": "",
+        "CH_GEN_TYPE": "coupling ",
+        "CH_DIMENSION": "3456"
+      },
+      "industryExtensions": {
+        "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+        "ZZ_API_SPEC": "API 5L PSL2",
+        "ZZ_PRESSURE_CLASS": "Non-Pressure",
+        "ZZ_NACE_SOUR": false,
+        "ZZ_MTC_EN10204": false,
+        "ZZ_CAS_NUMBER": "",
+        "ZZ_HAZARD_CLASS": "Non-Hazardous"
+      }
+    },
+    {
+      "mara": {
+        "matnr": "200000311",
+        "maktx": "bearing-123-6508-skf",
+        "mtart": "HAWA",
+        "mbrsh": "M",
+        "meins": "PC",
+        "matkl": "06-SP",
+        "bismt": "",
+        "spart": "01",
+        "brgew": 1,
+        "ntgew": 1,
+        "gewei": "KG",
+        "volum": 0.01,
+        "voleh": "M3",
+        "groes": "",
+        "ean11": "",
+        "mstae": "",
+        "xchpf": false,
+        "createdAt": "2026-11-24T06:46:55.243Z",
+        "createdBy": "SAP_USER",
+        "updatedAt": "2026-11-24T06:46:55.243Z"
+      },
+      "marc": {
+        "OG01": {
+          "werks": "OG01",
+          "ekgrp": "P01",
+          "bstme": "PC",
+          "ekwsl": "Z001",
+          "kautb": false,
+          "webaz": 1,
+          "kordp": false,
+          "dismm": "PD",
+          "dispo": "M01",
+          "minbe": 100,
+          "disls": "EX",
+          "bstmi": 10,
+          "bstma": 1000,
+          "bstfe": 100,
+          "eisbe": 50,
+          "beskz": "F",
+          "plifz": 7,
+          "mtvfp": "02",
+          "prctr": "PC-OG01",
+          "sernp": ""
+        }
+      },
+      "mard": {
+        "OG01-0001": {
+          "werks": "OG01",
+          "lgort": "0001",
+          "lgobe": "Material & Sparts",
+          "lgpbe": "BIN-0001-01",
+          "labst": 0,
+          "insme": 0,
+          "speme": 0,
+          "raube": "01 - Normal Indoor",
+          "tempb": "Ambient",
+          "maxlz": 365,
+          "mhdrz": 90,
+          "mhdhb": 365
+        }
+      },
+      "mbew": {
+        "OG01": {
+          "bwkey": "OG01",
+          "bwtty": "",
+          "bklas": "3100",
+          "vprsv": "V",
+          "verpr": 10000,
+          "stprs": 10000,
+          "peinh": 1,
+          "waers": "IDR",
+          "lbkum": 0,
+          "salk3": 0
+        }
+      },
+      "mvke": {
+        "vkorg": "1000",
+        "vtweg": "10",
+        "dwerk": "OG01",
+        "taxkm": "1",
+        "mtpos": "NORM",
+        "kondm": "01",
+        "tragr": "0001",
+        "ladgr": "0001"
+      },
+      "classificationClass": "CLS_SP_GENERAL",
+      "characteristics": {
+        "CH_BRAND": "skf",
+        "CH_MODEL": "",
+        "CH_OPER_WEIGHT": "",
+        "CH_BUCKET_CAP": "",
+        "CH_ARM_TYPE": "",
+        "CH_FILTER_TYPE": "",
+        "CH_PART_NO": "123",
+        "CH_EQUIP_APP": "",
+        "CH_GEN_TYPE": "bearing",
+        "CH_DIMENSION": "6508"
+      },
+      "industryExtensions": {
+        "ZZ_PROJECT_SCOPE": "Maintenance Oil & Gas",
+        "ZZ_API_SPEC": "API 5L PSL2",
+        "ZZ_PRESSURE_CLASS": "Non-Pressure",
+        "ZZ_NACE_SOUR": false,
+        "ZZ_MTC_EN10204": false,
+        "ZZ_CAS_NUMBER": "",
+        "ZZ_HAZARD_CLASS": "Non-Hazardous"
+      }
+    },
     {
       "mara": {
         "matnr": "200000310",
@@ -36223,6 +37627,44 @@
         "ZZ_PDI_CHECK": true
       },
       "classificationClass": "CLS_LV_DOUBLECAB"
+    }
+  ],
+  "corporateSearchDictionary": [
+    {
+      "id": "DIC-000001",
+      "keyword": "bearing",
+      "aliases": [
+        "klahar",
+        "laher"
+      ]
+    },
+    {
+      "id": "DIC-000002",
+      "keyword": "whell hub",
+      "aliases": [
+        "kepala kambing"
+      ]
+    },
+    {
+      "id": "DIC-000003",
+      "keyword": "excavator",
+      "aliases": [
+        "monster"
+      ]
+    },
+    {
+      "id": "DIC-000004",
+      "keyword": "brake",
+      "aliases": [
+        "rem"
+      ]
+    },
+    {
+      "id": "DIC-000005",
+      "keyword": "coupling",
+      "aliases": [
+        "roda gila"
+      ]
     }
   ]
 }
