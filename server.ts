@@ -3218,7 +3218,7 @@ async function startServer() {
     });
   }
 
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 8080;
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`SAP S/4HANA Multi-Tenant Material Master & MM server running on http://0.0.0.0:${PORT}`);
   });
