@@ -1,6 +1,6 @@
 {
   "schemaVersion": 28,
-  "activeTenantId": "tenant-mt",
+  "activeTenantId": "tenant-unitparts",
   "tenantCompanies": [
     {
       "tenantId": "tenant-oilgas",
@@ -4114,6 +4114,17 @@
         }
       ],
       "changeDocuments": [
+        {
+          "changenr": "CHG-000887",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000007",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "CREATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "-",
+          "newValue": "valve ← keran",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T08:41:19.757Z"
+        },
         {
           "changenr": "CHG-000886",
           "objectClass": "MATERIAL",
@@ -18187,6 +18198,61 @@
         }
       ],
       "changeDocuments": [
+        {
+          "changenr": "CHG-000740",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000006",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "UPDATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "whell ← roda",
+          "newValue": "wheel ← roda",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T08:44:27.982Z"
+        },
+        {
+          "changenr": "CHG-000739",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000006",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "UPDATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "Whell ← roda",
+          "newValue": "whell ← roda",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T08:43:44.385Z"
+        },
+        {
+          "changenr": "CHG-000738",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000002",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "DELETE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "whell hub ← kepala kambing",
+          "newValue": "-",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T08:43:29.879Z"
+        },
+        {
+          "changenr": "CHG-000737",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000006",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "UPDATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "whell ← roda",
+          "newValue": "Whell ← roda",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T08:42:24.280Z"
+        },
+        {
+          "changenr": "CHG-000736",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000006",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "CREATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "-",
+          "newValue": "whell ← roda",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T08:39:19.771Z"
+        },
         {
           "changenr": "CHG-000735",
           "objectClass": "MATERIAL",
@@ -37639,13 +37705,6 @@
       ]
     },
     {
-      "id": "DIC-000002",
-      "keyword": "whell hub",
-      "aliases": [
-        "kepala kambing"
-      ]
-    },
-    {
       "id": "DIC-000003",
       "keyword": "excavator",
       "aliases": [
@@ -37664,6 +37723,20 @@
       "keyword": "coupling",
       "aliases": [
         "roda gila"
+      ]
+    },
+    {
+      "id": "DIC-000006",
+      "keyword": "wheel",
+      "aliases": [
+        "roda"
+      ]
+    },
+    {
+      "id": "DIC-000007",
+      "keyword": "valve",
+      "aliases": [
+        "keran"
       ]
     }
   ]

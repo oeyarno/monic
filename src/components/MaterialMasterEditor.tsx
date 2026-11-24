@@ -453,53 +453,6 @@ export function MaterialMasterEditor({
     });
   };
 
-  const handleMaterialTypeChange = (newMtart: MaterialTypeCode) => {
-    const mtDef = data.materialTypes.find((m) => m.mtart === newMtart);
-    setDraft((prev) => {
-      const next = structuredClone(prev);
-      next.mara.mtart = newMtart;
-      if (mode === 'create' && mtDef) {
-        const prefix = mtDef.internalNumberPrefix;
-        let maxSeq = 100;
-        for (const m of data.materials) {
-          if (m.mara.matnr.startsWith(prefix)) {
-            const n = Number.parseInt(m.mara.matnr.slice(prefix.length), 10);
-            if (!Number.isNaN(n) && n >= maxSeq) maxSeq = n + 1;
-          }
-        }
-        next.mara.matnr = `${prefix}${String(maxSeq).padStart(3, '0')}`;
-        if (next.mbew[activeWerks]) {
-          next.mbew[activeWerks].bklas = mtDef.defaultBklas;
-          next.mbew[activeWerks].vprsv = mtDef.priceControlDefault;
-        }
-      }
-      return next;
-    });
-  };
-
-  const handleIndustrySectorChange = (newMbrsh: IndustrySectorCode) => {
-    setDraft((prev) => {
-      const nextExtensions = { ...prev.industryExtensions };
-      for (const cf of data.customIndustryFields.filter((f) => f.industrySector === newMbrsh)) {
-        if (nextExtensions[cf.fieldName] === undefined) {
-          nextExtensions[cf.fieldName] =
-            cf.defaultValue !== undefined
-              ? cf.defaultValue
-              : cf.dataType === 'boolean'
-              ? false
-              : cf.dataType === 'number'
-              ? 0
-              : '';
-        }
-      }
-      return {
-        ...prev,
-        mara: { ...prev.mara, mbrsh: newMbrsh },
-        industryExtensions: nextExtensions,
-      };
-    });
-  };
-
   const updateMarc = <K extends keyof MarcPlantData>(key: K, value: MarcPlantData[K]) => {
     setDraft((prev) => {
       const existing = prev.marc[activeWerks];
@@ -1178,43 +1131,7 @@ export function MaterialMasterEditor({
         </div>
 
         {/* Organizational Levels & OMS9 Context Strip */}
-        <div className="mt-4 pt-4 border-t border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-              Industry Sector (MARA-MBRSH)
-            </label>
-            <select
-              disabled={isReadOnly || data.industrySectors.length <= 1}
-              value={draft.mara.mbrsh}
-              onChange={(e) => handleIndustrySectorChange(e.target.value as IndustrySectorCode)}
-              className="w-full px-3 py-1.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-md text-slate-900 disabled:opacity-75 focus:outline-none focus:border-[#0064D9]"
-            >
-              {data.industrySectors.map((ind) => (
-                <option key={ind.mbrsh} value={ind.mbrsh}>
-                  {ind.mbrsh} · {ind.shortLabel}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-              Material Type (MARA-MTART)
-            </label>
-            <select
-              disabled={mode !== 'create'}
-              value={draft.mara.mtart}
-              onChange={(e) => handleMaterialTypeChange(e.target.value as MaterialTypeCode)}
-              className="w-full px-3 py-1.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-md text-slate-900 disabled:opacity-75 focus:outline-none focus:border-[#0064D9]"
-            >
-              {data.materialTypes.map((mt) => (
-                <option key={mt.mtart} value={mt.mtart}>
-                  {mt.mtart} · {mt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
+        <div className="mt-4 pt-4 border-t border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-3 items-end">
           <div>
             <label className="block text-[11px] font-semibold text-slate-500 mb-1">
               Organizational Level: Plant (WERKS)
@@ -1526,89 +1443,6 @@ export function MaterialMasterEditor({
                 </div>
               )}
 
-              {getStandardStatus('brgew') !== 'hide' && (
-                <div>
-                  {renderFieldLabel('Gross Weight', 'MARA-BRGEW', getStandardStatus('brgew'))}
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      disabled={isReadOnly || getStandardStatus('brgew') === 'display'}
-                      value={draft.mara.brgew}
-                      onChange={(e) => updateMara('brgew', Number(e.target.value))}
-                      className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
-                    />
-                    <input
-                      type="text"
-                      disabled={isReadOnly}
-                      value={draft.mara.gewei}
-                      onChange={(e) => updateMara('gewei', e.target.value.toUpperCase())}
-                      className="w-20 px-2.5 py-2 text-sm font-mono text-center bg-slate-50 border border-slate-200 rounded-md text-slate-700"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div>
-                {renderFieldLabel('Net Weight', 'MARA-NTGEW', 'optional')}
-                <input
-                  type="number"
-                  step="0.01"
-                  disabled={isReadOnly}
-                  value={draft.mara.ntgew}
-                  onChange={(e) => updateMara('ntgew', Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
-                />
-              </div>
-
-              {getStandardStatus('groes') !== 'hide' && (
-                <div>
-                  {renderFieldLabel('Size / Dimensions', 'MARA-GROES', getStandardStatus('groes'))}
-                  <input
-                    type="text"
-                    disabled={isReadOnly || getStandardStatus('groes') === 'display'}
-                    value={draft.mara.groes}
-                    onChange={(e) => updateMara('groes', e.target.value)}
-                    placeholder="mis. 180 x 120 x 45 mm"
-                    className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
-                  />
-                </div>
-              )}
-
-              {getStandardStatus('ean11') !== 'hide' && (
-                <div>
-                  {renderFieldLabel('EAN / GTIN Barcode', 'MARA-EAN11', getStandardStatus('ean11'))}
-                  <input
-                    type="text"
-                    disabled={isReadOnly || getStandardStatus('ean11') === 'display'}
-                    value={draft.mara.ean11}
-                    onChange={(e) => updateMara('ean11', e.target.value)}
-                    placeholder="899xxxxxxxxxx"
-                    className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
-                  />
-                </div>
-              )}
-
-              <div>
-                {renderFieldLabel('Volume & Unit', 'MARA-VOLUM', 'optional')}
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    step="0.001"
-                    disabled={isReadOnly}
-                    value={draft.mara.volum}
-                    onChange={(e) => updateMara('volum', Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-200 rounded-md text-slate-900 disabled:bg-slate-100 focus:outline-none focus:border-[#0064D9]"
-                  />
-                  <input
-                    type="text"
-                    disabled={isReadOnly}
-                    value={draft.mara.voleh}
-                    onChange={(e) => updateMara('voleh', e.target.value.toUpperCase())}
-                    className="w-20 px-2.5 py-2 text-sm font-mono text-center bg-slate-50 border border-slate-200 rounded-md text-slate-700"
-                  />
-                </div>
-              </div>
             </div>
             {renderCharacteristicSection(false)}
           </div>

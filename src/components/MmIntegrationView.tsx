@@ -144,13 +144,39 @@ export function MmIntegrationView({
     () => data.materials.find((m) => m.mara.matnr === selectedMatnr) || data.materials[0],
     [data.materials, selectedMatnr]
   );
+  const companyPlantWerks = useMemo(
+    () =>
+      new Set(
+        data.plants
+          .filter((plant) => plant.bukrs === data.activeTenant.bukrs)
+          .map((plant) => plant.werks)
+      ),
+    [data.plants, data.activeTenant.bukrs]
+  );
+  const stockMaterials = useMemo(
+    () =>
+      data.materials.filter((material) =>
+        Object.values(material.mard).some(
+          (storage) =>
+            companyPlantWerks.has(storage.werks) &&
+            (storage.labst > 0 || storage.insme > 0 || storage.speme > 0)
+        )
+      ),
+    [data.materials, companyPlantWerks]
+  );
+  const activeStockMaterial = useMemo(
+    () =>
+      stockMaterials.find((material) => material.mara.matnr === selectedMatnr) ||
+      stockMaterials[0],
+    [stockMaterials, selectedMatnr]
+  );
   const filteredStockMaterials = useMemo(() => {
     const query = stockSearchQuery.trim();
     if (!query) return [];
-    return data.materials.filter((material) =>
+    return stockMaterials.filter((material) =>
       matchesMaterialSearch(material, query, data.searchDictionary, data.materialGroups)
     );
-  }, [data.materials, data.searchDictionary, data.materialGroups, stockSearchQuery]);
+  }, [stockMaterials, data.searchDictionary, data.materialGroups, stockSearchQuery]);
 
   const activePlantMbew = activeMaterial?.mbew[werks];
   const isSplitActive = Boolean(activePlantMbew?.bwtty);
@@ -1246,7 +1272,9 @@ export function MmIntegrationView({
                 MMBE · Stock Overview (Client → Plant → Storage Location)
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Rincian stok Unrestricted (LABST), Quality Inspection (INSME), Blocked (SPEME), dan On-Order PO
+                Kamus clue berlaku corporate; stok dibatasi ke company code{' '}
+                {data.activeTenant.bukrs}. Rincian Unrestricted (LABST), Quality Inspection
+                (INSME), Blocked (SPEME), dan On-Order PO.
               </p>
             </div>
             <label className="relative w-full sm:max-w-md">
@@ -1265,7 +1293,8 @@ export function MmIntegrationView({
           {stockSearchQuery.trim() && (
             <div className="px-4 pt-4">
               <div className="text-xs font-medium text-slate-600 mb-2">
-                {filteredStockMaterials.length} material cocok dengan “{stockSearchQuery.trim()}”
+                {filteredStockMaterials.length} material dengan stok di{' '}
+                {data.activeTenant.bukrs} cocok dengan “{stockSearchQuery.trim()}”
               </div>
               {filteredStockMaterials.length > 0 ? (
                 <div className="overflow-x-auto border border-slate-200 rounded-md">
@@ -1286,10 +1315,14 @@ export function MmIntegrationView({
                         const materialGroup = data.materialGroups.find(
                           (group) => group.matkl === material.mara.matkl
                         );
+                        const companyStorage = Object.values(material.mard).filter((storage) =>
+                          companyPlantWerks.has(storage.werks)
+                        );
                         const openOrder = data.purchaseOrders
                           .filter(
                             (order) =>
                               order.matnr === material.mara.matnr &&
+                              companyPlantWerks.has(order.werks) &&
                               order.status !== 'Completed'
                           )
                           .reduce((sum, order) => sum + (order.menge - order.receivedQty), 0);
@@ -1307,7 +1340,7 @@ export function MmIntegrationView({
                                 aria-label={`Tampilkan stok ${material.mara.matnr} ${material.mara.maktx}`}
                                 className="text-left hover:underline"
                               >
-                              {material.mara.matnr}
+                                {material.mara.matnr}
                               </button>
                             </td>
                             <td className="py-2 px-3">{material.mara.maktx}</td>
@@ -1316,7 +1349,7 @@ export function MmIntegrationView({
                             </td>
                             <td className="py-2 px-3 text-right font-mono tabular-nums">
                               {formatNumber(
-                                Object.values(material.mard).reduce(
+                                companyStorage.reduce(
                                   (sum, storage) => sum + storage.labst,
                                   0
                                 )
@@ -1325,7 +1358,7 @@ export function MmIntegrationView({
                             </td>
                             <td className="py-2 px-3 text-right font-mono tabular-nums">
                               {formatNumber(
-                                Object.values(material.mard).reduce(
+                                companyStorage.reduce(
                                   (sum, storage) => sum + storage.insme,
                                   0
                                 )
@@ -1334,7 +1367,7 @@ export function MmIntegrationView({
                             </td>
                             <td className="py-2 px-3 text-right font-mono tabular-nums">
                               {formatNumber(
-                                Object.values(material.mard).reduce(
+                                companyStorage.reduce(
                                   (sum, storage) => sum + storage.speme,
                                   0
                                 )
@@ -1358,27 +1391,35 @@ export function MmIntegrationView({
             </div>
           )}
 
-          {activeMaterial &&
+          {!stockSearchQuery.trim() && stockMaterials.length === 0 && (
+            <p className="m-4 px-3 py-4 text-xs text-slate-500 border border-slate-200 rounded-md">
+              Tidak ada stok untuk company code {data.activeTenant.bukrs}.
+            </p>
+          )}
+
+          {activeStockMaterial &&
             (!stockSearchQuery.trim() ||
               filteredStockMaterials.some(
-                (material) => material.mara.matnr === activeMaterial.mara.matnr
+                (material) => material.mara.matnr === activeStockMaterial.mara.matnr
               )) && (
             <div className="p-5 space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-md">
                 <div>
                   <div className="text-[11px] text-slate-500">Material</div>
                   <div className="font-mono font-bold text-slate-900 text-sm mt-0.5">
-                    {activeMaterial.mara.matnr}
+                    {activeStockMaterial.mara.matnr}
                   </div>
-                  <div className="text-xs text-slate-600 truncate">{activeMaterial.mara.maktx}</div>
+                  <div className="text-xs text-slate-600 truncate">{activeStockMaterial.mara.maktx}</div>
                 </div>
                 <div>
                   <div className="text-[11px] text-slate-500">Total Unrestricted</div>
                   <div className="font-mono font-bold text-slate-900 text-lg tabular-nums mt-0.5">
                     {formatNumber(
-                      Object.values(activeMaterial.mard).reduce((a, b) => a + b.labst, 0)
+                      Object.values(activeStockMaterial.mard)
+                        .filter((storage) => companyPlantWerks.has(storage.werks))
+                        .reduce((a, b) => a + b.labst, 0)
                     )}{' '}
-                    {activeMaterial.mara.meins}
+                    {activeStockMaterial.mara.meins}
                   </div>
                 </div>
                 <div>
@@ -1386,17 +1427,24 @@ export function MmIntegrationView({
                   <div className="font-mono font-bold text-[#0064D9] text-lg tabular-nums mt-0.5">
                     {formatNumber(
                       data.purchaseOrders
-                        .filter((p) => p.matnr === activeMaterial.mara.matnr && p.status !== 'Completed')
+                        .filter(
+                          (p) =>
+                            p.matnr === activeStockMaterial.mara.matnr &&
+                            companyPlantWerks.has(p.werks) &&
+                            p.status !== 'Completed'
+                        )
                         .reduce((a, p) => a + (p.menge - p.receivedQty), 0)
                     )}{' '}
-                    {activeMaterial.mara.meins}
+                    {activeStockMaterial.mara.meins}
                   </div>
                 </div>
                 <div>
                   <div className="text-[11px] text-slate-500">Total Inventory Value</div>
                   <div className="font-mono font-bold text-slate-900 text-lg tabular-nums mt-0.5">
                     {formatCurrency(
-                      Object.values(activeMaterial.mbew).reduce((a, b) => a + b.salk3, 0)
+                      Object.values(activeStockMaterial.mbew)
+                        .filter((valuation) => companyPlantWerks.has(valuation.bwkey))
+                        .reduce((a, b) => a + b.salk3, 0)
                     )}
                   </div>
                 </div>
@@ -1415,40 +1463,47 @@ export function MmIntegrationView({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
-                    {Object.values(activeMaterial.mard).map((s) => {
-                      const mbew = activeMaterial.mbew[s.werks];
-                      return (
-                        <tr key={`${s.werks}-${s.lgort}`} className="hover:bg-slate-50">
-                          <td className="py-3 px-4">
-                            <div className="font-mono font-semibold text-slate-900">
-                              Plant {s.werks} · SLoc {s.lgort}
-                            </div>
-                            <div className="text-[11px] text-slate-500">{s.lgobe}</div>
-                          </td>
-                          <td className="py-3 px-4 font-mono text-slate-700">{s.lgpbe}</td>
-                          <td className="py-3 px-4 text-right font-mono tabular-nums font-bold text-slate-900">
-                            {formatNumber(s.labst)} {activeMaterial.mara.meins}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono tabular-nums text-amber-700">
-                            {formatNumber(s.insme)} {activeMaterial.mara.meins}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono tabular-nums text-red-700">
-                            {formatNumber(s.speme)} {activeMaterial.mara.meins}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono tabular-nums text-slate-700">
-                            {mbew
-                              ? formatCurrency(mbew.vprsv === 'V' ? mbew.verpr : mbew.stprs, mbew.waers)
-                              : '-'}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {Object.values(activeStockMaterial.mard)
+                      .filter((storage) => companyPlantWerks.has(storage.werks))
+                      .map((s) => {
+                        const mbew = activeStockMaterial.mbew[s.werks];
+                        return (
+                          <tr key={`${s.werks}-${s.lgort}`} className="hover:bg-slate-50">
+                            <td className="py-3 px-4">
+                              <div className="font-mono font-semibold text-slate-900">
+                                Plant {s.werks} · SLoc {s.lgort}
+                              </div>
+                              <div className="text-[11px] text-slate-500">{s.lgobe}</div>
+                            </td>
+                            <td className="py-3 px-4 font-mono text-slate-700">{s.lgpbe}</td>
+                            <td className="py-3 px-4 text-right font-mono tabular-nums font-bold text-slate-900">
+                              {formatNumber(s.labst)} {activeStockMaterial.mara.meins}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono tabular-nums text-amber-700">
+                              {formatNumber(s.insme)} {activeStockMaterial.mara.meins}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono tabular-nums text-red-700">
+                              {formatNumber(s.speme)} {activeStockMaterial.mara.meins}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono tabular-nums text-slate-700">
+                              {mbew
+                                ? formatCurrency(
+                                    mbew.vprsv === 'V' ? mbew.verpr : mbew.stprs,
+                                    mbew.waers
+                                  )
+                                : '-'}
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
 
               {/* Split Valuation Breakdown per Plant in MMBE */}
-              {Object.values(activeMaterial.mbew).some((m) => Boolean(m.bwtty)) && (
+              {Object.values(activeStockMaterial.mbew).some(
+                (m) => companyPlantWerks.has(m.bwkey) && Boolean(m.bwtty)
+              ) && (
                 <div className="space-y-2.5 pt-2">
                   <div className="text-xs font-semibold text-slate-800">
                     Split Valuation Breakdown (MBEW-BWTAR: LOCAL · IMPORT · FREE · OLD)
@@ -1466,8 +1521,13 @@ export function MmIntegrationView({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200">
-                        {Object.values(activeMaterial.mbew)
-                          .filter((m) => Boolean(m.bwtty) && m.splitValuations)
+                        {Object.values(activeStockMaterial.mbew)
+                          .filter(
+                            (m) =>
+                              companyPlantWerks.has(m.bwkey) &&
+                              Boolean(m.bwtty) &&
+                              m.splitValuations
+                          )
                           .flatMap((m) =>
                             Object.values(m.splitValuations!)
                               .filter((sv): sv is SplitValuationItem => Boolean(sv))
@@ -1483,7 +1543,7 @@ export function MmIntegrationView({
                                     {sv.vprsv === 'V' ? 'V (MAP)' : 'S (Std)'}
                                   </td>
                                   <td className="py-2.5 px-4 text-right font-mono tabular-nums font-semibold text-slate-900">
-                                    {formatNumber(sv.lbkum)} {activeMaterial.mara.meins}
+                                    {formatNumber(sv.lbkum)} {activeStockMaterial.mara.meins}
                                   </td>
                                   <td className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-700">
                                     {formatCurrency(sv.vprsv === 'V' ? sv.verpr : sv.stprs, m.waers)}

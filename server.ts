@@ -1276,9 +1276,10 @@ function validateMaterialAgainstOms9(
   const firstStorage = storageKeys.length > 0 ? material.mard[storageKeys[0]] : undefined;
   const mbewData = material.mbew[activeWerks];
 
+  const optionalHiddenFields = new Set(['brgew', 'groes', 'ean11']);
   for (const rule of ws.standardFieldRules) {
     const status = rule.rulesByIndustry[mbrsh];
-    if (status !== 'required') continue;
+    if (status !== 'required' || optionalHiddenFields.has(rule.fieldKey)) continue;
 
     let value: unknown = undefined;
     if (rule.tableName === 'MARA') {
