@@ -3895,6 +3895,17 @@
       ],
       "changeDocuments": [
         {
+          "changenr": "CHG-000882",
+          "objectClass": "CUSTOMIZING",
+          "objectId": "DIC-000003",
+          "tableName": "MATERIAL_SEARCH_DICTIONARY",
+          "fieldName": "CREATE_SEARCH_DICTIONARY_ENTRY",
+          "oldValue": "-",
+          "newValue": "excavator ← monster",
+          "username": "SAP_USER",
+          "timestamp": "2026-11-24T06:15:18.091Z"
+        },
+        {
           "changenr": "CHG-000881",
           "objectClass": "MATERIAL",
           "objectId": "200000311",
@@ -4926,6 +4937,13 @@
           "keyword": "whell hub",
           "aliases": [
             "kepala kambing"
+          ]
+        },
+        {
+          "id": "DIC-000003",
+          "keyword": "excavator",
+          "aliases": [
+            "monster"
           ]
         }
       ],

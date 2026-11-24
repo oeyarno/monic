@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   ClipboardList,
   FileSpreadsheet,
+  Search,
   ShoppingCart,
   Warehouse,
 } from 'lucide-react';
@@ -15,7 +16,7 @@ import type {
   SplitValuationItem,
   ValuationTypeCode,
 } from '../types/sap.ts';
-import { formatCurrency, formatNumber } from '../utils/format.ts';
+import { formatCurrency, formatNumber, matchesMaterialSearch } from '../utils/format.ts';
 
 interface MmIntegrationViewProps {
   data: SapBootstrapPayload;
@@ -76,6 +77,7 @@ export function MmIntegrationView({
   const defaultPlant = preselectedWerks || data.plants[0]?.werks || '1000';
   const defaultSloc = data.plants[0]?.storageLocations[0]?.lgort || '0001';
   const [selectedMatnr, setSelectedMatnr] = useState(defaultMatnr);
+  const [stockSearchQuery, setStockSearchQuery] = useState('');
   const [werks, setWerks] = useState(defaultPlant);
   const [lgort, setLgort] = useState(defaultSloc);
   const [qty, setQty] = useState(10);
@@ -142,6 +144,13 @@ export function MmIntegrationView({
     () => data.materials.find((m) => m.mara.matnr === selectedMatnr) || data.materials[0],
     [data.materials, selectedMatnr]
   );
+  const filteredStockMaterials = useMemo(() => {
+    const query = stockSearchQuery.trim();
+    if (!query) return [];
+    return data.materials.filter((material) =>
+      matchesMaterialSearch(material, query, data.searchDictionary, data.materialGroups)
+    );
+  }, [data.materials, data.searchDictionary, data.materialGroups, stockSearchQuery]);
 
   const activePlantMbew = activeMaterial?.mbew[werks];
   const isSplitActive = Boolean(activePlantMbew?.bwtty);
@@ -1240,20 +1249,120 @@ export function MmIntegrationView({
                 Rincian stok Unrestricted (LABST), Quality Inspection (INSME), Blocked (SPEME), dan On-Order PO
               </p>
             </div>
-            <select
-              value={selectedMatnr}
-              onChange={(e) => setSelectedMatnr(e.target.value)}
-              className="px-3 py-1.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-md"
-            >
-              {data.materials.map((m) => (
-                <option key={m.mara.matnr} value={m.mara.matnr}>
-                  {m.mara.matnr} — {m.mara.maktx.slice(0, 38)}
-                </option>
-              ))}
-            </select>
+            <label className="relative w-full sm:max-w-md">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <input
+                type="search"
+                value={stockSearchQuery}
+                onChange={(event) => setStockSearchQuery(event.target.value)}
+                aria-label="Cari stok berdasarkan clue, deskripsi, atau Material Group"
+                placeholder="Cari clue, deskripsi, Material Group, atau MATNR..."
+                className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-md focus:outline-none focus:border-[#0064D9]"
+              />
+            </label>
           </div>
 
-          {activeMaterial && (
+          {stockSearchQuery.trim() && (
+            <div className="px-4 pt-4">
+              <div className="text-xs font-medium text-slate-600 mb-2">
+                {filteredStockMaterials.length} material cocok dengan “{stockSearchQuery.trim()}”
+              </div>
+              {filteredStockMaterials.length > 0 ? (
+                <div className="overflow-x-auto border border-slate-200 rounded-md">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500">
+                        <th className="py-2 px-3">Material</th>
+                        <th className="py-2 px-3">Deskripsi</th>
+                        <th className="py-2 px-3">Material Group</th>
+                        <th className="py-2 px-3 text-right">Unrestricted</th>
+                        <th className="py-2 px-3 text-right">Quality</th>
+                        <th className="py-2 px-3 text-right">Blocked</th>
+                        <th className="py-2 px-3 text-right">On-Order</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      {filteredStockMaterials.map((material) => {
+                        const materialGroup = data.materialGroups.find(
+                          (group) => group.matkl === material.mara.matkl
+                        );
+                        const openOrder = data.purchaseOrders
+                          .filter(
+                            (order) =>
+                              order.matnr === material.mara.matnr &&
+                              order.status !== 'Completed'
+                          )
+                          .reduce((sum, order) => sum + (order.menge - order.receivedQty), 0);
+                        return (
+                          <tr
+                            key={material.mara.matnr}
+                            className={`hover:bg-blue-50 ${
+                              selectedMatnr === material.mara.matnr ? 'bg-blue-50' : ''
+                            }`}
+                          >
+                            <td className="py-2 px-3 font-mono font-semibold text-[#0064D9]">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedMatnr(material.mara.matnr)}
+                                aria-label={`Tampilkan stok ${material.mara.matnr} ${material.mara.maktx}`}
+                                className="text-left hover:underline"
+                              >
+                              {material.mara.matnr}
+                              </button>
+                            </td>
+                            <td className="py-2 px-3">{material.mara.maktx}</td>
+                            <td className="py-2 px-3">
+                              {materialGroup?.label || material.mara.matkl}
+                            </td>
+                            <td className="py-2 px-3 text-right font-mono tabular-nums">
+                              {formatNumber(
+                                Object.values(material.mard).reduce(
+                                  (sum, storage) => sum + storage.labst,
+                                  0
+                                )
+                              )}{' '}
+                              {material.mara.meins}
+                            </td>
+                            <td className="py-2 px-3 text-right font-mono tabular-nums">
+                              {formatNumber(
+                                Object.values(material.mard).reduce(
+                                  (sum, storage) => sum + storage.insme,
+                                  0
+                                )
+                              )}{' '}
+                              {material.mara.meins}
+                            </td>
+                            <td className="py-2 px-3 text-right font-mono tabular-nums">
+                              {formatNumber(
+                                Object.values(material.mard).reduce(
+                                  (sum, storage) => sum + storage.speme,
+                                  0
+                                )
+                              )}{' '}
+                              {material.mara.meins}
+                            </td>
+                            <td className="py-2 px-3 text-right font-mono tabular-nums">
+                              {formatNumber(openOrder)} {material.mara.meins}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="px-3 py-4 text-xs text-slate-500 border border-slate-200 rounded-md">
+                  Tidak ada stock yang cocok dengan clue, deskripsi, atau Material Group tersebut.
+                </p>
+              )}
+            </div>
+          )}
+
+          {activeMaterial &&
+            (!stockSearchQuery.trim() ||
+              filteredStockMaterials.some(
+                (material) => material.mara.matnr === activeMaterial.mara.matnr
+              )) && (
             <div className="p-5 space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-md">
                 <div>

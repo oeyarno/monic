@@ -23,7 +23,12 @@ import type {
   SapBootstrapPayload,
   ValuationTypeCode,
 } from '../types/sap.ts';
-import { formatCurrency, formatNumber, getMaterialStatusLabel } from '../utils/format.ts';
+import {
+  formatCurrency,
+  formatNumber,
+  getMaterialStatusLabel,
+  matchesMaterialSearch,
+} from '../utils/format.ts';
 
 interface MaterialListViewProps {
   data: SapBootstrapPayload;
@@ -106,9 +111,6 @@ export function MaterialListView({
 
   const filteredMaterials = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    const expandedTerms = data.searchDictionary
-      .filter((entry) => entry.aliases.some((alias) => alias.toLowerCase().includes(q)))
-      .map((entry) => entry.keyword.toLowerCase());
     return data.materials.filter((mat) => {
       if (selectedIndustry !== 'ALL' && mat.mara.mbrsh !== selectedIndustry) return false;
       if (selectedType !== 'ALL' && mat.mara.mtart !== selectedType) return false;
@@ -118,18 +120,9 @@ export function MaterialListView({
         if (!hasBklas) return false;
       }
       if (!q) return true;
-      const fields = [
-        mat.mara.matnr,
-        mat.mara.maktx,
-        mat.mara.matkl,
-        mat.classificationClass || '',
-        mat.mara.bismt,
-      ]
-        .map((field) => field.toLowerCase());
-      return fields.some((field) => field.includes(q)) ||
-        expandedTerms.some((term) => fields.some((field) => field.includes(term)));
+      return matchesMaterialSearch(mat, q, data.searchDictionary, data.materialGroups);
     });
-  }, [data.materials, data.searchDictionary, searchQuery, selectedIndustry, selectedBklas, selectedType, selectedPlant]);
+  }, [data.materials, data.searchDictionary, data.materialGroups, searchQuery, selectedIndustry, selectedBklas, selectedType, selectedPlant]);
 
   const resetDictionaryForm = () => {
     setDictionaryKeyword('');

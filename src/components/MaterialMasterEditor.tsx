@@ -37,6 +37,7 @@ import {
   formatCharacteristicPattern,
   formatCurrency,
   formatNumber,
+  matchesMaterialSearch,
 } from '../utils/format.ts';
 
 interface MaterialMasterEditorProps {
@@ -236,6 +237,7 @@ export function MaterialMasterEditor({
     const found = data.materials.find((m) => m.mara.matnr === initialMatnr) || data.materials[0];
     return found ? structuredClone(found) : createEmptyMaterial(data);
   });
+  const [materialSearchQuery, setMaterialSearchQuery] = useState('');
   const [saving, setSaving] = useState(false);
   const [autoShortDesc, setAutoShortDesc] = useState<boolean>(mode === 'create');
   const [errorBanner, setErrorBanner] = useState<string[] | null>(null);
@@ -301,6 +303,14 @@ export function MaterialMasterEditor({
       ),
     [data.classificationClasses, draft.classificationClass]
   );
+
+  const materialSearchResults = useMemo(() => {
+    const query = materialSearchQuery.trim();
+    if (!query) return data.materials;
+    return data.materials.filter((material) =>
+      matchesMaterialSearch(material, query, data.searchDictionary, data.materialGroups)
+    );
+  }, [data.materials, data.searchDictionary, data.materialGroups, materialSearchQuery]);
 
   const charCompletion = useMemo(() => {
     const chars = activeClassDefinition?.characteristics || [];
@@ -1031,18 +1041,52 @@ export function MaterialMasterEditor({
                 </span>
                 <span className="text-slate-300">/</span>
                 {mode !== 'create' && (
-                  <select
-                    value={draft.mara.matnr}
-                    onChange={(e) => onSelectMaterial(e.target.value)}
-                    aria-label="Pilih Material"
-                    className="font-mono text-sm font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded px-2 py-0.5 focus:outline-none focus:border-[#0064D9]"
-                  >
-                    {data.materials.map((m) => (
-                      <option key={m.mara.matnr} value={m.mara.matnr}>
-                        {m.mara.matnr} — {m.mara.maktx.slice(0, 42)}
+                  <div className="flex flex-col gap-1">
+                    {mode === 'view' && (
+                      <input
+                        type="search"
+                        value={materialSearchQuery}
+                        onChange={(event) => setMaterialSearchQuery(event.target.value)}
+                        aria-label="Cari material MM03 berdasarkan clue, deskripsi, atau Material Group"
+                        placeholder="Cari nomor material, clue, deskripsi, atau Material Group..."
+                        className="w-full max-w-sm px-2 py-1 text-xs bg-white border border-slate-200 rounded focus:outline-none focus:border-[#0064D9]"
+                      />
+                    )}
+                    <select
+                      value={
+                        materialSearchResults.some(
+                          (material) => material.mara.matnr === draft.mara.matnr
+                        )
+                          ? draft.mara.matnr
+                          : ''
+                      }
+                      onChange={(event) => {
+                        if (!event.target.value) return;
+                        onSelectMaterial(event.target.value);
+                        setMaterialSearchQuery('');
+                      }}
+                      aria-label="Pilih Material"
+                      className="font-mono text-sm font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded px-2 py-0.5 focus:outline-none focus:border-[#0064D9]"
+                    >
+                      <option value="">
+                        {materialSearchQuery.trim()
+                          ? `${materialSearchResults.length} material cocok — pilih material`
+                          : 'Pilih material'}
                       </option>
-                    ))}
-                  </select>
+                      {materialSearchResults.map((material) => (
+                        <option key={material.mara.matnr} value={material.mara.matnr}>
+                          {material.mara.matnr} — {material.mara.maktx.slice(0, 42)}
+                        </option>
+                      ))}
+                    </select>
+                    {mode === 'view' &&
+                      materialSearchQuery.trim() &&
+                      materialSearchResults.length === 0 && (
+                        <span className="text-[11px] text-slate-500">
+                          Tidak ada material yang cocok dengan pencarian.
+                        </span>
+                      )}
+                  </div>
                 )}
                 {mode === 'create' && (
                   <span className="font-mono text-sm font-bold text-slate-900">

@@ -1,6 +1,8 @@
 import type {
   MaterialClassificationClass,
   MaterialGroupDefinition,
+  MaterialMasterRecord,
+  MaterialSearchDictionaryEntry,
   MasterCharacteristic,
 } from '../types/sap.ts';
 
@@ -12,6 +14,48 @@ type CharacteristicSource =
 function getCharacteristics(source: CharacteristicSource | undefined): readonly MasterCharacteristic[] {
   if (!source) return [];
   return 'characteristics' in source ? source.characteristics : source;
+}
+
+function normalizeSearchText(value: string): string {
+  return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+export function matchesMaterialSearch(
+  material: MaterialMasterRecord,
+  query: string,
+  searchDictionary: MaterialSearchDictionaryEntry[],
+  materialGroups: MaterialGroupDefinition[]
+): boolean {
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return true;
+
+  const group = materialGroups.find((item) => item.matkl === material.mara.matkl);
+  const searchableText = normalizeSearchText(
+    [
+      material.mara.matnr,
+      material.mara.maktx,
+      material.mara.matkl,
+      material.classificationClass || '',
+      material.mara.bismt,
+      ...Object.values(material.characteristics || {}).map(String),
+      group?.label || '',
+      group?.description || '',
+    ].join(' ')
+  );
+  const queryTerms = normalizedQuery.split(/\s+/).filter(Boolean);
+  if (queryTerms.every((term) => searchableText.includes(term))) return true;
+
+  const matchingEntries = searchDictionary.filter((entry) =>
+    [entry.keyword, ...entry.aliases].some((term) =>
+      normalizeSearchText(term).includes(normalizedQuery)
+    )
+  );
+  return matchingEntries.some((entry) =>
+    [entry.keyword, ...entry.aliases].some((term) => {
+      const expandedTerms = normalizeSearchText(term).split(/\s+/).filter(Boolean);
+      return expandedTerms.length > 0 && expandedTerms.every((word) => searchableText.includes(word));
+    })
+  );
 }
 
 export function formatCurrency(amount: number, currency = 'IDR'): string {
